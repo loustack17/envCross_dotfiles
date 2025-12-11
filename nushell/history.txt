@@ -1,0 +1,17 @@
+cd D:/CA/
+ls
+clear
+ls -la
+cd social-bridge-ca-landing\
+ls
+$nu.config-path
+cls
+D:/CA/social-bridge-ca-landing/
+cls
+source C:\Users\Lou\AppData\Roaming\nushell\config.nu
+cls
+source C:\Users\Lou\AppData\Roaming\nushell\config.nu
+cls
+source C:\Users\Lou\AppData\Roaming\nushell\config.nu
+cls
+y
