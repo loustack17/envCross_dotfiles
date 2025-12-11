@@ -36,7 +36,7 @@ All installers assume you execute commands from the repository root:
 
 ```sh
 
-cd path/to/dotfiles
+cd ./dotfiles
 
 ```
 
@@ -191,7 +191,7 @@ sudo dnf install -y neovim nushell
 
 ## 4. Notes and Recommendations
 
-### Why symlinks on Linux/macOS?
+### Why symlinks on Linux?
 
 - Repository becomes the **source of truth**.
 - Editing files inside the repo immediately applies to the system.
