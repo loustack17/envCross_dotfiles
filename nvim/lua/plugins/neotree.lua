@@ -69,6 +69,7 @@ return {
                 follow_current_file = {
                     enabled = true,
                 },
+                bind_to_cwd = true,
                 group_empty_dirs = true,
                 hijack_netrw_behavior = "open_default",
             },
@@ -84,7 +85,30 @@ return {
             },
         })
 
-        vim.keymap.set("n", "<leader>e", ":Neotree toggle right<CR>", { desc = "Toggle Neo-tree" })
-        vim.keymap.set("n", "<leader>o", ":Neotree focus right<CR>", { desc = "Focus Neo-tree" })
+        -- Use current buffer's directory as root if possible
+        local function get_root_dir()
+            local bufname = vim.api.nvim_buf_get_name(0)
+            if bufname ~= "" then
+                return vim.fn.fnamemodify(bufname, ":p:h")
+            else
+                return vim.fn.getcwd()
+            end
+        end
+
+        vim.keymap.set("n", "<leader>e", function()
+            require("neo-tree.command").execute({
+                toggle = true,
+                position = "right",
+                dir = get_root_dir(),
+            })
+        end, { desc = "Toggle Neo-tree (file dir)" })
+
+        vim.keymap.set("n", "<leader>o", function()
+            require("neo-tree.command").execute({
+                reveal = true,
+                position = "right",
+                dir = get_root_dir(),
+            })
+        end, { desc = "Focus Neo-tree (file dir)" })
     end,
 }
