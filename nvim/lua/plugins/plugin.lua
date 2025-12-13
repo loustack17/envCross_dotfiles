@@ -2,7 +2,7 @@ return {
   -- Core Dependencies & Utility
   "nvim-lua/plenary.nvim",
   "onsails/lspkind.nvim", -- Adds icons to LSP suggestions
-  "jose-elias-alvarez/null-ls.nvim",
+  "nvimtools/none-ls.nvim",
   -- UI & Editor Enhancements
   {
     "catppuccin/nvim",
@@ -47,6 +47,13 @@ return {
   {
     "rmagatti/auto-session",
     lazy = false, -- Must load immediately to restore session
+    init = function()
+        -- If Neovim is started with a directory arg (e.g., from yazi), disable auto-session restore/save
+        local arg0 = vim.fn.argv(0)
+        if arg0 ~= "" and vim.fn.isdirectory(arg0) == 1 then
+          vim.g.auto_session_enabled = false
+        end
+      end,
     opts = {
       suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
     }
