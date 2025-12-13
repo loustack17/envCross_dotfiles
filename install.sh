@@ -74,10 +74,10 @@ link_safe "$REPO_ROOT/nushell" "$CONFIG_HOME/nushell" "Nushell"
 link_safe "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
 link_safe "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
 link_safe "$REPO_ROOT/wezterm" "$CONFIG_HOME/wezterm" "WezTerm directory"
+link_safe "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
 
 if [ -f "$REPO_ROOT/.wezterm.lua" ]; then
   link_safe "$REPO_ROOT/.wezterm.lua" "$HOME/.wezterm.lua" "WezTerm main config"
 fi
 
 info "Done."
-
