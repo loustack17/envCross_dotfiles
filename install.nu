@@ -75,7 +75,7 @@ def main [
                 rm -r $dest
             }
             mkdir ($dest | path dirname) | ignore
-            
+
             if $is_windows {
                 # Windows symlink command
                 if $is_file {
@@ -87,7 +87,7 @@ def main [
                 # Unix symlink
                 ln -s $source $dest
             }
-            
+
             info $"Linked: ($name)"
         } else {
             # Copy files (original behavior)
@@ -148,6 +148,16 @@ def main [
                     })
             is_file: false
         }
+        {
+            name:   "Lazygit"
+            source: ($repo_root | path join "lazygit")
+            dest:   (if $is_windows {
+                        $localappdata | path join "lazygit"
+                    } else {
+                        $config_home | path join "lazygit"
+                    })
+            is_file: false
+        }
     ]
 
       let wez_main_src = ($repo_root | path join ".wezterm.lua")
@@ -176,4 +186,3 @@ def main [
 
     info "Done."
 }
-

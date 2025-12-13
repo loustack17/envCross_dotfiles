@@ -6,6 +6,7 @@ This repository contains cross-platform configuration files for the following to
 - [**Nushell**](https://github.com/nushell/nushell)
 - [**Yazi**](https://github.com/sxyazi/yazi)
 - [**Neovim**](https://github.com/neovim/neovim)
+- [**Lazygit**](https://github.com/jesseduffield/lazygit)
 - [**eza**](https://github.com/eza-community/eza) (via shell aliases)
 
 The goal is to maintain a reproducible, cross-platform environment with one-command setup on:
@@ -28,6 +29,7 @@ envCross_dotfiles/
 ├─ nvim/              # Neovim configuration
 ├─ yazi/              # Yazi configuration
 ├─ wezterm/           # WezTerm lua modules
+├─ lazygit/           # Lazygit configuration
 └─.wezterm.lua       # WezTerm main config (optional)
 
 ```
@@ -51,6 +53,7 @@ The PowerShell installer:
    - `neovim`
    - `wezterm`
    - `yazi`
+   - `lazygit`
    - `eza`
 2. Backs up any existing configuration.
 3. Copies new config files into Windows-appropriate directories.
@@ -103,6 +106,7 @@ cd envCross_dotfiles
 | Nushell             | `%APPDATA%\nushell`             |
 | Neovim              | `%LOCALAPPDATA%\nvim`           |
 | Yazi                | `%APPDATA%\yazi`                |
+| Lazygit             | `%LOCALAPPDATA%\lazygit`        |
 | WezTerm             | `%USERPROFILE%\.config\wezterm` |
 | WezTerm main config | `%USERPROFILE%\.wezterm.lua`    |
 
@@ -150,6 +154,7 @@ nu install.nu --symlink --dry-run
 - Nushell configuration
 - Neovim configuration
 - Yazi configuration
+- Lazygit configuration
 - WezTerm configuration directory
 - WezTerm main config (optional)
 
