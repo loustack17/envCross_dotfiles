@@ -116,6 +116,7 @@ Backup-IfExists "$env:APPDATA\nushell" "nushell"
 Backup-IfExists "$env:LOCALAPPDATA\nvim" "nvim"
 Backup-IfExists "$env:APPDATA\yazi" "yazi"
 Backup-IfExists "$env:USERPROFILE\.config\wezterm" "wezterm"
+Backup-IfExists "$env:LOCALAPPDATA\lazygit" "lazygit"
 
 if (Test-Path "$env:USERPROFILE\.wezterm.lua") {
     Backup-IfExists "$env:USERPROFILE\.wezterm.lua" "wezterm_lua"
@@ -130,6 +131,7 @@ Copy-DirectorySafe "$RepoRoot\nushell" "$env:APPDATA\nushell" "Nushell"
 Copy-DirectorySafe "$RepoRoot\nvim" "$env:LOCALAPPDATA\nvim" "Neovim"
 Copy-DirectorySafe "$RepoRoot\yazi" "$env:APPDATA\yazi" "Yazi"
 Copy-DirectorySafe "$RepoRoot\wezterm" "$env:USERPROFILE\.config\wezterm" "WezTerm directory"
+Copy-DirectorySafe "$RepoRoot\lazygit" "$env:LOCALAPPDATA\lazygit" "Lazygit"
 
 if (Test-Path "$RepoRoot\.wezterm.lua") {
     Copy-FileSafe "$RepoRoot\.wezterm.lua" "$env:USERPROFILE\.wezterm.lua" "WezTerm main config"
@@ -137,4 +139,3 @@ if (Test-Path "$RepoRoot\.wezterm.lua") {
 
 Write-Host ""
 Info "Done."
-
