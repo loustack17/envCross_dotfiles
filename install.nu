@@ -2,10 +2,12 @@
 #   nu install.nu
 #   nu install.nu --dry-run
 #   nu install.nu --no-backup
+#   nu install.nu --symlink         # Use symlinks instead of copies (requires admin on Windows)
 
 def main [
     --dry-run (-n)
     --no-backup
+    --symlink (-s)              # Create symlinks instead of copying
 ] {
     let repo_root = (pwd)
 
@@ -58,23 +60,51 @@ def main [
         }
 
         if $dry_run {
-            info $"DryRun: copy ($source) -> ($dest)"
+            if $symlink {
+                info $"DryRun: symlink ($source) -> ($dest)"
+            } else {
+                info $"DryRun: copy ($source) -> ($dest)"
+            }
             return
         }
 
-        if $is_file {
-            mkdir ($dest | path dirname) | ignore
-            cp $source $dest -f
-        } else {
+        if $symlink {
+            # Create symlink
             if ($dest | path exists) {
                 info $"Remove old: ($dest)"
                 rm -r $dest
             }
             mkdir ($dest | path dirname) | ignore
-            cp -r $source $dest
-        }
+            
+            if $is_windows {
+                # Windows symlink command
+                if $is_file {
+                    ^cmd /c mklink $dest $source | complete | ignore
+                } else {
+                    ^cmd /c mklink /D $dest $source | complete | ignore
+                }
+            } else {
+                # Unix symlink
+                ln -s $source $dest
+            }
+            
+            info $"Linked: ($name)"
+        } else {
+            # Copy files (original behavior)
+            if $is_file {
+                mkdir ($dest | path dirname) | ignore
+                cp $source $dest -f
+            } else {
+                if ($dest | path exists) {
+                    info $"Remove old: ($dest)"
+                    rm -r $dest
+                }
+                mkdir ($dest | path dirname) | ignore
+                cp -r $source $dest
+            }
 
-        info $"Installed: ($name)"
+            info $"Installed: ($name)"
+        }
     }
 
     mut targets = [
@@ -120,17 +150,17 @@ def main [
         }
     ]
 
-    let wez_main_src = ($repo_root | path join ".wezterm.lua")
-    if ($wez_main_src | path exists) {
-        $targets ++= [
-            {
-                name:   "WezTerm main config"
-                source: $wez_main_src
-                dest:   ($home | path join ".wezterm.lua")
-                is_file: true
-            }
-        ]
-    }
+      let wez_main_src = ($repo_root | path join ".wezterm.lua")
+      if ($wez_main_src | path exists) {
+          $targets ++= [
+              {
+                  name:   ".wezterm.lua"
+                  source: $wez_main_src
+                  dest:   ($home | path join ".wezterm.lua")
+                  is_file: true
+              }
+          ]
+      }
 
     if (not $dry_run) and (not $no_backup) {
         mkdir $backup_root | ignore
