@@ -3,13 +3,24 @@ Param(
     [switch]$NoBackup
 )
 
+# Parse arguments for Unix-style flags
+foreach ($arg in $args) {
+    if ($arg -eq "--dry-run" -or $arg -eq "-n") {
+        $DryRun = $true
+    }
+    if ($arg -eq "--no-backup") {
+        $NoBackup = $true
+    }
+}
+
 $ErrorActionPreference = "Stop"
 
 # Repo root (folder where this script is located)
 $ScriptPath = $MyInvocation.MyCommand.Path
 $RepoRoot   = Split-Path -Parent $ScriptPath
 
-$BackupRoot = Join-Path $RepoRoot "backup"
+$Timestamp  = Get-Date -Format "yyyyMMdd-HHmmss"
+$BackupRoot = Join-Path $RepoRoot "backup\$Timestamp"
 
 function Info($msg) {
     Write-Host "[INFO ] $msg"
@@ -28,7 +39,7 @@ function Backup-IfExists($Path, $Name) {
         New-Item -Path $BackupRoot -ItemType Directory | Out-Null
     }
 
-    $SafeName = ($Name -replace '[\\/:*?"<>| ]', '_') + "_old"
+    $SafeName = ($Name -replace '[\\/:*?"<>| ]', '_')
     $Dest     = Join-Path $BackupRoot $SafeName
 
     if ($DryRun) {
@@ -38,11 +49,11 @@ function Backup-IfExists($Path, $Name) {
 
     Info "Backup $Name -> $Dest"
 
-    if (Test-Path $Dest) {
-        Remove-Item -Recurse -Force $Dest
+    $DestParent = Split-Path $Dest -Parent
+    if (-not (Test-Path $DestParent)) {
+        New-Item -ItemType Directory -Path $DestParent | Out-Null
     }
 
-    New-Item -ItemType Directory -Path $Dest | Out-Null
     Copy-Item $Path -Destination $Dest -Recurse -Force
 }
 

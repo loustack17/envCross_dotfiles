@@ -62,20 +62,20 @@ return {
 
             filesystem = {
                 filtered_items = {
-                    visible = false,
-                    hide_dotfiles = true,
-                    hide_gitignored = true,
+                    visible = true,
+                    hide_dotfiles = false,
+                    hide_gitignored = false,
                 },
                 follow_current_file = {
-                    enabled = true,
+                    enabled = false,
                 },
                 bind_to_cwd = true,
                 group_empty_dirs = true,
-                hijack_netrw_behavior = "open_default",
+                hijack_netrw_behavior = "disabled",
             },
 
             buffers = {
-                follow_current_file = { enabled = true },
+                follow_current_file = { enabled = false },
             },
 
             git_status = {
@@ -99,7 +99,7 @@ return {
             require("neo-tree.command").execute({
                 toggle = true,
                 position = "right",
-                dir = get_root_dir(),
+                -- dir = get_root_dir(),
             })
         end, { desc = "Toggle Neo-tree (file dir)" })
 
@@ -107,7 +107,7 @@ return {
             require("neo-tree.command").execute({
                 reveal = true,
                 position = "right",
-                dir = get_root_dir(),
+                -- dir = get_root_dir(),
             })
         end, { desc = "Focus Neo-tree (file dir)" })
     end,
