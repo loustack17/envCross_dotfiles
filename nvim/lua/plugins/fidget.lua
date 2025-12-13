@@ -25,29 +25,5 @@ return {
         if type(progress.handle) ~= "table" or type(progress.handle.create) ~= "function" then
             return
         end
-
-        local group = vim.api.nvim_create_augroup("CodeCompanionFidget", { clear = true })
-
-        local cc_handle = nil
-
-        vim.api.nvim_create_autocmd("User", {
-            pattern = "CodeCompanionRequest*",
-            group = group,
-            callback = function(ev)
-                if ev.match == "CodeCompanionRequestStarted" then
-                    -- create a new progress handle
-                    cc_handle = progress.handle.create({
-                        lsp_client = "codecompanion",
-                        message = "CodeCompanion request",
-                    })
-                elseif ev.match == "CodeCompanionRequestFinished" then
-                    -- end this progress
-                    if cc_handle then
-                        cc_handle:finish()
-                        cc_handle = nil
-                    end
-                end
-            end,
-        })
     end,
 }

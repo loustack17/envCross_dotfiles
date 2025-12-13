@@ -1,6 +1,19 @@
 #!/usr/bin/env sh
 set -e
 
+DRY_RUN=0
+
+for arg in "$@"; do
+  case $arg in
+    --dry-run|-n)
+      DRY_RUN=1
+      shift
+      ;;
+    *)
+      ;;
+  esac
+done
+
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKUP_ROOT="$REPO_ROOT/backup/$(date +%Y%m%d-%H%M%S)"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -16,12 +29,18 @@ backup_if_exists () {
     return
   fi
 
+  if [ "$DRY_RUN" -eq 1 ]; then
+    SAFE_NAME=$(printf '%s' "$NAME" | tr '/\\:*?"<>| ' '_')
+    DEST="$BACKUP_ROOT/$SAFE_NAME"
+    info "DryRun: Backup $SRC -> $DEST"
+    return
+  fi
+
   mkdir -p "$BACKUP_ROOT"
   SAFE_NAME=$(printf '%s' "$NAME" | tr '/\\:*?"<>| ' '_')
   DEST="$BACKUP_ROOT/$SAFE_NAME"
 
   info "Backup $NAME -> $DEST"
-  mkdir -p "$DEST"
   cp -a "$SRC" "$DEST"
 }
 
@@ -32,6 +51,11 @@ link_safe () {
 
   if [ ! -e "$SRC" ]; then
     warn "Source not found, skip: $NAME ($SRC)"
+    return
+  fi
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    info "DryRun: Link $SRC -> $DEST"
     return
   fi
 

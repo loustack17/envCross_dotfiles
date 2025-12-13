@@ -26,7 +26,7 @@ function Component:init(options)
             elseif ev.match == "CodeCompanionRequestFinished" then
                 self.processing = false
             end
-            -- 重新畫 statusline
+            -- redraw statusline
             vim.cmd("redrawstatus")
         end,
     })

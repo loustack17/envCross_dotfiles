@@ -15,3 +15,133 @@ cls
 source C:\Users\Lou\AppData\Roaming\nushell\config.nu
 cls
 y
+cd D:/Notes/WorkFlow/dotfiles/
+ls -la
+touch install.nu
+touch install.sh install.cmd
+ls -la
+nvim install.nu
+nvim install.sh
+nvim install.cmd
+ls
+touch install.ps1
+nvim install.ps1
+rm install.cmd
+ls
+touch README.md
+nvim README.md
+yazi
+y
+cd ../
+cd ../../
+cd CA\
+ls -la
+rm -r social-bridge-ca-landing\
+sudo rm -r social-bridge-ca-landing\
+cd D:/CA/
+ls -la
+rm -r social-bridge-ca-landing\
+nvim
+nvim .
+scoop install lazygit
+lazygit
+cd D:/Notes/WorkFlow/envCross_dotfiles/
+lazygit
+cd ../
+cd ../../CA/social-bridge-ca-landing/
+laz
+lazygit
+scoop install extras/gitbutler
+scoop update -a
+scoop uninstall datagrip
+scoop install main/usql
+scoop install extras/beekeeper-studio
+scoop update -a
+scoop uninstall dbeaver
+scoop clean *
+scoop clear *
+scoop help
+scoop cleanup *
+cls
+lazygit --print-config-dir
+lazygit
+cls
+cd D:/CA/social-bridge-ca-landing/
+ls
+scoop install extras/zed
+cls
+pnpm add react react-dom @types/react @types/react-dom -D
+pnpm approve-builds
+pnpm i
+uv tool install markitdown
+where uvx
+where uv
+uv -v
+uv --version
+uvx --version
+where markitdown
+markitdown --help
+scoop install extras/mailspring
+cd ~
+ls
+cd D:/CA/social-bridge-ca-landing/
+cd D:/CA/Social-Bridge/
+pnpm i
+cd social-bridge-ca-landing\
+pnpm i
+git status
+lazygit
+cd social-bridge-ca-landing\
+scoop status
+scoop uninstall firefox-beta
+scoop status
+scoop gitbulter status
+scoop status gitbulter
+scoop update
+scoop status gitbulter
+pnpm dev
+clear
+ls
+pnpm dev
+pnpm i
+cd D:/CA/
+ls
+rm -r social-bridge-ca-landing\
+ls
+cd Social-Bridge\
+ls
+cd social-bridge-ca-landing\
+scoop uninstall mailbox
+scoop uninstall mailspring
+yazi
+config nu
+nu --version
+config nu
+$env.config.buffer_editor = "nvim"
+config nu
+source C:\Users\Lou\AppData\Roaming\nushell\config.nu
+cls
+cd C:\Users\Lou\AppData\Roaming\yazi\config
+zed yazi.toml
+yazi
+nu ./install.nu --symlink
+cd D:\Notes\WorkFlow\envCross_dotfiles
+ls
+nu ./install.nu --symlink
+zed README.md
+yazi
+cd D:\Notes\WorkFlow\envCross_dotfiles
+zed .
+nvim
+yazi
+nvim
+yazi
+ls
+nvim install.nu
+nvim install.ps1
+nvim install.sh
+nvim install.nu
+^cmd /c mklink C:\Users\Lou\.wezterm.lua D:\Notes\WorkFlow\envCross_dotfiles\.wezterm.lua | complete | ignore
+lazygit
+ls
+touch .gitignore

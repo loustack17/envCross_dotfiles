@@ -87,9 +87,12 @@ cd dotfiles
 #### Optional Flags
 
 ```powershell
-.\install.ps1 -DryRun       # Show planned operations
-.\install.ps1 -NoBackup     # Perform install without backup
-.\install.ps1 -SkipInstall  # Skip Scoop installation
+.\install.ps1 --dry-run     # Show planned operations
+.\install.ps1 --no-backup   # Perform install without backup
+
+# PowerShell-style flags also supported:
+.\install.ps1 -DryRun
+.\install.ps1 -NoBackup
 ```
 
 ---
@@ -107,7 +110,7 @@ cd dotfiles
 Backups are stored under:
 
 ```sh
-dotfiles/backup/<timestamp>/
+dotfiles/backup/YYYYMMDD-HHMMSS/
 ```
 
 ---
@@ -121,8 +124,9 @@ The Nushell installer works on **Windows and Linux**.
 - Detects OS automatically.
 - Determines correct config paths.
 - Backs up existing config.
-- Copies new configuration files.
+- Copies new configuration files (or creates symlinks with `--symlink`).
 - Handles `.wezterm.lua` if present.
+- Supports symlinks for both directories and individual files.
 
 ### Usage
 
@@ -135,6 +139,11 @@ nu install.nu
 ```nu
 nu install.nu --dry-run
 nu install.nu --no-backup
+nu install.nu --symlink     # Use symlinks instead of copies
+nu install.nu -s            # Short form for --symlink
+
+# Combine flags
+nu install.nu --symlink --dry-run
 ```
 
 ### Targets installed
@@ -160,6 +169,12 @@ This installer:
 ```sh
 chmod +x install.sh
 ./install.sh
+```
+
+#### Optional Flags
+
+```sh
+./install.sh --dry-run      # Show planned operations
 ```
 
 ---
@@ -197,11 +212,14 @@ sudo dnf install -y neovim nushell
 - Editing files inside the repo immediately applies to the system.
 - No need to re-run installers when editing configs.
 
-### Why copies (not symlinks) on Windows?
+### Symlinks on Windows
 
-- Windows symlink behavior often requires admin rights.
-- PowerShell behavior varies by filesystem and policies.
-- Copying is stable and predictable on all Windows setups.
+- `install.nu --symlink` now supports creating symlinks for both files and directories on Windows.
+- **Requirements**: Windows symlinks require either:
+  - Administrator privileges, OR
+  - Developer Mode enabled (Windows 10/11)
+- **Default behavior**: The installers use copying by default for maximum compatibility.
+- **When to use symlinks**: If you want live config updates (edit repo files → changes apply immediately).
 
 ### Yazi installation on Windows
 
