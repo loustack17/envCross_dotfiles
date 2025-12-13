@@ -8,3 +8,5 @@ lastversion: 0.57.0
 customcommandshistory:
     - git graph
 hidecommandlog: false
+# Ignore lazygit state file (contains user-specific data)
+lazygit/state.yml
