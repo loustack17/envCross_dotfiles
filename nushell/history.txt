@@ -145,3 +145,6 @@ nvim install.nu
 lazygit
 ls
 touch .gitignore
+lazygit
+cls
+^cmd /c mklink /D C:\Users\Lou\AppData\Local\lazygit D:\Notes\WorkFlow\envCross_dotfiles\lazygit | complete | ignore
