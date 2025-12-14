@@ -44,6 +44,140 @@ cd ./envCross_dotfiles
 
 ---
 
+## Plugins & Packages Statistics
+
+This development environment includes **65 total plugins/packages/modules** across all tools:
+
+| Tool        | Plugins/Packages | Description                                                                             |
+| ----------- | ---------------- | --------------------------------------------------------------------------------------- |
+| **Neovim**  | **59**           | Complete IDE setup with LSP, AI assistants, Git integration, and .NET development tools |
+| **Yazi**    | **2**            | File manager with custom plugins (whoosh.yazi, image.lua)                               |
+| **Nushell** | **2**            | Shell with Starship prompt and Catppuccin theme                                         |
+| **WezTerm** | **2**            | Terminal with custom modules (themes.lua, launcher.lua)                                 |
+| **Lazygit** | **0**            | Git TUI with Catppuccin theme configuration                                             |
+| **eza**     | **0**            | Modern ls replacement (configured via shell aliases)                                    |
+
+### 🟣 Neovim Plugins (59)
+
+<details>
+<summary>Click to expand full list</summary>
+
+#### 🎨 Appearance & Themes (7)
+
+- catppuccin - Color scheme
+- lualine.nvim - Status line
+- bufferline.nvim - Buffer/tab line
+- barbar.nvim - Alternative tab manager
+- nvim-web-devicons - Icon support
+- indent-blankline.nvim - Indentation guides
+- nvim-colorizer.lua - Color code visualization
+
+#### 📝 Editing Enhancement (6)
+
+- Comment.nvim - Commenting
+- nvim-autopairs - Auto-close brackets
+- nvim-ufo - Enhanced folding
+- nvim-treesitter - Syntax highlighting
+- conform.nvim - Code formatting
+- LuaSnip - Snippet engine
+
+#### 🔍 Search & Navigation (4)
+
+- telescope.nvim - Fuzzy finder
+- telescope-fzf-native.nvim - FZF integration
+- neo-tree.nvim - File tree
+- yazi.nvim - Yazi integration
+
+#### 💡 LSP & Completion (11)
+
+- nvim-lspconfig - LSP configuration
+- mason.nvim - LSP/DAP/Linter manager
+- mason-lspconfig.nvim - Mason-LSP bridge
+- nvim-cmp - Completion engine
+- cmp-nvim-lsp - LSP completion source
+- cmp-buffer - Buffer completion
+- cmp-path - Path completion
+- cmp-cmdline - Command line completion
+- cmp_luasnip - LuaSnip completion
+- lspkind.nvim - Completion icons
+- none-ls.nvim - Formatting & diagnostics
+
+#### 🤖 AI Assistants (4)
+
+- copilot.lua - GitHub Copilot
+- copilot-cmp - Copilot completion
+- codecompanion.nvim - AI code assistant
+- supermaven-nvim - Supermaven AI
+
+#### 🐛 Debugging (4)
+
+- nvim-dap - Debug Adapter Protocol
+- nvim-dap-ui - DAP UI
+- nvim-dap-virtual-text - Virtual text for debugging
+- trouble.nvim - Diagnostics panel
+
+#### 🔧 .NET Development (4)
+
+- roslyn.nvim - Roslyn LSP (C#)
+- rzls.nvim - Razor LSP
+- dotnet.nvim - .NET tools
+- easy-dotnet.nvim - .NET development helpers
+
+#### 📚 Markdown Support (4)
+
+- markdown-preview.nvim - Live preview
+- markview.nvim - Markdown visualization
+- render-markdown.nvim - Markdown rendering
+- img-clip.nvim - Image clipboard
+
+#### 🔄 Git Integration (3)
+
+- gitsigns.nvim - Git signs & hunks
+- git-blame.nvim - Git blame
+- mini.diff - Diff visualization
+
+#### 🛠️ Utilities & Framework (12)
+
+- lazy.nvim - Package manager
+- plenary.nvim - Lua utilities
+- nui.nvim - UI components
+- nvim-nio - Async I/O
+- promise-async - Async promises
+- luarocks.nvim - Lua package manager
+- which-key.nvim - Keybinding hints
+- auto-session - Session management
+- fidget.nvim - LSP progress
+- mcphub.nvim - MCP Hub
+- friendly-snippets - Snippet collection
+
+</details>
+
+### 🟦 Yazi Plugins (2)
+
+- **whoosh.yazi** - Navigation enhancement
+- **image.lua** - Custom image handling
+- Built-in integrations: fzf, zoxide
+
+### 🟩 Nushell Components (2)
+
+- **Starship** - Cross-shell prompt
+- **Catppuccin Mocha** - Color theme
+
+### 🟧 WezTerm Modules (2)
+
+- **themes.lua** - Theme configuration (Catppuccin)
+- **launcher.lua** - Launch menu (4 shells: NuShell, PowerShell 7, CMD, Git Bash)
+
+### 🟨 Lazygit Configuration
+
+- **Catppuccin theme** colors only (no plugins)
+
+### Theme Consistency
+
+All tools use the **Catppuccin** color scheme (primarily Mocha variant) for a unified visual experience! 🎨
+
+---
+
 ## 1. Windows Installation (`install.ps1`)
 
 The PowerShell installer:
