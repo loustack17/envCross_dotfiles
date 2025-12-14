@@ -55,7 +55,6 @@ This development environment includes **65 total plugins/packages/modules** acro
 | **Nushell** | **2**            | Shell with Starship prompt and Catppuccin theme                                         |
 | **WezTerm** | **2**            | Terminal with custom modules (themes.lua, launcher.lua)                                 |
 | **Lazygit** | **0**            | Git TUI with Catppuccin theme configuration                                             |
-| **eza**     | **0**            | Modern ls replacement (configured via shell aliases)                                    |
 
 ### 🟣 Neovim Plugins (59)
 
