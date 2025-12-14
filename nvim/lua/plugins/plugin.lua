@@ -3,6 +3,7 @@ return {
   "nvim-lua/plenary.nvim",
   "onsails/lspkind.nvim", -- Adds icons to LSP suggestions
   "nvimtools/none-ls.nvim",
+  "tpope/vim-dadbod",
   -- UI & Editor Enhancements
   {
     "catppuccin/nvim",
@@ -24,10 +25,18 @@ return {
   },
   {
     "folke/which-key.nvim",
-    lazy = false, -- Must load immediately
-    config = function()
-      require("which-key").setup({})
-    end,
+    event = "VeryLazy",
+	opts = {
+	},
+	keys = {
+	  {
+		"<leader>?",
+		function()
+		require("which-key").show({ global = false })
+		end,
+		desc = "Buffer Local Keymaps (which-key)",
+	  },
+	},
   },
   -- Fuzzy Finding (Telescope)
   {
