@@ -63,113 +63,113 @@ This development environment includes **65 total plugins/packages/modules** acro
 
 #### 🎨 Appearance & Themes (7)
 
-- catppuccin - Color scheme
-- lualine.nvim - Status line
-- bufferline.nvim - Buffer/tab line
-- barbar.nvim - Alternative tab manager
-- nvim-web-devicons - Icon support
-- indent-blankline.nvim - Indentation guides
-- nvim-colorizer.lua - Color code visualization
+- [catppuccin](https://github.com/catppuccin/nvim) - Color scheme
+- [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Status line
+- [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) - Buffer/tab line
+- [barbar.nvim](https://github.com/romgrk/barbar.nvim) - Alternative tab manager
+- [nvim-web-devicons](https://github.com/nvim-tree/nvim-web-devicons) - Icon support
+- [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) - Indentation guides
+- [nvim-colorizer.lua](https://github.com/NvChad/nvim-colorizer.lua) - Color code visualization
 
 #### 📝 Editing Enhancement (6)
 
-- Comment.nvim - Commenting
-- nvim-autopairs - Auto-close brackets
-- nvim-ufo - Enhanced folding
-- nvim-treesitter - Syntax highlighting
-- conform.nvim - Code formatting
-- LuaSnip - Snippet engine
+- [Comment.nvim](https://github.com/numToStr/Comment.nvim) - Commenting
+- [nvim-autopairs](https://github.com/windwp/nvim-autopairs) - Auto-close brackets
+- [nvim-ufo](https://github.com/kevinhwang91/nvim-ufo) - Enhanced folding
+- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) - Syntax highlighting
+- [conform.nvim](https://github.com/stevearc/conform.nvim) - Code formatting
+- [LuaSnip](https://github.com/L3MON4D3/LuaSnip) - Snippet engine
 
 #### 🔍 Search & Navigation (4)
 
-- telescope.nvim - Fuzzy finder
-- telescope-fzf-native.nvim - FZF integration
-- neo-tree.nvim - File tree
-- yazi.nvim - Yazi integration
+- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) - Fuzzy finder
+- [telescope-fzf-native.nvim](https://github.com/nvim-telescope/telescope-fzf-native.nvim) - FZF integration
+- [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) - File tree
+- [yazi.nvim](https://github.com/mikavilpas/yazi.nvim) - Yazi integration
 
 #### 💡 LSP & Completion (11)
 
-- nvim-lspconfig - LSP configuration
-- mason.nvim - LSP/DAP/Linter manager
-- mason-lspconfig.nvim - Mason-LSP bridge
-- nvim-cmp - Completion engine
-- cmp-nvim-lsp - LSP completion source
-- cmp-buffer - Buffer completion
-- cmp-path - Path completion
-- cmp-cmdline - Command line completion
-- cmp_luasnip - LuaSnip completion
-- lspkind.nvim - Completion icons
-- none-ls.nvim - Formatting & diagnostics
+- [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) - LSP configuration
+- [mason.nvim](https://github.com/williamboman/mason.nvim) - LSP/DAP/Linter manager
+- [mason-lspconfig.nvim](https://github.com/williamboman/mason-lspconfig.nvim) - Mason-LSP bridge
+- [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) - Completion engine
+- [cmp-nvim-lsp](https://github.com/hrsh7th/cmp-nvim-lsp) - LSP completion source
+- [cmp-buffer](https://github.com/hrsh7th/cmp-buffer) - Buffer completion
+- [cmp-path](https://github.com/hrsh7th/cmp-path) - Path completion
+- [cmp-cmdline](https://github.com/hrsh7th/cmp-cmdline) - Command line completion
+- [cmp_luasnip](https://github.com/saadparwaiz1/cmp_luasnip) - LuaSnip completion
+- [lspkind.nvim](https://github.com/onsails/lspkind.nvim) - Completion icons
+- [none-ls.nvim](https://github.com/nvimtools/none-ls.nvim) - Formatting & diagnostics
 
 #### 🤖 AI Assistants (4)
 
-- copilot.lua - GitHub Copilot
-- copilot-cmp - Copilot completion
-- codecompanion.nvim - AI code assistant
-- supermaven-nvim - Supermaven AI
+- [copilot.lua](https://github.com/zbirenbaum/copilot.lua) - GitHub Copilot
+- [copilot-cmp](https://github.com/zbirenbaum/copilot-cmp) - Copilot completion
+- [codecompanion.nvim](https://github.com/olimorris/codecompanion.nvim) - AI code assistant
+- [supermaven-nvim](https://github.com/supermaven-inc/supermaven-nvim) - Supermaven AI
 
 #### 🐛 Debugging (4)
 
-- nvim-dap - Debug Adapter Protocol
-- nvim-dap-ui - DAP UI
-- nvim-dap-virtual-text - Virtual text for debugging
-- trouble.nvim - Diagnostics panel
+- [nvim-dap](https://github.com/mfussenegger/nvim-dap) - Debug Adapter Protocol
+- [nvim-dap-ui](https://github.com/rcarriga/nvim-dap-ui) - DAP UI
+- [nvim-dap-virtual-text](https://github.com/theHamsta/nvim-dap-virtual-text) - Virtual text for debugging
+- [trouble.nvim](https://github.com/folke/trouble.nvim) - Diagnostics panel
 
 #### 🔧 .NET Development (4)
 
-- roslyn.nvim - Roslyn LSP (C#)
-- rzls.nvim - Razor LSP
-- dotnet.nvim - .NET tools
-- easy-dotnet.nvim - .NET development helpers
+- [roslyn.nvim](https://github.com/seblj/roslyn.nvim) - Roslyn LSP (C#)
+- [rzls.nvim](https://github.com/tris203/rzls.nvim) - Razor LSP
+- [dotnet.nvim](https://github.com/MoaidHathot/dotnet.nvim) - .NET tools
+- [easy-dotnet.nvim](https://github.com/GustavEikaas/easy-dotnet.nvim) - .NET development helpers
 
 #### 📚 Markdown Support (4)
 
-- markdown-preview.nvim - Live preview
-- markview.nvim - Markdown visualization
-- render-markdown.nvim - Markdown rendering
-- img-clip.nvim - Image clipboard
+- [markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim) - Live preview
+- [markview.nvim](https://github.com/OXY2DEV/markview.nvim) - Markdown visualization
+- [render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) - Markdown rendering
+- [img-clip.nvim](https://github.com/HakonHarnes/img-clip.nvim) - Image clipboard
 
 #### 🔄 Git Integration (3)
 
-- gitsigns.nvim - Git signs & hunks
-- git-blame.nvim - Git blame
-- mini.diff - Diff visualization
+- [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) - Git signs & hunks
+- [git-blame.nvim](https://github.com/f-person/git-blame.nvim) - Git blame
+- [mini.diff](https://github.com/echasnovski/mini.diff) - Diff visualization
 
 #### 🛠️ Utilities & Framework (12)
 
-- lazy.nvim - Package manager
-- plenary.nvim - Lua utilities
-- nui.nvim - UI components
-- nvim-nio - Async I/O
-- promise-async - Async promises
-- luarocks.nvim - Lua package manager
-- which-key.nvim - Keybinding hints
-- auto-session - Session management
-- fidget.nvim - LSP progress
-- mcphub.nvim - MCP Hub
-- friendly-snippets - Snippet collection
+- [lazy.nvim](https://github.com/folke/lazy.nvim) - Package manager
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) - Lua utilities
+- [nui.nvim](https://github.com/MunifTanjim/nui.nvim) - UI components
+- [nvim-nio](https://github.com/nvim-neotest/nvim-nio) - Async I/O
+- [promise-async](https://github.com/kevinhwang91/promise-async) - Async promises
+- [luarocks.nvim](https://github.com/vhyrro/luarocks.nvim) - Lua package manager
+- [which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding hints
+- [auto-session](https://github.com/rmagatti/auto-session) - Session management
+- [fidget.nvim](https://github.com/j-hui/fidget.nvim) - LSP progress
+- [mcphub.nvim](https://github.com/ravibrock/mcphub.nvim) - MCP Hub
+- [friendly-snippets](https://github.com/rafamadriz/friendly-snippets) - Snippet collection
 
 </details>
 
 ### 🟦 Yazi Plugins (2)
 
-- **whoosh.yazi** - Navigation enhancement
-- **image.lua** - Custom image handling
-- Built-in integrations: fzf, zoxide
+- [**whoosh.yazi**](https://github.com/yazi-rs/plugins/tree/main/whoosh.yazi) - Navigation enhancement
+- **image.lua** - Custom image handling (local plugin)
+- Built-in integrations: [fzf](https://github.com/junegunn/fzf), [zoxide](https://github.com/ajeetdsouza/zoxide)
 
 ### 🟩 Nushell Components (2)
 
-- **Starship** - Cross-shell prompt
-- **Catppuccin Mocha** - Color theme
+- [**Starship**](https://github.com/starship/starship) - Cross-shell prompt
+- [**Catppuccin Mocha**](https://github.com/catppuccin/nushell) - Color theme
 
 ### 🟧 WezTerm Modules (2)
 
-- **themes.lua** - Theme configuration (Catppuccin)
+- **themes.lua** - Theme configuration ([Catppuccin](https://github.com/catppuccin/wezterm))
 - **launcher.lua** - Launch menu (4 shells: NuShell, PowerShell 7, CMD, Git Bash)
 
 ### 🟨 Lazygit Configuration
 
-- **Catppuccin theme** colors only (no plugins)
+- [**Catppuccin theme**](https://github.com/catppuccin/lazygit) colors only (no plugins)
 
 ### Theme Consistency
 
