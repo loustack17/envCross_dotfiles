@@ -1,0 +1,184 @@
+/* Catppuccin Mocha Maroon userChrome.css*/
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --zen-colors-primary: #313244 !important;
+    --zen-primary-color: #eba0ac !important;
+    --zen-colors-secondary: #313244 !important;
+    --zen-colors-tertiary: #181825 !important;
+    --zen-colors-border: #eba0ac !important;
+    --toolbarbutton-icon-fill: #eba0ac !important;
+    --lwt-text-color: #cdd6f4 !important;
+    --toolbar-field-color: #cdd6f4 !important;
+    --tab-selected-textcolor: rgb(220, 187, 208) !important;
+    --toolbar-field-focus-color: #cdd6f4 !important;
+    --toolbar-color: #cdd6f4 !important;
+    --newtab-text-primary-color: #cdd6f4 !important;
+    --arrowpanel-color: #cdd6f4 !important;
+    --arrowpanel-background: #1e1e2e !important;
+    --sidebar-text-color: #cdd6f4 !important;
+    --lwt-sidebar-text-color: #cdd6f4 !important;
+    --lwt-sidebar-background-color: #11111b !important;
+    --toolbar-bgcolor: #313244 !important;
+    --newtab-background-color: #1e1e2e !important;
+    --zen-themed-toolbar-bg: #181825 !important;
+    --zen-main-browser-background: #181825 !important;
+    --toolbox-bgcolor-inactive: #181825 !important;
+  }
+
+  #permissions-granted-icon {
+    color: #181825 !important;
+  }
+
+  .sidebar-placesTree {
+    background-color: #1e1e2e !important;
+  }
+
+  #zen-workspaces-button {
+    background-color: #1e1e2e !important;
+  }
+
+  #TabsToolbar {
+    background-color: #181825 !important;
+  }
+
+  .urlbar-background {
+    background-color: #1e1e2e !important;
+  }
+
+  .content-shortcuts {
+    background-color: #1e1e2e !important;
+    border-color: #eba0ac !important;
+  }
+
+  .urlbarView-url {
+    color: #eba0ac !important;
+  }
+
+  #zenEditBookmarkPanelFaviconContainer {
+    background: #11111b !important;
+  }
+
+  #zen-media-controls-toolbar {
+    & #zen-media-progress-bar {
+      &::-moz-range-track {
+        background: #313244 !important;
+      }
+    }
+  }
+
+  toolbar .toolbarbutton-1 {
+    &:not([disabled]) {
+      &:is([open], [checked])
+        > :is(
+          .toolbarbutton-icon,
+          .toolbarbutton-text,
+          .toolbarbutton-badge-stack
+        ) {
+        fill: #11111b;
+      }
+    }
+  }
+
+  .identity-color-blue {
+    --identity-tab-color: #89b4fa !important;
+    --identity-icon-color: #89b4fa !important;
+  }
+
+  .identity-color-turquoise {
+    --identity-tab-color: #94e2d5 !important;
+    --identity-icon-color: #94e2d5 !important;
+  }
+
+  .identity-color-green {
+    --identity-tab-color: #a6e3a1 !important;
+    --identity-icon-color: #a6e3a1 !important;
+  }
+
+  .identity-color-yellow {
+    --identity-tab-color: #f9e2af !important;
+    --identity-icon-color: #f9e2af !important;
+  }
+
+  .identity-color-orange {
+    --identity-tab-color: #fab387 !important;
+    --identity-icon-color: #fab387 !important;
+  }
+
+  .identity-color-red {
+    --identity-tab-color: #f38ba8 !important;
+    --identity-icon-color: #f38ba8 !important;
+  }
+
+  .identity-color-pink {
+    --identity-tab-color: #f5c2e7 !important;
+    --identity-icon-color: #f5c2e7 !important;
+  }
+
+  .identity-color-purple {
+    --identity-tab-color: #cba6f7 !important;
+    --identity-icon-color: #cba6f7 !important;
+  }
+
+  hbox#titlebar {
+    background-color: #181825 !important;
+  }
+
+  #zen-appcontent-navbar-container {
+    background-color: #181825 !important;
+  }
+}
+
+/* ===== Catppuccin (Mocha / Maroon) - PiP Toggle Patch ===== */
+/* Paste at the END of userChrome.css, then restart Zen/Firefox */
+
+/* Prefer Maroon accent if available, fallback otherwise */
+:root {
+  --pip-ctp-accent: var(--ctp-maroon, var(--ctp-mauve, var(--ctp-text, #cdd6f4)));
+  --pip-ctp-fg: var(--ctp-text, #cdd6f4);
+  --pip-ctp-bg: transparent;
+}
+
+/* Target Firefox PiP overlay toggle button (multi-selector for compatibility) */
+:root .videoPictureInPictureToggleButton,
+:root .pictureInPictureToggleButton,
+:root [class*="videoPictureInPictureToggleButton"],
+:root [class*="pictureInPictureToggleButton"] {
+  /* smaller */
+  transform: scale(0.58) !important;
+
+  /* MUCH more transparent */
+  opacity: 0.015 !important;
+
+  /* remove blocky look */
+  background: var(--pip-ctp-bg) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border: 1px solid transparent !important;
+
+  /* tone down icon */
+  color: var(--pip-ctp-fg) !important;
+  filter: grayscale(100%) brightness(0.85) !important;
+
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    filter 140ms ease,
+    border-color 140ms ease !important;
+}
+
+/* Hover: visible + Maroon accent border */
+:root .videoPictureInPictureToggleButton:hover,
+:root .pictureInPictureToggleButton:hover,
+:root [class*="videoPictureInPictureToggleButton"]:hover,
+:root [class*="pictureInPictureToggleButton"]:hover {
+  opacity: 0.92 !important;
+  transform: scale(0.74) !important;
+  border-color: var(--pip-ctp-accent) !important;
+  filter: none !important;
+}
+
+
+
+/* --- Bubble Clean --- */
+@import "bubble-clean/bubble-clean.css";
