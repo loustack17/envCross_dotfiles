@@ -1,0 +1,17 @@
+/* Smaller extension icons */
+.unified-extensions-item-action-button {
+  scale: 0.85;
+}
+.toolbarbutton-badge {
+  height: 50%;
+  width: 50%;
+  font-size: 6px !important;
+  margin: -3px 0 0 !important;
+  margin-inline-end: -1px !important;
+  min-width: 12px important;
+}
+
+/* More unified extension icons */
+.unified-extensions-item {
+  filter: saturate(0.5) grayscale(0.4) brightness(1.25) !important;
+}
