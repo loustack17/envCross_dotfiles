@@ -1,20 +1,12 @@
 #!/usr/bin/env bash
-# Linux dotfiles installer with automatic tool installation
-# Primary target: CachyOS / Arch Linux (supports other distros)
-# Core tools: Kitty, Fish, Neovim, Yazi, Lazygit
-# Hyprland ecosystem: Waybar, Mako, Rofi, HyprLock, swww, Thunar, Zathura, Wallust, Polkit-gnome, MPV
-#
-# Usage:
-#   ./install.sh
-#   ./install.sh --dry-run
-#   ./install.sh --no-backup
-#   ./install.sh --no-install           # Skip tool installation, only symlink configs
-#   ./install.sh --skip-kitty --skip-fish
-#   ./install.sh --only-nvim --only-yazi
+# Linux dotfiles installer
+# Target: CachyOS / Arch Linux
+# Core: Kitty, Fish, Neovim, Yazi, Lazygit
+# Hyprland: Waybar, Mako, Rofi, HyprLock, swww, Thunar, Zathura, Wallust, Polkit, MPV
 
 set -e
 
-# ==================== Configuration ====================
+# Config
 DRY_RUN=0
 NO_BACKUP=0
 NO_INSTALL=0
@@ -26,147 +18,80 @@ REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKUP_ROOT="$REPO_ROOT/backup/$(date +%Y%m%d-%H%M%S)"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-# System detection
 DISTRO=""
 PKG_MANAGER=""
 AUR_HELPER=""
 
-# ==================== Colors ====================
-RED='\033[0;31m'
+# Colors
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
+RED='\033[0;31m'
 NC='\033[0m'
 
-# ==================== Utility Functions ====================
-info() { printf "${GREEN}[INFO ]${NC} %s\n" "$1"; }
-warn() { printf "${YELLOW}[WARN ]${NC} %s\n" "$1"; }
-error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; exit 1; }
-header() { 
-    echo ""
-    printf "${BLUE}╔════════════════════════════════════════════╗${NC}\n"
-    printf "${BLUE}║${NC} %-42s ${BLUE}║${NC}\n" "$1"
-    printf "${BLUE}╚════════════════════════════════════════════╝${NC}\n"
-    echo ""
-}
+# Logging
+log_info() { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
+log_warn() { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; }
+log_error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; exit 1; }
 
-section() {
-    echo ""
-    printf "${CYAN}>>> %s${NC}\n" "$1"
-    echo ""
-}
-
-# ==================== Help ====================
+# Help
 show_help() {
-    cat << EOF
-Linux Dotfiles Installer
-
+    cat << 'EOF'
 Usage: ./install.sh [OPTIONS]
 
 Options:
-  --dry-run, -n         Simulate installation without making changes
-  --no-backup           Skip backing up existing configs
-  --no-install          Skip automatic tool installation (only symlink)
-  --force-install       Force reinstall even if tools exist
-  --skip-<tool>         Skip installing specific tool
-                        (e.g., --skip-kitty --skip-waybar)
-  --only-<tool>         Only install specific tool
-                        (e.g., --only-nvim --only-yazi)
-  -h, --help            Show this help message
+  --dry-run, -n         Simulate without changes
+  --no-backup           Skip backup
+  --no-install          Skip package installation
+  --force-install       Force reinstall
+  --skip-<tool>         Skip tool (e.g., --skip-kitty)
+  --only-<tool>         Only install tool (e.g., --only-nvim)
+  -h, --help            Show help
 
 Examples:
-  ./install.sh                          # Full installation
-  ./install.sh --dry-run                # Preview changes
-  ./install.sh --skip-kitty             # Skip Kitty terminal
-  ./install.sh --only-nvim --only-yazi  # Install only Neovim and Yazi
+  ./install.sh
+  ./install.sh --dry-run
+  ./install.sh --skip-kitty --skip-waybar
+  ./install.sh --only-nvim --only-yazi
 
-Supported Distributions:
-  - Arch Linux / CachyOS (primary)
-  - Ubuntu / Debian
-  - Fedora
-  - openSUSE
-
-Core Tools:
-  - Kitty (terminal, from AUR for latest version)
-  - Fish (shell)
-  - Neovim (editor)
-  - Yazi (file manager TUI)
-  - Lazygit (git UI)
-
-Hyprland Ecosystem:
-  - Waybar (status bar)
-  - Mako (notification daemon)
-  - Rofi (application launcher)
-  - HyprLock (screen locker)
-  - swww (wallpaper daemon)
-  - Thunar (file manager GUI)
-  - Zathura (PDF viewer)
-  - Wallust (color palette generator)
-  - Polkit-gnome (authentication agent)
-  - MPV (media player)
+Tools:
+  Core: kitty, fish, nvim, yazi, lazygit
+  Hyprland: waybar, mako, rofi, hyprlock, swww, thunar, zathura, wallust, polkit-gnome, mpv
 EOF
     exit 0
 }
 
-# ==================== Argument Parsing ====================
+# Parse args
 parse_args() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --dry-run|-n)
-                DRY_RUN=1
-                ;;
-            --no-backup)
-                NO_BACKUP=1
-                ;;
-            --no-install)
-                NO_INSTALL=1
-                ;;
-            --force-install)
-                FORCE_INSTALL=1
-                ;;
-            --skip-*)
-                SKIP_TOOLS+=("${1#--skip-}")
-                ;;
-            --only-*)
-                ONLY_TOOLS+=("${1#--only-}")
-                ;;
-            -h|--help)
-                show_help
-                ;;
-            *)
-                warn "Unknown option: $1"
-                ;;
+            --dry-run|-n) DRY_RUN=1 ;;
+            --no-backup) NO_BACKUP=1 ;;
+            --no-install) NO_INSTALL=1 ;;
+            --force-install) FORCE_INSTALL=1 ;;
+            --skip-*) SKIP_TOOLS+=("${1#--skip-}") ;;
+            --only-*) ONLY_TOOLS+=("${1#--only-}") ;;
+            -h|--help) show_help ;;
+            *) log_warn "Unknown option: $1" ;;
         esac
         shift
     done
 }
 
-# ==================== System Detection ====================
+# Detect system
 detect_system() {
-    info "Detecting system..."
-    
-    # Detect distribution
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         DISTRO=$ID
     elif [ -f /etc/arch-release ]; then
         DISTRO="arch"
     else
-        error "Cannot detect Linux distribution"
+        log_error "Cannot detect Linux distribution"
     fi
     
-    # Detect package manager
     if command -v pacman &>/dev/null; then
         PKG_MANAGER="pacman"
-        
-        # Detect AUR helper
-        if command -v yay &>/dev/null; then
-            AUR_HELPER="yay"
-        elif command -v paru &>/dev/null; then
-            AUR_HELPER="paru"
-        fi
+        command -v yay &>/dev/null && AUR_HELPER="yay"
+        command -v paru &>/dev/null && AUR_HELPER="paru"
     elif command -v apt &>/dev/null; then
         PKG_MANAGER="apt"
     elif command -v dnf &>/dev/null; then
@@ -174,244 +99,161 @@ detect_system() {
     elif command -v zypper &>/dev/null; then
         PKG_MANAGER="zypper"
     else
-        error "No supported package manager found"
+        log_error "No supported package manager found"
     fi
-    
-    info "Distribution: $DISTRO"
-    info "Package Manager: $PKG_MANAGER${AUR_HELPER:+ (with $AUR_HELPER)}"
 }
 
-# ==================== Tool Filtering ====================
-should_install_tool() {
+# Check if should install tool
+should_install() {
     local tool=$1
     
-    # If only-tools specified, only install those
     if [[ ${#ONLY_TOOLS[@]} -gt 0 ]]; then
-        for only_tool in "${ONLY_TOOLS[@]}"; do
-            [[ "$tool" == "$only_tool" ]] && return 0
+        for only in "${ONLY_TOOLS[@]}"; do
+            [[ "$tool" == "$only" ]] && return 0
         done
         return 1
     fi
     
-    # Check if tool is in skip list
-    for skip_tool in "${SKIP_TOOLS[@]}"; do
-        [[ "$tool" == "$skip_tool" ]] && return 1
+    for skip in "${SKIP_TOOLS[@]}"; do
+        [[ "$tool" == "$skip" ]] && return 1
     done
     
     return 0
 }
 
-# ==================== Package Installation ====================
-install_package() {
-    local pkg_name=$1
-    local display_name=$2
+# Install package
+install_pkg() {
+    local pkg=$1
+    local name=$2
     local use_aur=${3:-false}
     
-    if [[ $DRY_RUN -eq 1 ]]; then
-        info "DryRun: Would install $display_name ($pkg_name)"
-        return 0
-    fi
-    
-    info "Installing $display_name..."
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: $name"; return 0; }
     
     case "$PKG_MANAGER" in
         pacman)
-            # If explicitly AUR package or AUR helper available
-            if [[ "$use_aur" == "true" ]]; then
-                if [[ -z "$AUR_HELPER" ]]; then
-                    warn "AUR helper (yay/paru) required for $display_name"
-                    warn "Install yay: https://github.com/Jguer/yay#installation"
-                    return 1
-                fi
-                $AUR_HELPER -S --noconfirm --needed "$pkg_name"
+            if [[ "$use_aur" == "true" && -n "$AUR_HELPER" ]]; then
+                $AUR_HELPER -S --noconfirm --needed "$pkg"
             elif [[ -n "$AUR_HELPER" ]]; then
-                # Try AUR helper first, fallback to pacman
-                $AUR_HELPER -S --noconfirm --needed "$pkg_name" 2>/dev/null || \
-                sudo pacman -S --noconfirm --needed "$pkg_name"
+                $AUR_HELPER -S --noconfirm --needed "$pkg" 2>/dev/null || \
+                sudo pacman -S --noconfirm --needed "$pkg"
             else
-                sudo pacman -S --noconfirm --needed "$pkg_name"
+                sudo pacman -S --noconfirm --needed "$pkg"
             fi
             ;;
-        apt)
-            sudo apt update -qq
-            sudo apt install -y "$pkg_name"
-            ;;
-        dnf)
-            sudo dnf install -y "$pkg_name"
-            ;;
-        zypper)
-            sudo zypper install -y "$pkg_name"
-            ;;
-        *)
-            warn "Please manually install: $pkg_name"
-            return 1
-            ;;
+        apt) sudo apt update -qq && sudo apt install -y "$pkg" ;;
+        dnf) sudo dnf install -y "$pkg" ;;
+        zypper) sudo zypper install -y "$pkg" ;;
+        *) log_warn "Manual install required: $pkg"; return 1 ;;
     esac
-    
-    return $?
 }
 
-# ==================== Tool Installation ====================
+# Install tool
 install_tool() {
-    local tool_cmd=$1
-    local pkg_name=$2
-    local display_name=$3
+    local cmd=$1
+    local pkg=$2
+    local name=$3
     local use_aur=${4:-false}
     
-    # Check if already installed
-    if command -v "$tool_cmd" &>/dev/null && [[ $FORCE_INSTALL -eq 0 ]]; then
-        info "✓ $display_name already installed"
+    if command -v "$cmd" &>/dev/null && [[ $FORCE_INSTALL -eq 0 ]]; then
+        log_info "$name already installed"
         return 0
     fi
     
-    # Install package
-    if install_package "$pkg_name" "$display_name" "$use_aur"; then
-        # Verify installation
-        if command -v "$tool_cmd" &>/dev/null; then
-            info "✓ $display_name installed successfully"
-            return 0
-        else
-            warn "$display_name installation completed but command not found"
-            warn "You may need to restart your session"
-            return 1
-        fi
+    log_info "Installing $name..."
+    
+    if install_pkg "$pkg" "$name" "$use_aur"; then
+        command -v "$cmd" &>/dev/null && log_info "$name installed" || log_warn "$name install completed but command not found"
     else
-        warn "Failed to install $display_name"
-        return 1
+        log_warn "Failed to install $name"
     fi
 }
 
-# ==================== Special: Zathura with PDF support ====================
+# Special: Zathura with PDF backend
 install_zathura() {
-    local display_name="Zathura"
+    command -v zathura &>/dev/null && [[ $FORCE_INSTALL -eq 0 ]] && { log_info "Zathura already installed"; return 0; }
     
-    if command -v zathura &>/dev/null && [[ $FORCE_INSTALL -eq 0 ]]; then
-        info "✓ $display_name already installed"
-        return 0
-    fi
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: Zathura"; return 0; }
     
-    info "Installing $display_name with PDF support..."
-    
-    if [[ $DRY_RUN -eq 1 ]]; then
-        info "DryRun: Would install zathura zathura-pdf-mupdf"
-        return 0
-    fi
+    log_info "Installing Zathura..."
     
     case "$PKG_MANAGER" in
         pacman)
-            if [[ -n "$AUR_HELPER" ]]; then
-                $AUR_HELPER -S --noconfirm --needed zathura zathura-pdf-mupdf
-            else
-                sudo pacman -S --noconfirm --needed zathura zathura-pdf-mupdf
-            fi
+            [[ -n "$AUR_HELPER" ]] && $AUR_HELPER -S --noconfirm --needed zathura zathura-pdf-mupdf || \
+            sudo pacman -S --noconfirm --needed zathura zathura-pdf-mupdf
             ;;
-        apt)
-            sudo apt update -qq
-            sudo apt install -y zathura zathura-pdf-poppler
-            ;;
-        dnf)
-            sudo dnf install -y zathura zathura-pdf-mupdf
-            ;;
-        *)
-            warn "Please manually install: zathura"
-            return 1
-            ;;
+        apt) sudo apt update -qq && sudo apt install -y zathura zathura-pdf-poppler ;;
+        dnf) sudo dnf install -y zathura zathura-pdf-mupdf ;;
+        *) log_warn "Manual install required: zathura"; return 1 ;;
     esac
     
-    if command -v zathura &>/dev/null; then
-        info "✓ $display_name installed successfully"
-        return 0
-    else
-        warn "Failed to install $display_name"
-        return 1
-    fi
+    command -v zathura &>/dev/null && log_info "Zathura installed" || log_warn "Zathura install failed"
 }
 
-# ==================== Backup Function ====================
-backup_if_exists() {
-    [[ $NO_BACKUP -eq 1 ]] && return
+# Special: Polkit (binary check)
+install_polkit() {
+    local binary="/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
     
-    local path=$1
-    local name=$2
+    [[ -f "$binary" && $FORCE_INSTALL -eq 0 ]] && { log_info "Polkit-gnome already installed"; return 0; }
     
-    [[ ! -e "$path" ]] && return
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: Polkit-gnome"; return 0; }
     
-    if [[ $DRY_RUN -eq 1 ]]; then
-        info "DryRun: Would backup $path"
-        return
-    fi
+    log_info "Installing Polkit-gnome..."
+    install_pkg "polkit-gnome" "Polkit-gnome" false
+    
+    [[ -f "$binary" ]] && log_info "Polkit-gnome installed" || log_warn "Polkit-gnome binary not found"
+}
+
+# Backup
+backup() {
+    [[ $NO_BACKUP -eq 1 || ! -e "$1" ]] && return
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would backup: $1"; return; }
     
     mkdir -p "$BACKUP_ROOT"
-    local safe_name=$(echo "$name" | tr '/\\:*?"<>| ' '_')
-    local dest="$BACKUP_ROOT/$safe_name"
-    
-    info "Backing up $name..."
-    cp -a "$path" "$dest"
-    info "✓ Backup saved to $dest"
+    local dest="$BACKUP_ROOT/$(echo "$2" | tr '/\\:*?"<>| ' '_')"
+    cp -a "$1" "$dest" && log_info "Backed up: $2"
 }
 
-# ==================== Symlink Function ====================
-link_safe() {
-    local source=$1
-    local dest=$2
+# Symlink
+link_config() {
+    local src=$1
+    local dst=$2
     local name=$3
     
-    if [[ ! -e "$source" ]]; then
-        warn "Source not found, skip: $name ($source)"
-        return
-    fi
+    [[ ! -e "$src" ]] && { log_warn "Source not found: $name"; return; }
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would link: $name"; return; }
     
-    if [[ $DRY_RUN -eq 1 ]]; then
-        info "DryRun: Would create symlink $source -> $dest"
-        return
-    fi
+    [[ -e "$dst" || -L "$dst" ]] && { backup "$dst" "$name"; rm -rf "$dst"; }
     
-    # Backup and remove existing
-    if [[ -e "$dest" ]] || [[ -L "$dest" ]]; then
-        backup_if_exists "$dest" "$name"
-        rm -rf "$dest"
-    fi
-    
-    # Create symlink
-    mkdir -p "$(dirname "$dest")"
-    ln -sf "$source" "$dest"
-    
-    info "✓ Linked: $name"
+    mkdir -p "$(dirname "$dst")"
+    ln -sf "$src" "$dst" && log_info "Linked: $name"
 }
 
-# ==================== Tool Installation Phase ====================
-install_tools() {
-    header "Phase 1: Tool Installation"
+# Install all tools
+install_all_tools() {
+    [[ $NO_INSTALL -eq 1 ]] && { log_info "Skipping tool installation"; return; }
     
-    # ===== Core Tools =====
-    section "Core Tools"
+    echo ""
+    log_info "=== Installing Tools ==="
     
-    # Tool format: [command]="package_name|display_name|use_aur"
-    declare -A CORE_TOOLS=(
+    # Core tools
+    declare -A CORE=(
         ["kitty"]="kitty|Kitty|true"
-        ["fish"]="fish|Fish Shell|false"
+        ["fish"]="fish|Fish|false"
         ["nvim"]="neovim|Neovim|false"
         ["yazi"]="yazi|Yazi|false"
         ["lazygit"]="lazygit|Lazygit|false"
     )
     
-    for tool_cmd in "${!CORE_TOOLS[@]}"; do
-        IFS='|' read -r pkg_name display_name use_aur <<< "${CORE_TOOLS[$tool_cmd]}"
-        
-        if should_install_tool "$tool_cmd"; then
-            install_tool "$tool_cmd" "$pkg_name" "$display_name" "$use_aur"
-        else
-            info "⊘ Skipping $display_name"
-        fi
+    for cmd in "${!CORE[@]}"; do
+        IFS='|' read -r pkg name aur <<< "${CORE[$cmd]}"
+        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
     done
     
-    # ===== Hyprland Ecosystem =====
-    section "Hyprland Ecosystem"
-    
-    declare -A HYPR_TOOLS=(
+    # Hyprland tools
+    declare -A HYPR=(
         ["waybar"]="waybar|Waybar|false"
         ["mako"]="mako|Mako|false"
-        ["rofi"]="rofi-wayland|Rofi (Wayland)|false"
+        ["rofi"]="rofi-wayland|Rofi|false"
         ["hyprlock"]="hyprlock|HyprLock|false"
         ["swww"]="swww|swww|false"
         ["thunar"]="thunar|Thunar|false"
@@ -419,179 +261,72 @@ install_tools() {
         ["mpv"]="mpv|MPV|false"
     )
     
-    for tool_cmd in "${!HYPR_TOOLS[@]}"; do
-        IFS='|' read -r pkg_name display_name use_aur <<< "${HYPR_TOOLS[$tool_cmd]}"
-        
-        if should_install_tool "$tool_cmd"; then
-            install_tool "$tool_cmd" "$pkg_name" "$display_name" "$use_aur"
-        else
-            info "⊘ Skipping $display_name"
-        fi
+    for cmd in "${!HYPR[@]}"; do
+        IFS='|' read -r pkg name aur <<< "${HYPR[$cmd]}"
+        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
     done
     
-    # Special handling for Zathura (requires PDF backend)
-    if should_install_tool "zathura"; then
-        install_zathura
-    else
-        info "⊘ Skipping Zathura"
-    fi
+    should_install "zathura" && install_zathura
+    should_install "polkit-gnome" && install_polkit
+}
+
+# Link all configs
+link_all_configs() {
+    echo ""
+    log_info "=== Linking Configs ==="
     
-    # Special handling for Polkit-gnome (no direct command)
-    if should_install_tool "polkit-gnome"; then
-        if [[ -f "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1" ]] && [[ $FORCE_INSTALL -eq 0 ]]; then
-            info "✓ Polkit-gnome already installed"
-        else
-            install_package "polkit-gnome" "Polkit-gnome" false
-            if [[ -f "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1" ]]; then
-                info "✓ Polkit-gnome installed successfully"
-            else
-                warn "Polkit-gnome installation completed but binary not found"
-            fi
-        fi
-    else
-        info "⊘ Skipping Polkit-gnome"
-    fi
+    # Core
+    should_install "kitty" && link_config "$REPO_ROOT/kitty" "$CONFIG_HOME/kitty" "Kitty"
+    should_install "fish" && link_config "$REPO_ROOT/fish" "$CONFIG_HOME/fish" "Fish"
+    should_install "nvim" && link_config "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
+    should_install "yazi" && link_config "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
+    should_install "lazygit" && link_config "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
+    
+    # Hyprland
+    should_install "waybar" && link_config "$REPO_ROOT/waybar" "$CONFIG_HOME/waybar" "Waybar"
+    should_install "mako" && link_config "$REPO_ROOT/mako" "$CONFIG_HOME/mako" "Mako"
+    should_install "rofi" && link_config "$REPO_ROOT/rofi" "$CONFIG_HOME/rofi" "Rofi"
+    should_install "hyprlock" && link_config "$REPO_ROOT/hyprlock" "$CONFIG_HOME/hypr/hyprlock.conf" "HyprLock"
+    should_install "swww" && link_config "$REPO_ROOT/swww" "$CONFIG_HOME/swww" "swww"
+    should_install "thunar" && link_config "$REPO_ROOT/thunar" "$CONFIG_HOME/Thunar" "Thunar"
+    should_install "zathura" && link_config "$REPO_ROOT/zathura" "$CONFIG_HOME/zathura" "Zathura"
+    should_install "wallust" && link_config "$REPO_ROOT/wallust" "$CONFIG_HOME/wallust" "Wallust"
+    should_install "mpv" && link_config "$REPO_ROOT/mpv" "$CONFIG_HOME/mpv" "MPV"
+}
+
+# Post install info
+show_next_steps() {
+    echo ""
+    log_info "=== Installation Complete ==="
+    echo ""
+    
+    [[ $DRY_RUN -eq 1 ]] && return
+    
+    should_install "fish" && command -v fish &>/dev/null && echo "Set Fish as default shell: chsh -s \$(which fish)"
+    should_install "nvim" && command -v nvim &>/dev/null && echo "Open Neovim to install plugins: nvim"
+    should_install "polkit-gnome" && echo "Add to Hyprland: exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+    should_install "swww" && echo "Initialize swww: swww init && swww img /path/to/wallpaper.jpg"
     
     echo ""
+    [[ -d "$BACKUP_ROOT" ]] && log_info "Backups: $BACKUP_ROOT"
+    echo "Restart terminal: exec \$SHELL"
 }
 
-# ==================== Configuration Phase ====================
-setup_configs() {
-    header "Phase 2: Configuration Setup"
-    
-    # Core tools configs
-    if should_install_tool "kitty"; then
-        link_safe "$REPO_ROOT/kitty" "$CONFIG_HOME/kitty" "Kitty"
-    fi
-    
-    if should_install_tool "fish"; then
-        link_safe "$REPO_ROOT/fish" "$CONFIG_HOME/fish" "Fish Shell"
-    fi
-    
-    if should_install_tool "nvim"; then
-        link_safe "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
-    fi
-    
-    if should_install_tool "yazi"; then
-        link_safe "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
-    fi
-    
-    if should_install_tool "lazygit"; then
-        link_safe "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
-    fi
-    
-    # Hyprland ecosystem configs
-    if should_install_tool "waybar"; then
-        link_safe "$REPO_ROOT/waybar" "$CONFIG_HOME/waybar" "Waybar"
-    fi
-    
-    if should_install_tool "mako"; then
-        link_safe "$REPO_ROOT/mako" "$CONFIG_HOME/mako" "Mako"
-    fi
-    
-    if should_install_tool "rofi"; then
-        link_safe "$REPO_ROOT/rofi" "$CONFIG_HOME/rofi" "Rofi"
-    fi
-    
-    if should_install_tool "hyprlock"; then
-        link_safe "$REPO_ROOT/hyprlock" "$CONFIG_HOME/hypr/hyprlock.conf" "HyprLock"
-    fi
-    
-    if should_install_tool "swww"; then
-        link_safe "$REPO_ROOT/swww" "$CONFIG_HOME/swww" "swww"
-    fi
-    
-    if should_install_tool "thunar"; then
-        link_safe "$REPO_ROOT/thunar" "$CONFIG_HOME/Thunar" "Thunar"
-    fi
-    
-    if should_install_tool "zathura"; then
-        link_safe "$REPO_ROOT/zathura" "$CONFIG_HOME/zathura" "Zathura"
-    fi
-    
-    if should_install_tool "wallust"; then
-        link_safe "$REPO_ROOT/wallust" "$CONFIG_HOME/wallust" "Wallust"
-    fi
-    
-    if should_install_tool "mpv"; then
-        link_safe "$REPO_ROOT/mpv" "$CONFIG_HOME/mpv" "MPV"
-    fi
-    
-    echo ""
-}
-
-# ==================== Post-Installation ====================
-post_install() {
-    header "Installation Complete! 🎉"
-    
-    if [[ $DRY_RUN -eq 0 ]]; then
-        info "Next steps:"
-        echo ""
-        
-        # Core tools
-        if should_install_tool "fish" && command -v fish &>/dev/null; then
-            info "  1. Set Fish as default shell:"
-            info "     chsh -s \$(which fish)"
-            echo ""
-        fi
-        
-        if should_install_tool "kitty" && command -v kitty &>/dev/null; then
-            info "  2. Launch Kitty terminal"
-        fi
-        
-        if should_install_tool "nvim" && command -v nvim &>/dev/null; then
-            info "  3. Open Neovim and let plugins install:"
-            info "     nvim"
-            echo ""
-        fi
-        
-        # Hyprland specific
-        if should_install_tool "polkit-gnome"; then
-            info "  4. Add Polkit to Hyprland startup (if using Hyprland):"
-            info "     exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-            echo ""
-        fi
-        
-        if should_install_tool "swww"; then
-            info "  5. Initialize swww daemon:"
-            info "     swww init"
-            info "     swww img /path/to/wallpaper.jpg"
-            echo ""
-        fi
-        
-        info "Restart your terminal or run: exec \$SHELL"
-        
-        if [[ -d "$BACKUP_ROOT" ]]; then
-            echo ""
-            info "Backups saved to: $BACKUP_ROOT"
-        fi
-    fi
-}
-
-# ==================== Main ====================
+# Main
 main() {
-    header "Linux Dotfiles Installer"
-    
-    info "Repository: $REPO_ROOT"
-    info "Config Home: $CONFIG_HOME"
+    echo "Linux Dotfiles Installer"
+    echo "Repository: $REPO_ROOT"
+    echo ""
     
     parse_args "$@"
     detect_system
     
-    # Tool installation phase
-    if [[ $NO_INSTALL -eq 0 ]]; then
-        install_tools
-    else
-        echo ""
-        info "⊘ Skipping tool installation (--no-install)"
-        echo ""
-    fi
+    log_info "System: $DISTRO"
+    log_info "Package Manager: $PKG_MANAGER${AUR_HELPER:+ ($AUR_HELPER)}"
     
-    # Configuration phase
-    setup_configs
-    
-    # Post-installation messages
-    post_install
+    [[ $NO_INSTALL -eq 0 ]] && install_all_tools
+    link_all_configs
+    show_next_steps
 }
 
 main "$@"
