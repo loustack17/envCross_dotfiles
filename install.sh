@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Linux dotfiles installer
-# Target: CachyOS / Arch Linux with Niri
+# Target: Arch Linux with Niri
 # Core: Ghostty, Fish, Neovim, Zed, Yazi, Lazygit
 # Niri: Waybar, Mako, Walker, HyprLock, swww, Thunar, Zathura, Polkit, MPV
 
@@ -18,7 +18,6 @@ REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKUP_ROOT="$REPO_ROOT/backup/$(date +%Y%m%d-%H%M%S)"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 
-DISTRO=""
 PKG_MANAGER=""
 AUR_HELPER=""
 
@@ -44,14 +43,14 @@ Options:
   --no-install          Skip package installation
   --force-install       Force reinstall
   --skip-<tool>         Skip tool (e.g., --skip-ghostty)
-  --only-<tool>         Only install tool (e.g., --only-nvim)
+  --only-<tool>         Only install tool (e.g., --only-neovim)
   -h, --help            Show help
 
 Examples:
   ./install.sh
   ./install.sh --dry-run
   ./install.sh --skip-ghostty --skip-waybar
-  ./install.sh --only-nvim --only-yazi
+  ./install.sh --only-neovim --only-yazi
 
 Tools:
   Core: kitty, ghostty, fish, neovim, zed, yazi, lazygit
@@ -80,21 +79,12 @@ parse_args() {
 
 # Detect system
 detect_system() {
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-        DISTRO=$ID
-    elif [ -f /etc/arch-release ]; then
-        DISTRO="arch"
-    else
-        log_error "Cannot detect Linux distribution"
-    fi
-    
     if command -v pacman &>/dev/null; then
         PKG_MANAGER="pacman"
         command -v yay &>/dev/null && AUR_HELPER="yay"
         command -v paru &>/dev/null && AUR_HELPER="paru"
     else
-        log_error "No supported package manager found"
+        log_error "pacman not found - Arch-based distro required"
     fi
 }
 
@@ -124,22 +114,14 @@ install_pkg() {
     
     [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: $name"; return 0; }
     
-    case "$PKG_MANAGER" in
-        pacman)
-            if [[ "$use_aur" == "true" && -n "$AUR_HELPER" ]]; then
-                $AUR_HELPER -S --noconfirm --needed "$pkg"
-            elif [[ -n "$AUR_HELPER" ]]; then
-                $AUR_HELPER -S --noconfirm --needed "$pkg" 2>/dev/null || \
-                sudo pacman -S --noconfirm --needed "$pkg"
-            else
-                sudo pacman -S --noconfirm --needed "$pkg"
-            fi
-            ;;
-        apt) sudo apt update -qq && sudo apt install -y "$pkg" ;;
-        dnf) sudo dnf install -y "$pkg" ;;
-        zypper) sudo zypper install -y "$pkg" ;;
-        *) log_warn "Manual install required: $pkg"; return 1 ;;
-    esac
+    if [[ "$use_aur" == "true" && -n "$AUR_HELPER" ]]; then
+        $AUR_HELPER -S --noconfirm --needed "$pkg"
+    elif [[ -n "$AUR_HELPER" ]]; then
+        $AUR_HELPER -S --noconfirm --needed "$pkg" 2>/dev/null || \
+        sudo pacman -S --noconfirm --needed "$pkg"
+    else
+        sudo pacman -S --noconfirm --needed "$pkg"
+    fi
 }
 
 # Install tool
@@ -187,15 +169,8 @@ install_zathura() {
     
     log_info "Installing Zathura..."
     
-    case "$PKG_MANAGER" in
-        pacman)
-            [[ -n "$AUR_HELPER" ]] && $AUR_HELPER -S --noconfirm --needed zathura zathura-pdf-mupdf || \
-            sudo pacman -S --noconfirm --needed zathura zathura-pdf-mupdf
-            ;;
-        apt) sudo apt update -qq && sudo apt install -y zathura zathura-pdf-poppler ;;
-        dnf) sudo dnf install -y zathura zathura-pdf-mupdf ;;
-        *) log_warn "Manual install required: zathura"; return 1 ;;
-    esac
+    [[ -n "$AUR_HELPER" ]] && $AUR_HELPER -S --noconfirm --needed zathura zathura-pdf-mupdf || \
+    sudo pacman -S --noconfirm --needed zathura zathura-pdf-mupdf
     
     command -v zathura &>/dev/null && log_info "Zathura installed" || log_warn "Zathura install failed"
 }
@@ -280,13 +255,31 @@ install_all_tools() {
     echo ""
     log_info "=== Installing Tools ==="
     
+    # Utility tools (install first - contains dependencies)
+    declare -A UTILS=(
+        ["playerctl"]="playerctl|Playerctl|false"
+        ["brightnessctl"]="brightnessctl|Brightnessctl|false"
+        ["bluetoothctl"]="bluez|Bluez|false"
+        ["blueman-manager"]="blueman|Blueman|false"
+        ["elephant"]="elephant-all-git|Elephant|true"
+        ["slurp"]="slurp|Slurp|false"
+        ["satty"]="satty-git|Satty|true"
+        ["impala-nm"]="wlctl-bin|Impala-NM|true"
+        ["yt-dlp"]="yt-dlp|yt-dlp|false"
+    )
+    
+    for cmd in "${!UTILS[@]}"; do
+        IFS='|' read -r pkg name aur <<< "${UTILS[$cmd]}"
+        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
+    done
+    
     # Core tools (Kitty requires latest from AUR)
     declare -A CORE=(
         ["kitty"]="kitty-git|Kitty|true"
         ["ghostty"]="ghostty-git|Ghostty|true"
         ["fish"]="fish|Fish|false"
         ["neovim"]="neovim|Neovim|false"
-        ["zed"]="zed-git|Zed Editor|true"
+        ["zed"]="zed-git|Zed|true"
         ["yazi"]="yazi|Yazi|false"
         ["lazygit"]="lazygit|Lazygit|false"
     )
@@ -296,7 +289,7 @@ install_all_tools() {
         should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
     done
     
-    # Niri tools
+    # Niri tools (depends on utilities)
     declare -A NIRI=(
         ["waybar"]="waybar|Waybar|false"
         ["mako"]="mako|Mako|false"
@@ -309,24 +302,6 @@ install_all_tools() {
     
     for cmd in "${!NIRI[@]}"; do
         IFS='|' read -r pkg name aur <<< "${NIRI[$cmd]}"
-        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
-    done
-    
-    # Utility tools
-    declare -A UTILS=(
-        ["playerctl"]="playerctl|Playerctl|false"
-        ["brightnessctl"]="brightnessctl|Brightnessctl|false"
-        ["bluetoothctl"]="bluez|Bluez|false"
-        ["blueman-manager"]="blueman|Blueman|false"
-        ["elephant"]="elephant-all-git|Elephant (Walker dependency)|true"
-        ["slurp"]="slurp|Slurp|false"
-        ["satty"]="satty-git|Satty|true"
-        ["impala-nm"]="wlctl-bin|Impala-NM (TUI Network Manager)|true"
-        ["yt-dlp"]="yt-dlp|yt-dlp (MPV dependency)|false"
-    )
-    
-    for cmd in "${!UTILS[@]}"; do
-        IFS='|' read -r pkg name aur <<< "${UTILS[$cmd]}"
         should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
     done
     
@@ -352,6 +327,7 @@ link_all_configs() {
     should_install "waybar" && link_config "$REPO_ROOT/waybar" "$CONFIG_HOME/waybar" "Waybar"
     should_install "mako" && link_config "$REPO_ROOT/mako" "$CONFIG_HOME/mako" "Mako"
     should_install "walker" && link_config "$REPO_ROOT/walker" "$CONFIG_HOME/walker" "Walker"
+    should_install "elephant" && link_config "$REPO_ROOT/elephant" "$CONFIG_HOME/elephant" "Elephant"
     should_install "hyprlock" && link_config "$REPO_ROOT/hyprlock" "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
     should_install "swww" && link_config "$REPO_ROOT/swww" "$CONFIG_HOME/swww" "swww"
     should_install "thunar" && link_config "$REPO_ROOT/thunar" "$CONFIG_HOME/Thunar" "Thunar"
@@ -368,8 +344,8 @@ show_next_steps() {
     [[ $DRY_RUN -eq 1 ]] && return
     
     should_install "fish" && command -v fish &>/dev/null && echo "Set Fish as default shell: chsh -s \$(which fish)"
-    should_install "nvim" && command -v nvim &>/dev/null && echo "Open Neovim to install plugins: nvim"
-    should_install "polkit-gnome" && echo "Add to Niri config: exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+    should_install "neovim" && command -v nvim &>/dev/null && echo "Open Neovim to install plugins: nvim"
+    should_install "polkit-gnome" && echo "Add to Niri config: spawn-at-startup \"/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1\""
     should_install "swww" && echo "Initialize swww: swww-daemon && swww img /path/to/wallpaper.jpg"
     
     echo ""
@@ -379,14 +355,13 @@ show_next_steps() {
 
 # Main
 main() {
-    echo "Linux Dotfiles Installer (Niri Edition)"
+    echo "Linux Dotfiles Installer (Arch)"
     echo "Repository: $REPO_ROOT"
     echo ""
     
     parse_args "$@"
     detect_system
     
-    log_info "System: $DISTRO"
     log_info "Package Manager: $PKG_MANAGER${AUR_HELPER:+ ($AUR_HELPER)}"
     
     [[ $NO_INSTALL -eq 0 ]] && install_all_tools
