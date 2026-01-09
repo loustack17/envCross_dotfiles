@@ -9,6 +9,7 @@ set -e
 # Config
 DRY_RUN=0
 NO_BACKUP=0
+BACKUP_ONLY=0
 NO_INSTALL=0
 FORCE_INSTALL=0
 SKIP_TOOLS=()
@@ -39,6 +40,7 @@ Usage: ./install.sh [OPTIONS]
 
 Options:
   --dry-run, -n         Simulate without changes
+  --backup, -b          Backup existing configs only (no install/link)
   --no-backup           Skip backup
   --no-install          Skip package installation
   --force-install       Force reinstall
@@ -49,6 +51,7 @@ Options:
 Examples:
   ./install.sh
   ./install.sh --dry-run
+  ./install.sh --backup
   ./install.sh --skip-ghostty --skip-waybar
   ./install.sh --only-neovim --only-yazi
 
@@ -65,6 +68,7 @@ parse_args() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             --dry-run|-n) DRY_RUN=1 ;;
+            --backup|-b) BACKUP_ONLY=1 ;;
             --no-backup) NO_BACKUP=1 ;;
             --no-install) NO_INSTALL=1 ;;
             --force-install) FORCE_INSTALL=1 ;;
@@ -309,30 +313,65 @@ install_all_tools() {
     should_install "polkit-gnome" && install_polkit
 }
 
+# Backup all configs
+backup_all_configs() {
+    echo ""
+    log_info "=== Backing Up Configs ==="
+    
+    mkdir -p "$BACKUP_ROOT"
+    
+    # Shared configs
+    [[ -e "$CONFIG_HOME/nvim" ]] && backup "$CONFIG_HOME/nvim" "Neovim"
+    [[ -e "$CONFIG_HOME/yazi" ]] && backup "$CONFIG_HOME/yazi" "Yazi"
+    [[ -e "$CONFIG_HOME/lazygit" ]] && backup "$CONFIG_HOME/lazygit" "Lazygit"
+    [[ -e "$CONFIG_HOME/mpv" ]] && backup "$CONFIG_HOME/mpv" "MPV"
+    
+    # Linux-specific (Niri ecosystem)
+    [[ -e "$CONFIG_HOME/kitty" ]] && backup "$CONFIG_HOME/kitty" "Kitty"
+    [[ -e "$CONFIG_HOME/ghostty" ]] && backup "$CONFIG_HOME/ghostty" "Ghostty"
+    [[ -e "$CONFIG_HOME/fish" ]] && backup "$CONFIG_HOME/fish" "Fish"
+    [[ -e "$CONFIG_HOME/waybar" ]] && backup "$CONFIG_HOME/waybar" "Waybar"
+    [[ -e "$CONFIG_HOME/mako" ]] && backup "$CONFIG_HOME/mako" "Mako"
+    [[ -e "$CONFIG_HOME/walker" ]] && backup "$CONFIG_HOME/walker" "Walker"
+    [[ -e "$CONFIG_HOME/elephant" ]] && backup "$CONFIG_HOME/elephant" "Elephant"
+    [[ -e "$CONFIG_HOME/niri/hyprlock.conf" ]] && backup "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
+    [[ -e "$CONFIG_HOME/swww" ]] && backup "$CONFIG_HOME/swww" "swww"
+    [[ -e "$CONFIG_HOME/Thunar" ]] && backup "$CONFIG_HOME/Thunar" "Thunar"
+    [[ -e "$CONFIG_HOME/zathura" ]] && backup "$CONFIG_HOME/zathura" "Zathura"
+    
+    # Linux-specific (standalone)
+    [[ -e "$CONFIG_HOME/zed" ]] && backup "$CONFIG_HOME/zed" "Zed"
+    
+    echo ""
+    log_info "Backup Complete: $BACKUP_ROOT"
+}
+
 # Link all configs
 link_all_configs() {
     echo ""
     log_info "=== Linking Configs ==="
     
-    # Core
-    should_install "kitty" && link_config "$REPO_ROOT/kitty" "$CONFIG_HOME/kitty" "Kitty"
-    should_install "ghostty" && link_config "$REPO_ROOT/ghostty" "$CONFIG_HOME/ghostty" "Ghostty"
-    should_install "fish" && link_config "$REPO_ROOT/fish" "$CONFIG_HOME/fish" "Fish"
+    # Shared configs
     should_install "neovim" && link_config "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
-    should_install "zed" && link_config "$REPO_ROOT/zed" "$CONFIG_HOME/zed" "Zed"
     should_install "yazi" && link_config "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
     should_install "lazygit" && link_config "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
-    
-    # Niri
-    should_install "waybar" && link_config "$REPO_ROOT/waybar" "$CONFIG_HOME/waybar" "Waybar"
-    should_install "mako" && link_config "$REPO_ROOT/mako" "$CONFIG_HOME/mako" "Mako"
-    should_install "walker" && link_config "$REPO_ROOT/walker" "$CONFIG_HOME/walker" "Walker"
-    should_install "elephant" && link_config "$REPO_ROOT/elephant" "$CONFIG_HOME/elephant" "Elephant"
-    should_install "hyprlock" && link_config "$REPO_ROOT/hyprlock" "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
-    should_install "swww" && link_config "$REPO_ROOT/swww" "$CONFIG_HOME/swww" "swww"
-    should_install "thunar" && link_config "$REPO_ROOT/thunar" "$CONFIG_HOME/Thunar" "Thunar"
-    should_install "zathura" && link_config "$REPO_ROOT/zathura" "$CONFIG_HOME/zathura" "Zathura"
     should_install "mpv" && link_config "$REPO_ROOT/mpv" "$CONFIG_HOME/mpv" "MPV"
+    
+    # Linux-specific (Niri ecosystem)
+    should_install "kitty" && link_config "$REPO_ROOT/niri/kitty" "$CONFIG_HOME/kitty" "Kitty"
+    should_install "ghostty" && link_config "$REPO_ROOT/niri/ghostty" "$CONFIG_HOME/ghostty" "Ghostty"
+    should_install "fish" && link_config "$REPO_ROOT/niri/fish" "$CONFIG_HOME/fish" "Fish"
+    should_install "waybar" && link_config "$REPO_ROOT/niri/waybar" "$CONFIG_HOME/waybar" "Waybar"
+    should_install "mako" && link_config "$REPO_ROOT/niri/mako" "$CONFIG_HOME/mako" "Mako"
+    should_install "walker" && link_config "$REPO_ROOT/niri/walker" "$CONFIG_HOME/walker" "Walker"
+    should_install "elephant" && link_config "$REPO_ROOT/niri/elephant" "$CONFIG_HOME/elephant" "Elephant"
+    should_install "hyprlock" && link_config "$REPO_ROOT/niri/hyprlock" "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
+    should_install "swww" && link_config "$REPO_ROOT/niri/swww" "$CONFIG_HOME/swww" "swww"
+    should_install "thunar" && link_config "$REPO_ROOT/niri/thunar" "$CONFIG_HOME/Thunar" "Thunar"
+    should_install "zathura" && link_config "$REPO_ROOT/niri/zathura" "$CONFIG_HOME/zathura" "Zathura"
+    
+    # Linux-specific (standalone)
+    should_install "zed" && link_config "$REPO_ROOT/zed" "$CONFIG_HOME/zed" "Zed"
 }
 
 # Post install info
@@ -363,6 +402,12 @@ main() {
     detect_system
     
     log_info "Package Manager: $PKG_MANAGER${AUR_HELPER:+ ($AUR_HELPER)}"
+    
+    # Backup only mode
+    if [[ $BACKUP_ONLY -eq 1 ]]; then
+        backup_all_configs
+        return
+    fi
     
     [[ $NO_INSTALL -eq 0 ]] && install_all_tools
     link_all_configs

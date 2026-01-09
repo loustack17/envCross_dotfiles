@@ -5,6 +5,7 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
 ## Platforms
 
 ### Windows
+
 - **Terminal**: WezTerm
 - **Shell**: Nushell
 - **Editor**: Neovim
@@ -12,6 +13,7 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
 - **Git UI**: Lazygit
 
 ### Linux (CachyOS with Niri)
+
 - **Terminal**: Kitty, Ghostty
 - **Shell**: Fish
 - **Editor**: Neovim, Zed
@@ -54,6 +56,7 @@ nu install.nu --only [nvim lazygit]
 ```
 
 **Requirements**:
+
 - Administrator or Developer Mode enabled
 - Automatically installs Scoop if missing
 
@@ -71,6 +74,7 @@ nu install.nu --only [nvim lazygit]
 ```
 
 **Requirements**:
+
 - AUR helper (yay or paru) for specific packages
 - Priority: CachyOS official repository > AUR
 - Kitty: Always install latest from kitty-git (AUR)
@@ -80,7 +84,7 @@ nu install.nu --only [nvim lazygit]
 
 ## Directory Structure
 
-```
+```text
 dotfiles/
 ├── install.sh              # Linux installer (Niri edition)
 ├── install.nu              # Windows installer
@@ -89,26 +93,30 @@ dotfiles/
 ├── nvim/                   # Neovim
 ├── yazi/                   # Yazi
 ├── lazygit/                # Lazygit
-│
-# Linux-specific (Niri)
-├── kitty/                  # Kitty terminal
-├── ghostty/                # Ghostty terminal
-├── fish/                   # Fish shell
-├── zed/                    # Zed editor
-├── waybar/                 # Waybar
-├── mako/                   # Mako
-├── walker/                 # Walker launcher
-├── elephant/               # Elephant
-├── hyprlock/               # HyprLock
-├── swww/                   # swww
-├── thunar/                 # Thunar
-├── zathura/                # Zathura
 ├── mpv/                    # MPV
 │
+# Linux-specific (Niri)
+├── niri/                   # Niri ecosystem configs
+│   ├── kitty/              # Kitty terminal
+│   ├── ghostty/            # Ghostty terminal
+│   ├── fish/               # Fish shell
+│   ├── waybar/             # Waybar
+│   ├── mako/               # Mako
+│   ├── walker/             # Walker launcher
+│   ├── elephant/           # Elephant
+│   ├── hyprlock/           # HyprLock
+│   ├── swww/               # swww
+│   ├── thunar/             # Thunar
+│   └── zathura/            # Zathura
+├── zed/                    # Zed editor
+│
 # Windows-specific
-├── wezterm/                # WezTerm dir
+├── wezterm/                # WezTerm
 ├── .wezterm.lua            # WezTerm main config
 ├── nushell/                # Nushell
+│
+# Other
+├── chrome/                 # Zen Browser themes
 └── backup/                 # Auto-backups
 ```
 
@@ -117,33 +125,35 @@ dotfiles/
 ## Configuration Paths
 
 ### Windows
-| Tool | Config Path |
-|------|-------------|
+
+| Tool    | Config Path                     |
+| ------- | ------------------------------- |
 | WezTerm | `%USERPROFILE%\.config\wezterm` |
-| Nushell | `%APPDATA%\nushell` |
-| Neovim | `%LOCALAPPDATA%\nvim` |
-| Yazi | `%APPDATA%\yazi` |
-| Lazygit | `%LOCALAPPDATA%\lazygit` |
+| Nushell | `%APPDATA%\nushell`             |
+| Neovim  | `%LOCALAPPDATA%\nvim`           |
+| Yazi    | `%APPDATA%\yazi`                |
+| Lazygit | `%LOCALAPPDATA%\lazygit`        |
 
 ### Linux (Niri)
-| Tool | Config Path |
-|------|-------------|
-| Kitty | `~/.config/kitty` |
-| Ghostty | `~/.config/ghostty` |
-| Fish | `~/.config/fish` |
-| Neovim | `~/.config/nvim` |
-| Zed | `~/.config/zed` |
-| Yazi | `~/.config/yazi` |
-| Lazygit | `~/.config/lazygit` |
-| Waybar | `~/.config/waybar` |
-| Mako | `~/.config/mako` |
-| Walker | `~/.config/walker` |
-| Elephant | `~/.config/elephant` |
+
+| Tool     | Config Path                    |
+| -------- | ------------------------------ |
+| Kitty    | `~/.config/kitty`              |
+| Ghostty  | `~/.config/ghostty`            |
+| Fish     | `~/.config/fish`               |
+| Neovim   | `~/.config/nvim`               |
+| Zed      | `~/.config/zed`                |
+| Yazi     | `~/.config/yazi`               |
+| Lazygit  | `~/.config/lazygit`            |
+| Waybar   | `~/.config/waybar`             |
+| Mako     | `~/.config/mako`               |
+| Walker   | `~/.config/walker`             |
+| Elephant | `~/.config/elephant`           |
 | HyprLock | `~/.config/niri/hyprlock.conf` |
-| swww | `~/.config/swww` |
-| Thunar | `~/.config/Thunar` |
-| Zathura | `~/.config/zathura` |
-| MPV | `~/.config/mpv` |
+| swww     | `~/.config/swww`               |
+| Thunar   | `~/.config/Thunar`             |
+| Zathura  | `~/.config/zathura`            |
+| MPV      | `~/.config/mpv`                |
 
 ---
 
@@ -237,6 +247,7 @@ cd yay && makepkg -si
 ### Windows: Symlink Failed
 
 Enable Developer Mode:
+
 1. Open Settings
 2. Privacy & Security → For developers
 3. Enable Developer Mode
@@ -246,15 +257,16 @@ Or run terminal as Administrator.
 ### Linux: Polkit Not Working
 
 Check binary exists:
+
 ```bash
 ls /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 ```
 
 Add to Niri config (`~/.config/niri/config.kdl`):
+
 ```conf
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 ```
-
 
 ---
 
@@ -273,13 +285,13 @@ spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 
 ## References
 
-- **Ghostty**: https://ghostty.org
-- **Zed**: https://zed.dev
-- **Walker**: https://github.com/abenz1267/walker
-- **Niri**: https://github.com/YaLTeR/niri
-- **CachyOS**: https://cachyos.org
-- **Waybar**: https://github.com/Alexays/Waybar
-- **Impala-mn**: https://github.com/aashish-thapa/wlctl
+- **Ghostty**: <https://ghostty.org>
+- **Zed**: <https://zed.dev>
+- **Walker**: <https://github.com/abenz1267/walker>
+- **Niri**: <https://github.com/YaLTeR/niri>
+- **CachyOS**: <https://cachyos.org>
+- **Waybar**: <https://github.com/Alexays/Waybar>
+- **Impala-mn**: <https://github.com/aashish-thapa/wlctl>
 
 ---
 
