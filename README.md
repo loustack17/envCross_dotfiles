@@ -20,7 +20,7 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
 - **Niri Ecosystem**:
   - Waybar (status bar)
   - Mako (notifications)
-  - Walker (launcher with Elephant engine)
+  - Walker (launcher - requires Elephant)
   - HyprLock (screen lock)
   - swww (wallpaper)
   - Zathura (PDF viewer)
@@ -33,8 +33,8 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
   - Elephant (Walker dependency - required)
   - Slurp (screen region select)
   - Satty (screenshot annotation)
-  - Impala-NM (TUI network manager for NetworkManager)
-  - yt-dlp (MPV dependency for streaming)
+  - Impala-nm (TUI network manager for NetworkManager)
+  - yt-dlp (optional for mpv streaming)
 
 ---
 
@@ -98,7 +98,7 @@ dotfiles/
 ├── waybar/                 # Waybar
 ├── mako/                   # Mako
 ├── walker/                 # Walker launcher
-├── Elephant/               # Elephant
+├── elephant/               # Elephant
 ├── hyprlock/               # HyprLock
 ├── swww/                   # swww
 ├── thunar/                 # Thunar
@@ -200,6 +200,7 @@ chsh -s $(which fish)
 
 # Open Neovim to install plugins
 nvim
+:Lazy
 
 # Add Polkit to Niri config (~/.config/niri/config.kdl)
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
@@ -207,23 +208,17 @@ spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 # Initialize swww
 swww-daemon
 swww img ~/Pictures/wallpaper.jpg
-
-# Verify installations
-kitty --version
-ghostty --version
-zed --version
-walker --version
 ```
 
 ### Windows
 
 ```powershell
-# Restart terminal
-# Launch WezTerm
+# Restart terminal and launch WezTerm
 wezterm.exe
 
 # Open Neovim to install plugins
 nvim
+:Lazy
 ```
 
 ---
