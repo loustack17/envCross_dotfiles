@@ -6,7 +6,10 @@
 
 set -e
 
-# Config
+# ============================================================================
+# Configuration
+# ============================================================================
+
 DRY_RUN=0
 NO_BACKUP=0
 BACKUP_ONLY=0
@@ -23,17 +26,70 @@ PKG_MANAGER=""
 AUR_HELPER=""
 
 # Colors
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-RED='\033[0;31m'
-NC='\033[0m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[0;33m'
+readonly RED='\033[0;31m'
+readonly NC='\033[0m'
 
-# Logging
+# ============================================================================
+# Tool Definitions (Data-Driven Configuration)
+# ============================================================================
+
+# Format: "cmd|pkg|name|use_aur|src_subdir|dst_path"
+# - cmd: command to check
+# - pkg: package name
+# - name: display name
+# - use_aur: true/false
+# - src_subdir: subdirectory in repo (relative to REPO_ROOT)
+# - dst_path: destination path (relative to CONFIG_HOME, or absolute)
+
+declare -a TOOL_DEFINITIONS=(
+    # Utilities (dependencies for other tools)
+    "playerctl|playerctl|Playerctl|false|||"
+    "brightnessctl|brightnessctl|Brightnessctl|false|||"
+    "bluetoothctl|bluez|Bluez|false|||"
+    "blueman-manager|blueman|Blueman|false|||"
+    "elephant|elephant-all-git|Elephant|true|niri/elephant|elephant"
+    "slurp|slurp|Slurp|false|||"
+    "satty|satty-git|Satty|true|||"
+    "impala-nm|wlctl-bin|Impala-NM|true|||"
+    "yt-dlp|yt-dlp|yt-dlp|false|||"
+    
+    # Core tools
+    "kitty|kitty-git|Kitty|true|niri/kitty|kitty"
+    "ghostty|ghostty-git|Ghostty|true|niri/ghostty|ghostty"
+    "fish|fish|Fish|false|niri/fish|fish"
+    "neovim|neovim|Neovim|false|nvim|nvim"
+    "zed|zed-git|Zed|true|zed|zed"
+    "yazi|yazi|Yazi|false|yazi|yazi"
+    "lazygit|lazygit|Lazygit|false|lazygit|lazygit"
+    
+    # Niri ecosystem
+    "waybar|waybar|Waybar|false|niri/waybar|waybar"
+    "mako|mako|Mako|false|niri/mako|mako"
+    "walker|walker-git|Walker|true|niri/walker|walker"
+    "hyprlock|hyprlock|HyprLock|false|niri/hyprlock|niri/hyprlock.conf"
+    "swww|swww|swww|false|niri/swww|swww"
+    "thunar|thunar|Thunar|false|niri/thunar|Thunar"
+    "zathura|zathura|Zathura|false|niri/zathura|zathura"
+    "mpv|mpv|MPV|false|mpv|mpv"
+)
+
+# Special handling tools
+readonly POLKIT_BINARY="/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+
+# ============================================================================
+# Logging Functions
+# ============================================================================
+
 log_info() { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
 log_warn() { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; }
 log_error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; exit 1; }
 
-# Help
+# ============================================================================
+# Help & Argument Parsing
+# ============================================================================
+
 show_help() {
     cat << 'EOF'
 Usage: ./install.sh [OPTIONS]
@@ -63,7 +119,7 @@ EOF
     exit 0
 }
 
-# Parse args
+
 parse_args() {
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -81,7 +137,10 @@ parse_args() {
     done
 }
 
-# Detect system
+# ============================================================================
+# System Detection & Tool Filtering
+# ============================================================================
+
 detect_system() {
     if command -v pacman &>/dev/null; then
         PKG_MANAGER="pacman"
@@ -92,10 +151,10 @@ detect_system() {
     fi
 }
 
-# Check if should install tool
 should_install() {
     local tool=$1
     
+    # If ONLY_TOOLS specified, check if tool is in the list
     if [[ ${#ONLY_TOOLS[@]} -gt 0 ]]; then
         for only in "${ONLY_TOOLS[@]}"; do
             [[ "$tool" == "$only" ]] && return 0
@@ -103,6 +162,7 @@ should_install() {
         return 1
     fi
     
+    # Check if tool is in SKIP_TOOLS
     for skip in "${SKIP_TOOLS[@]}"; do
         [[ "$tool" == "$skip" ]] && return 1
     done
@@ -110,7 +170,10 @@ should_install() {
     return 0
 }
 
-# Install package
+# ============================================================================
+# Package Installation
+# ============================================================================
+
 install_pkg() {
     local pkg=$1
     local name=$2
@@ -128,14 +191,13 @@ install_pkg() {
     fi
 }
 
-# Install tool
 install_tool() {
     local cmd=$1
     local pkg=$2
     local name=$3
     local use_aur=${4:-false}
     
-    # Check if tool exists
+    # Check if already installed
     if command -v "$cmd" &>/dev/null; then
         if [[ $FORCE_INSTALL -eq 0 ]]; then
             log_info "$name already installed (skipping)"
@@ -145,19 +207,13 @@ install_tool() {
     fi
     
     log_info "Installing $name..."
-    
-    if [[ $DRY_RUN -eq 1 ]]; then
-        log_info "Would install: $name"
-        return 0
-    fi
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: $name"; return 0; }
     
     if install_pkg "$pkg" "$name" "$use_aur"; then
         if command -v "$cmd" &>/dev/null; then
             log_info "$name installed successfully"
-            return 0
         else
             log_warn "$name package installed but command not found"
-            return 1
         fi
     else
         log_warn "Failed to install $name"
@@ -165,41 +221,63 @@ install_tool() {
     fi
 }
 
-# Special: Zathura with PDF backend
 install_zathura() {
-    command -v zathura &>/dev/null && [[ $FORCE_INSTALL -eq 0 ]] && { log_info "Zathura already installed"; return 0; }
-    
-    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: Zathura"; return 0; }
+    # Check if already installed
+    if command -v zathura &>/dev/null; then
+        if [[ $FORCE_INSTALL -eq 0 ]]; then
+            log_info "Zathura already installed (skipping)"
+            return 0
+        fi
+        log_info "Zathura already installed (forcing reinstall)"
+    fi
     
     log_info "Installing Zathura..."
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: Zathura"; return 0; }
     
-    [[ -n "$AUR_HELPER" ]] && $AUR_HELPER -S --noconfirm --needed zathura zathura-pdf-mupdf || \
-    sudo pacman -S --noconfirm --needed zathura zathura-pdf-mupdf
+    if [[ -n "$AUR_HELPER" ]]; then
+        $AUR_HELPER -S --noconfirm --needed zathura zathura-pdf-mupdf
+    else
+        sudo pacman -S --noconfirm --needed zathura zathura-pdf-mupdf
+    fi
     
-    command -v zathura &>/dev/null && log_info "Zathura installed" || log_warn "Zathura install failed"
+    if command -v zathura &>/dev/null; then
+        log_info "Zathura installed successfully"
+    else
+        log_warn "Zathura install failed"
+    fi
 }
 
-# Special: Polkit (binary check)
 install_polkit() {
-    local binary="/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-    
-    [[ -f "$binary" && $FORCE_INSTALL -eq 0 ]] && { log_info "Polkit-gnome already installed"; return 0; }
-    
-    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: Polkit-gnome"; return 0; }
+    # Check if already installed
+    if [[ -f "$POLKIT_BINARY" ]]; then
+        if [[ $FORCE_INSTALL -eq 0 ]]; then
+            log_info "Polkit-gnome already installed (skipping)"
+            return 0
+        fi
+        log_info "Polkit-gnome already installed (forcing reinstall)"
+    fi
     
     log_info "Installing Polkit-gnome..."
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would install: Polkit-gnome"; return 0; }
+    
     install_pkg "polkit-gnome" "Polkit-gnome" false
     
-    [[ -f "$binary" ]] && log_info "Polkit-gnome installed" || log_warn "Polkit-gnome binary not found"
+    if [[ -f "$POLKIT_BINARY" ]]; then
+        log_info "Polkit-gnome installed successfully"
+    else
+        log_warn "Polkit-gnome binary not found"
+    fi
 }
 
-# Backup
+# ============================================================================
+# Backup & Symlink Management
+# ============================================================================
+
 backup() {
     local src=$1
     local name=$2
     
-    [[ $NO_BACKUP -eq 1 ]] && return
-    [[ ! -e "$src" ]] && return
+    [[ $NO_BACKUP -eq 1 || ! -e "$src" ]] && return
     
     if [[ $DRY_RUN -eq 1 ]]; then
         log_info "Would backup: $name"
@@ -216,165 +294,91 @@ backup() {
     fi
 }
 
-# Symlink
 link_config() {
     local src=$1
     local dst=$2
     local name=$3
     
-    # Check source exists
-    if [[ ! -e "$src" ]]; then
-        log_warn "Source not found: $name ($src)"
-        return 1
-    fi
+    [[ ! -e "$src" ]] && { log_warn "Source not found: $name ($src)"; return 1; }
     
-    if [[ $DRY_RUN -eq 1 ]]; then
-        log_info "Would link: $name"
-        return 0
-    fi
+    [[ $DRY_RUN -eq 1 ]] && { log_info "Would link: $name"; return 0; }
     
-    # Backup existing config if it exists
+    # Backup and remove existing config
     if [[ -e "$dst" || -L "$dst" ]]; then
         backup "$dst" "$name"
         rm -rf "$dst"
     fi
     
-    # Create parent directory
     mkdir -p "$(dirname "$dst")"
     
-    # Create symlink
     if ln -sf "$src" "$dst"; then
         log_info "Linked: $name → $dst"
-        return 0
     else
         log_error "Failed to link: $name"
-        return 1
     fi
 }
 
-# Install all tools
+# ============================================================================
+# Main Installation Logic
+# ============================================================================
+
 install_all_tools() {
     [[ $NO_INSTALL -eq 1 ]] && { log_info "Skipping tool installation"; return; }
     
     echo ""
     log_info "=== Installing Tools ==="
     
-    # Utility tools (install first - contains dependencies)
-    declare -A UTILS=(
-        ["playerctl"]="playerctl|Playerctl|false"
-        ["brightnessctl"]="brightnessctl|Brightnessctl|false"
-        ["bluetoothctl"]="bluez|Bluez|false"
-        ["blueman-manager"]="blueman|Blueman|false"
-        ["elephant"]="elephant-all-git|Elephant|true"
-        ["slurp"]="slurp|Slurp|false"
-        ["satty"]="satty-git|Satty|true"
-        ["impala-nm"]="wlctl-bin|Impala-NM|true"
-        ["yt-dlp"]="yt-dlp|yt-dlp|false"
-    )
-    
-    for cmd in "${!UTILS[@]}"; do
-        IFS='|' read -r pkg name aur <<< "${UTILS[$cmd]}"
-        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
+    # Process all tools from TOOL_DEFINITIONS
+    for definition in "${TOOL_DEFINITIONS[@]}"; do
+        IFS='|' read -r cmd pkg name use_aur src_subdir dst_path <<< "$definition"
+        
+        # Skip tools without package (config-only)
+        [[ -z "$pkg" ]] && continue
+        
+        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$use_aur"
     done
     
-    # Core tools (Kitty requires latest from AUR)
-    declare -A CORE=(
-        ["kitty"]="kitty-git|Kitty|true"
-        ["ghostty"]="ghostty-git|Ghostty|true"
-        ["fish"]="fish|Fish|false"
-        ["neovim"]="neovim|Neovim|false"
-        ["zed"]="zed-git|Zed|true"
-        ["yazi"]="yazi|Yazi|false"
-        ["lazygit"]="lazygit|Lazygit|false"
-    )
-    
-    for cmd in "${!CORE[@]}"; do
-        IFS='|' read -r pkg name aur <<< "${CORE[$cmd]}"
-        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
-    done
-    
-    # Niri tools (depends on utilities)
-    declare -A NIRI=(
-        ["waybar"]="waybar|Waybar|false"
-        ["mako"]="mako|Mako|false"
-        ["walker"]="walker-git|Walker|true"
-        ["hyprlock"]="hyprlock|HyprLock|false"
-        ["swww"]="swww|swww|false"
-        ["thunar"]="thunar|Thunar|false"
-        ["mpv"]="mpv|MPV|false"
-    )
-    
-    for cmd in "${!NIRI[@]}"; do
-        IFS='|' read -r pkg name aur <<< "${NIRI[$cmd]}"
-        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
-    done
-    
+    # Special tools with custom install logic
     should_install "zathura" && install_zathura
     should_install "polkit-gnome" && install_polkit
 }
 
-# Backup all configs
 backup_all_configs() {
     echo ""
     log_info "=== Backing Up Configs ==="
     
     mkdir -p "$BACKUP_ROOT"
     
-    # Shared configs
-    [[ -e "$CONFIG_HOME/nvim" ]] && backup "$CONFIG_HOME/nvim" "Neovim"
-    [[ -e "$CONFIG_HOME/yazi" ]] && backup "$CONFIG_HOME/yazi" "Yazi"
-    [[ -e "$CONFIG_HOME/lazygit" ]] && backup "$CONFIG_HOME/lazygit" "Lazygit"
-    [[ -e "$CONFIG_HOME/mpv" ]] && backup "$CONFIG_HOME/mpv" "MPV"
-    
-    # Linux-specific (Niri ecosystem)
-    [[ -e "$CONFIG_HOME/kitty" ]] && backup "$CONFIG_HOME/kitty" "Kitty"
-    [[ -e "$CONFIG_HOME/ghostty" ]] && backup "$CONFIG_HOME/ghostty" "Ghostty"
-    [[ -e "$CONFIG_HOME/fish" ]] && backup "$CONFIG_HOME/fish" "Fish"
-    [[ -e "$CONFIG_HOME/waybar" ]] && backup "$CONFIG_HOME/waybar" "Waybar"
-    [[ -e "$CONFIG_HOME/mako" ]] && backup "$CONFIG_HOME/mako" "Mako"
-    [[ -e "$CONFIG_HOME/walker" ]] && backup "$CONFIG_HOME/walker" "Walker"
-    [[ -e "$CONFIG_HOME/elephant" ]] && backup "$CONFIG_HOME/elephant" "Elephant"
-    [[ -e "$CONFIG_HOME/niri/hyprlock.conf" ]] && backup "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
-    [[ -e "$CONFIG_HOME/swww" ]] && backup "$CONFIG_HOME/swww" "swww"
-    [[ -e "$CONFIG_HOME/Thunar" ]] && backup "$CONFIG_HOME/Thunar" "Thunar"
-    [[ -e "$CONFIG_HOME/zathura" ]] && backup "$CONFIG_HOME/zathura" "Zathura"
-    
-    # Linux-specific (standalone)
-    [[ -e "$CONFIG_HOME/zed" ]] && backup "$CONFIG_HOME/zed" "Zed"
+    # Backup all configs from TOOL_DEFINITIONS
+    for definition in "${TOOL_DEFINITIONS[@]}"; do
+        IFS='|' read -r cmd pkg name use_aur src_subdir dst_path <<< "$definition"
+        
+        # Skip if no config path defined
+        [[ -z "$dst_path" ]] && continue
+        
+        local full_path="$CONFIG_HOME/$dst_path"
+        [[ -e "$full_path" ]] && backup "$full_path" "$name"
+    done
     
     echo ""
     log_info "Backup Complete: $BACKUP_ROOT"
 }
 
-# Link all configs
 link_all_configs() {
     echo ""
     log_info "=== Linking Configs ==="
     
-    # Shared configs
-    should_install "neovim" && link_config "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
-    should_install "yazi" && link_config "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
-    should_install "lazygit" && link_config "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
-    should_install "mpv" && link_config "$REPO_ROOT/mpv" "$CONFIG_HOME/mpv" "MPV"
-    
-    # Linux-specific (Niri ecosystem)
-    should_install "kitty" && link_config "$REPO_ROOT/niri/kitty" "$CONFIG_HOME/kitty" "Kitty"
-    should_install "ghostty" && link_config "$REPO_ROOT/niri/ghostty" "$CONFIG_HOME/ghostty" "Ghostty"
-    should_install "fish" && link_config "$REPO_ROOT/niri/fish" "$CONFIG_HOME/fish" "Fish"
-    should_install "waybar" && link_config "$REPO_ROOT/niri/waybar" "$CONFIG_HOME/waybar" "Waybar"
-    should_install "mako" && link_config "$REPO_ROOT/niri/mako" "$CONFIG_HOME/mako" "Mako"
-    should_install "walker" && link_config "$REPO_ROOT/niri/walker" "$CONFIG_HOME/walker" "Walker"
-    should_install "elephant" && link_config "$REPO_ROOT/niri/elephant" "$CONFIG_HOME/elephant" "Elephant"
-    should_install "hyprlock" && link_config "$REPO_ROOT/niri/hyprlock" "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
-    should_install "swww" && link_config "$REPO_ROOT/niri/swww" "$CONFIG_HOME/swww" "swww"
-    should_install "thunar" && link_config "$REPO_ROOT/niri/thunar" "$CONFIG_HOME/Thunar" "Thunar"
-    should_install "zathura" && link_config "$REPO_ROOT/niri/zathura" "$CONFIG_HOME/zathura" "Zathura"
-    
-    # Linux-specific (standalone)
-    should_install "zed" && link_config "$REPO_ROOT/zed" "$CONFIG_HOME/zed" "Zed"
+    # Link all configs from TOOL_DEFINITIONS
+    for definition in "${TOOL_DEFINITIONS[@]}"; do
+        IFS='|' read -r cmd pkg name use_aur src_subdir dst_path <<< "$definition"
+        
+        # Skip if no config defined
+        [[ -z "$src_subdir" || -z "$dst_path" ]] && continue
+        
+        should_install "$cmd" && link_config "$REPO_ROOT/$src_subdir" "$CONFIG_HOME/$dst_path" "$name"
+    done
 }
 
-# Post install info
 show_next_steps() {
     echo ""
     log_info "=== Installation Complete ==="
@@ -384,7 +388,7 @@ show_next_steps() {
     
     should_install "fish" && command -v fish &>/dev/null && echo "Set Fish as default shell: chsh -s \$(which fish)"
     should_install "neovim" && command -v nvim &>/dev/null && echo "Open Neovim to install plugins: nvim"
-    should_install "polkit-gnome" && echo "Add to Niri config: spawn-at-startup \"/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1\""
+    should_install "polkit-gnome" && echo "Add to Niri config: spawn-at-startup \"$POLKIT_BINARY\""
     should_install "swww" && echo "Initialize swww: swww-daemon && swww img /path/to/wallpaper.jpg"
     
     echo ""
@@ -392,7 +396,10 @@ show_next_steps() {
     echo "Restart terminal: exec \$SHELL"
 }
 
-# Main
+# ============================================================================
+# Main Entry Point
+# ============================================================================
+
 main() {
     echo "Linux Dotfiles Installer (Arch)"
     echo "Repository: $REPO_ROOT"
