@@ -54,7 +54,7 @@ Examples:
   ./install.sh --only-nvim --only-yazi
 
 Tools:
-  Core: kitty, ghostty, fish, nvim, zed, yazi, lazygit
+  Core: kitty, ghostty, fish, neovim, zed, yazi, lazygit
   Niri: waybar, mako, walker, hyprlock, swww, thunar, zathura, polkit-gnome, mpv
   Utils: playerctl, brightnessctl, bluez, blueman, elephant, slurp, satty, impala-nm, yt-dlp
 EOF
@@ -285,7 +285,7 @@ install_all_tools() {
         ["kitty"]="kitty-git|Kitty|true"
         ["ghostty"]="ghostty-git|Ghostty|true"
         ["fish"]="fish|Fish|false"
-        ["nvim"]="neovim|Neovim|false"
+        ["neovim"]="neovim|Neovim|false"
         ["zed"]="zed-git|Zed Editor|true"
         ["yazi"]="yazi|Yazi|false"
         ["lazygit"]="lazygit|Lazygit|false"
@@ -343,7 +343,7 @@ link_all_configs() {
     should_install "kitty" && link_config "$REPO_ROOT/kitty" "$CONFIG_HOME/kitty" "Kitty"
     should_install "ghostty" && link_config "$REPO_ROOT/ghostty" "$CONFIG_HOME/ghostty" "Ghostty"
     should_install "fish" && link_config "$REPO_ROOT/fish" "$CONFIG_HOME/fish" "Fish"
-    should_install "nvim" && link_config "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
+    should_install "neovim" && link_config "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
     should_install "zed" && link_config "$REPO_ROOT/zed" "$CONFIG_HOME/zed" "Zed"
     should_install "yazi" && link_config "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
     should_install "lazygit" && link_config "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
