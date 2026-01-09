@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Linux dotfiles installer
-# Target: CachyOS / Arch Linux
-# Core: Kitty, Fish, Neovim, Yazi, Lazygit
-# Hyprland: Waybar, Mako, Rofi, HyprLock, swww, Thunar, Zathura, Wallust, Polkit, MPV
+# Target: CachyOS / Arch Linux with Niri
+# Core: Ghostty, Fish, Neovim, Zed, Yazi, Lazygit
+# Niri: Waybar, Mako, Walker, HyprLock, swww, Thunar, Zathura, Polkit, MPV
 
 set -e
 
@@ -43,19 +43,20 @@ Options:
   --no-backup           Skip backup
   --no-install          Skip package installation
   --force-install       Force reinstall
-  --skip-<tool>         Skip tool (e.g., --skip-kitty)
+  --skip-<tool>         Skip tool (e.g., --skip-ghostty)
   --only-<tool>         Only install tool (e.g., --only-nvim)
   -h, --help            Show help
 
 Examples:
   ./install.sh
   ./install.sh --dry-run
-  ./install.sh --skip-kitty --skip-waybar
+  ./install.sh --skip-ghostty --skip-waybar
   ./install.sh --only-nvim --only-yazi
 
 Tools:
-  Core: kitty, fish, nvim, yazi, lazygit
-  Hyprland: waybar, mako, rofi, hyprlock, swww, thunar, zathura, wallust, polkit-gnome, mpv
+  Core: kitty, ghostty, fish, nvim, zed, yazi, lazygit
+  Niri: waybar, mako, walker, hyprlock, swww, thunar, zathura, polkit-gnome, mpv
+  Utils: playerctl, brightnessctl, bluez, blueman, elephant, slurp, satty, impala-nm, yt-dlp
 EOF
     exit 0
 }
@@ -92,12 +93,6 @@ detect_system() {
         PKG_MANAGER="pacman"
         command -v yay &>/dev/null && AUR_HELPER="yay"
         command -v paru &>/dev/null && AUR_HELPER="paru"
-    elif command -v apt &>/dev/null; then
-        PKG_MANAGER="apt"
-    elif command -v dnf &>/dev/null; then
-        PKG_MANAGER="dnf"
-    elif command -v zypper &>/dev/null; then
-        PKG_MANAGER="zypper"
     else
         log_error "No supported package manager found"
     fi
@@ -154,17 +149,33 @@ install_tool() {
     local name=$3
     local use_aur=${4:-false}
     
-    if command -v "$cmd" &>/dev/null && [[ $FORCE_INSTALL -eq 0 ]]; then
-        log_info "$name already installed"
-        return 0
+    # Check if tool exists
+    if command -v "$cmd" &>/dev/null; then
+        if [[ $FORCE_INSTALL -eq 0 ]]; then
+            log_info "$name already installed (skipping)"
+            return 0
+        fi
+        log_info "$name already installed (forcing reinstall)"
     fi
     
     log_info "Installing $name..."
     
+    if [[ $DRY_RUN -eq 1 ]]; then
+        log_info "Would install: $name"
+        return 0
+    fi
+    
     if install_pkg "$pkg" "$name" "$use_aur"; then
-        command -v "$cmd" &>/dev/null && log_info "$name installed" || log_warn "$name install completed but command not found"
+        if command -v "$cmd" &>/dev/null; then
+            log_info "$name installed successfully"
+            return 0
+        else
+            log_warn "$name package installed but command not found"
+            return 1
+        fi
     else
         log_warn "Failed to install $name"
+        return 1
     fi
 }
 
@@ -205,12 +216,25 @@ install_polkit() {
 
 # Backup
 backup() {
-    [[ $NO_BACKUP -eq 1 || ! -e "$1" ]] && return
-    [[ $DRY_RUN -eq 1 ]] && { log_info "Would backup: $1"; return; }
+    local src=$1
+    local name=$2
+    
+    [[ $NO_BACKUP -eq 1 ]] && return
+    [[ ! -e "$src" ]] && return
+    
+    if [[ $DRY_RUN -eq 1 ]]; then
+        log_info "Would backup: $name"
+        return
+    fi
     
     mkdir -p "$BACKUP_ROOT"
-    local dest="$BACKUP_ROOT/$(echo "$2" | tr '/\\:*?"<>| ' '_')"
-    cp -a "$1" "$dest" && log_info "Backed up: $2"
+    local dest="$BACKUP_ROOT/$(echo "$name" | tr '/\\:*?"<>| ' '_')"
+    
+    if cp -a "$src" "$dest" 2>/dev/null; then
+        log_info "Backed up: $name → $dest"
+    else
+        log_warn "Failed to backup: $name"
+    fi
 }
 
 # Symlink
@@ -219,13 +243,34 @@ link_config() {
     local dst=$2
     local name=$3
     
-    [[ ! -e "$src" ]] && { log_warn "Source not found: $name"; return; }
-    [[ $DRY_RUN -eq 1 ]] && { log_info "Would link: $name"; return; }
+    # Check source exists
+    if [[ ! -e "$src" ]]; then
+        log_warn "Source not found: $name ($src)"
+        return 1
+    fi
     
-    [[ -e "$dst" || -L "$dst" ]] && { backup "$dst" "$name"; rm -rf "$dst"; }
+    if [[ $DRY_RUN -eq 1 ]]; then
+        log_info "Would link: $name"
+        return 0
+    fi
     
+    # Backup existing config if it exists
+    if [[ -e "$dst" || -L "$dst" ]]; then
+        backup "$dst" "$name"
+        rm -rf "$dst"
+    fi
+    
+    # Create parent directory
     mkdir -p "$(dirname "$dst")"
-    ln -sf "$src" "$dst" && log_info "Linked: $name"
+    
+    # Create symlink
+    if ln -sf "$src" "$dst"; then
+        log_info "Linked: $name → $dst"
+        return 0
+    else
+        log_error "Failed to link: $name"
+        return 1
+    fi
 }
 
 # Install all tools
@@ -235,11 +280,13 @@ install_all_tools() {
     echo ""
     log_info "=== Installing Tools ==="
     
-    # Core tools
+    # Core tools (Kitty requires latest from AUR)
     declare -A CORE=(
-        ["kitty"]="kitty|Kitty|true"
+        ["kitty"]="kitty-git|Kitty|true"
+        ["ghostty"]="ghostty-git|Ghostty|true"
         ["fish"]="fish|Fish|false"
         ["nvim"]="neovim|Neovim|false"
+        ["zed"]="zed-git|Zed Editor|true"
         ["yazi"]="yazi|Yazi|false"
         ["lazygit"]="lazygit|Lazygit|false"
     )
@@ -249,20 +296,37 @@ install_all_tools() {
         should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
     done
     
-    # Hyprland tools
-    declare -A HYPR=(
+    # Niri tools
+    declare -A NIRI=(
         ["waybar"]="waybar|Waybar|false"
         ["mako"]="mako|Mako|false"
-        ["rofi"]="rofi-wayland|Rofi|false"
+        ["walker"]="walker-git|Walker|true"
         ["hyprlock"]="hyprlock|HyprLock|false"
         ["swww"]="swww|swww|false"
         ["thunar"]="thunar|Thunar|false"
-        ["wallust"]="wallust|Wallust|true"
         ["mpv"]="mpv|MPV|false"
     )
     
-    for cmd in "${!HYPR[@]}"; do
-        IFS='|' read -r pkg name aur <<< "${HYPR[$cmd]}"
+    for cmd in "${!NIRI[@]}"; do
+        IFS='|' read -r pkg name aur <<< "${NIRI[$cmd]}"
+        should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
+    done
+    
+    # Utility tools
+    declare -A UTILS=(
+        ["playerctl"]="playerctl|Playerctl|false"
+        ["brightnessctl"]="brightnessctl|Brightnessctl|false"
+        ["bluetoothctl"]="bluez|Bluez|false"
+        ["blueman-manager"]="blueman|Blueman|false"
+        ["elephant"]="elephant-all-git|Elephant (Walker dependency)|true"
+        ["slurp"]="slurp|Slurp|false"
+        ["satty"]="satty-git|Satty|true"
+        ["impala-nm"]="wlctl-bin|Impala-NM (TUI Network Manager)|true"
+        ["yt-dlp"]="yt-dlp|yt-dlp (MPV dependency)|false"
+    )
+    
+    for cmd in "${!UTILS[@]}"; do
+        IFS='|' read -r pkg name aur <<< "${UTILS[$cmd]}"
         should_install "$cmd" && install_tool "$cmd" "$pkg" "$name" "$aur"
     done
     
@@ -277,20 +341,21 @@ link_all_configs() {
     
     # Core
     should_install "kitty" && link_config "$REPO_ROOT/kitty" "$CONFIG_HOME/kitty" "Kitty"
+    should_install "ghostty" && link_config "$REPO_ROOT/ghostty" "$CONFIG_HOME/ghostty" "Ghostty"
     should_install "fish" && link_config "$REPO_ROOT/fish" "$CONFIG_HOME/fish" "Fish"
     should_install "nvim" && link_config "$REPO_ROOT/nvim" "$CONFIG_HOME/nvim" "Neovim"
+    should_install "zed" && link_config "$REPO_ROOT/zed" "$CONFIG_HOME/zed" "Zed"
     should_install "yazi" && link_config "$REPO_ROOT/yazi" "$CONFIG_HOME/yazi" "Yazi"
     should_install "lazygit" && link_config "$REPO_ROOT/lazygit" "$CONFIG_HOME/lazygit" "Lazygit"
     
-    # Hyprland
+    # Niri
     should_install "waybar" && link_config "$REPO_ROOT/waybar" "$CONFIG_HOME/waybar" "Waybar"
     should_install "mako" && link_config "$REPO_ROOT/mako" "$CONFIG_HOME/mako" "Mako"
-    should_install "rofi" && link_config "$REPO_ROOT/rofi" "$CONFIG_HOME/rofi" "Rofi"
-    should_install "hyprlock" && link_config "$REPO_ROOT/hyprlock" "$CONFIG_HOME/hypr/hyprlock.conf" "HyprLock"
+    should_install "walker" && link_config "$REPO_ROOT/walker" "$CONFIG_HOME/walker" "Walker"
+    should_install "hyprlock" && link_config "$REPO_ROOT/hyprlock" "$CONFIG_HOME/niri/hyprlock.conf" "HyprLock"
     should_install "swww" && link_config "$REPO_ROOT/swww" "$CONFIG_HOME/swww" "swww"
     should_install "thunar" && link_config "$REPO_ROOT/thunar" "$CONFIG_HOME/Thunar" "Thunar"
     should_install "zathura" && link_config "$REPO_ROOT/zathura" "$CONFIG_HOME/zathura" "Zathura"
-    should_install "wallust" && link_config "$REPO_ROOT/wallust" "$CONFIG_HOME/wallust" "Wallust"
     should_install "mpv" && link_config "$REPO_ROOT/mpv" "$CONFIG_HOME/mpv" "MPV"
 }
 
@@ -304,8 +369,8 @@ show_next_steps() {
     
     should_install "fish" && command -v fish &>/dev/null && echo "Set Fish as default shell: chsh -s \$(which fish)"
     should_install "nvim" && command -v nvim &>/dev/null && echo "Open Neovim to install plugins: nvim"
-    should_install "polkit-gnome" && echo "Add to Hyprland: exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-    should_install "swww" && echo "Initialize swww: swww init && swww img /path/to/wallpaper.jpg"
+    should_install "polkit-gnome" && echo "Add to Niri config: exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+    should_install "swww" && echo "Initialize swww: swww-daemon && swww img /path/to/wallpaper.jpg"
     
     echo ""
     [[ -d "$BACKUP_ROOT" ]] && log_info "Backups: $BACKUP_ROOT"
@@ -314,7 +379,7 @@ show_next_steps() {
 
 # Main
 main() {
-    echo "Linux Dotfiles Installer"
+    echo "Linux Dotfiles Installer (Niri Edition)"
     echo "Repository: $REPO_ROOT"
     echo ""
     
