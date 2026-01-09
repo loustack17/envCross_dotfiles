@@ -11,23 +11,30 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
 - **File Manager**: Yazi
 - **Git UI**: Lazygit
 
-### Linux (CachyOS/Arch)
-- **Terminal**: Kitty (from AUR)
+### Linux (CachyOS with Niri)
+- **Terminal**: Kitty, Ghostty
 - **Shell**: Fish
-- **Editor**: Neovim
-- **File Manager**: Yazi
+- **Editor**: Neovim, Zed
+- **File Manager**: Yazi, Thunar
 - **Git UI**: Lazygit
-- **Hyprland Ecosystem**:
+- **Niri Ecosystem**:
   - Waybar (status bar)
   - Mako (notifications)
-  - Rofi (launcher)
+  - Walker (launcher with Elephant engine)
   - HyprLock (screen lock)
   - swww (wallpaper)
-  - Thunar (file manager GUI)
   - Zathura (PDF viewer)
-  - Wallust (color palette, AUR)
   - Polkit-gnome (authentication)
   - MPV (media player)
+- **Utilities**:
+  - Playerctl (media control)
+  - Brightnessctl (brightness control)
+  - Bluez/Blueman (Bluetooth)
+  - Elephant (Walker dependency - required)
+  - Slurp (screen region select)
+  - Satty (screenshot annotation)
+  - Impala-NM (TUI network manager for NetworkManager)
+  - yt-dlp (MPV dependency for streaming)
 
 ---
 
@@ -50,7 +57,7 @@ nu install.nu --only [nvim lazygit]
 - Administrator or Developer Mode enabled
 - Automatically installs Scoop if missing
 
-### Linux
+### Linux (CachyOS with Niri)
 
 ```bash
 # Full installation
@@ -59,13 +66,15 @@ nu install.nu --only [nvim lazygit]
 # Options
 ./install.sh --dry-run
 ./install.sh --no-backup
-./install.sh --skip-kitty --skip-waybar
+./install.sh --skip-ghostty --skip-waybar
 ./install.sh --only-nvim --only-yazi
 ```
 
 **Requirements**:
-- AUR helper (`yay` or `paru`) for Kitty and Wallust
-- Supported: Arch, Ubuntu, Fedora, openSUSE
+- AUR helper (yay or paru) for specific packages
+- Priority: CachyOS official repository > AUR
+- Kitty: Always install latest from kitty-git (AUR)
+- Supported: Arch Based distros
 
 ---
 
@@ -73,7 +82,7 @@ nu install.nu --only [nvim lazygit]
 
 ```
 dotfiles/
-├── install.sh              # Linux installer
+├── install.sh              # Linux installer (Niri edition)
 ├── install.nu              # Windows installer
 │
 # Shared configs
@@ -81,17 +90,18 @@ dotfiles/
 ├── yazi/                   # Yazi
 ├── lazygit/                # Lazygit
 │
-# Linux-specific
+# Linux-specific (Niri)
 ├── kitty/                  # Kitty terminal
+├── ghostty/                # Ghostty terminal
 ├── fish/                   # Fish shell
+├── zed/                    # Zed editor
 ├── waybar/                 # Waybar
 ├── mako/                   # Mako
-├── rofi/                   # Rofi
+├── walker/                 # Walker launcher
 ├── hyprlock/               # HyprLock
 ├── swww/                   # swww
 ├── thunar/                 # Thunar
 ├── zathura/                # Zathura
-├── wallust/                # Wallust
 ├── mpv/                    # MPV
 │
 # Windows-specific
@@ -100,7 +110,6 @@ dotfiles/
 ├── nushell/                # Nushell
 │
 └── backup/                 # Auto-backups
-    └── 20241231-143052/
 ```
 
 ---
@@ -116,22 +125,24 @@ dotfiles/
 | Yazi | `%APPDATA%\yazi` |
 | Lazygit | `%LOCALAPPDATA%\lazygit` |
 
-### Linux
+### Linux (Niri)
 | Tool | Config Path |
 |------|-------------|
 | Kitty | `~/.config/kitty` |
+| Ghostty | `~/.config/ghostty` |
 | Fish | `~/.config/fish` |
 | Neovim | `~/.config/nvim` |
+| Zed | `~/.config/zed` |
 | Yazi | `~/.config/yazi` |
 | Lazygit | `~/.config/lazygit` |
 | Waybar | `~/.config/waybar` |
 | Mako | `~/.config/mako` |
-| Rofi | `~/.config/rofi` |
-| HyprLock | `~/.config/hypr/hyprlock.conf` |
+| Walker | `~/.config/walker` |
+| Elephant | `~/.config/elephant` |
+| HyprLock | `~/.config/niri/hyprlock.conf` |
 | swww | `~/.config/swww` |
 | Thunar | `~/.config/Thunar` |
 | Zathura | `~/.config/zathura` |
-| Wallust | `~/.config/wallust` |
 | MPV | `~/.config/mpv` |
 
 ---
@@ -162,7 +173,7 @@ nu install.nu --dry-run
 
 ```bash
 # Skip tools
-./install.sh --skip-kitty --skip-waybar
+./install.sh --skip-ghostty --skip-waybar
 nu install.nu --skip [wezterm yazi]
 
 # Install specific tools only
@@ -181,7 +192,7 @@ nu install.nu --no-install
 
 ## Post-Installation
 
-### Linux
+### Linux (Niri)
 
 ```bash
 # Set Fish as default shell
@@ -190,12 +201,18 @@ chsh -s $(which fish)
 # Open Neovim to install plugins
 nvim
 
-# Add Polkit to Hyprland config
-echo 'exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1' >> ~/.config/hypr/hyprland.conf
+# Add Polkit to Niri config (~/.config/niri/config.kdl)
+spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 
 # Initialize swww
-swww init
+swww-daemon
 swww img ~/Pictures/wallpaper.jpg
+
+# Verify installations
+kitty --version
+ghostty --version
+zed --version
+walker --version
 ```
 
 ### Windows
@@ -238,23 +255,42 @@ Check binary exists:
 ls /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 ```
 
-Add to Hyprland config:
-```bash
-exec-once = /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+Add to Niri config (`~/.config/niri/config.kdl`):
+```conf
+spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 ```
+
+### Waybar Not Working with Niri
+
+Update Waybar config to use Niri modules instead of Hyprland:
+- Replace `hyprland/workspaces` with `niri/workspaces`
+- Replace `hyprland/window` with `niri/window`
 
 ---
 
 ## Features
 
-- ✅ Automatic package installation
-- ✅ Automatic backup before changes
-- ✅ Symlink-based config management
-- ✅ Selective tool installation
-- ✅ Dry-run mode
-- ✅ Cross-platform (Windows/Linux)
-- ✅ AUR support (Arch Linux)
-- ✅ Multiple package managers (pacman/apt/dnf/zypper)
+- Automatic package installation
+- Automatic backup before changes
+- Symlink-based config management
+- Selective tool installation
+- Dry-run mode
+- Cross-platform (Windows/Linux)
+- AUR support (Arch Linux)
+- Niri window manager support
+- Security-focused (*-git sources from AUR)
+
+---
+
+## References
+
+- **Ghostty**: https://ghostty.org
+- **Zed**: https://zed.dev
+- **Walker**: https://github.com/abenz1267/walker
+- **Niri**: https://github.com/YaLTeR/niri
+- **CachyOS**: https://cachyos.org
+- **Waybar**: https://github.com/Alexays/Waybar
+- **Impala-mn**: https://github.com/aashish-thapa/wlctl
 
 ---
 

@@ -28,3 +28,9 @@ vim.opt.fillchars = vim.opt.fillchars + {
 -- vim.opt.foldenable = true
 -- vim.opt.foldlevel = 99
 -- vim.opt.foldlevelstart = 99
+
+-- Resize
+vim.keymap.set("n", "rh", "<C-w><")
+vim.keymap.set("n", "rj", "<C-w>+")
+vim.keymap.set("n", "rk", "<C-w>-")
+vim.keymap.set("n", "rl", "<C-w>>")
