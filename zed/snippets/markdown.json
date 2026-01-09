@@ -1,0 +1,9 @@
+{
+  "Markdown link": {
+    "prefix": "link",
+    "body": [
+      "[$1]($2)$0"
+    ],
+    "description": "Insert markdown link"
+  }
+}
