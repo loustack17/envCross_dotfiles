@@ -98,6 +98,7 @@ dotfiles/
 ├── waybar/                 # Waybar
 ├── mako/                   # Mako
 ├── walker/                 # Walker launcher
+├── Elephant/               # Elephant
 ├── hyprlock/               # HyprLock
 ├── swww/                   # swww
 ├── thunar/                 # Thunar
@@ -108,7 +109,6 @@ dotfiles/
 ├── wezterm/                # WezTerm dir
 ├── .wezterm.lua            # WezTerm main config
 ├── nushell/                # Nushell
-│
 └── backup/                 # Auto-backups
 ```
 
@@ -260,11 +260,6 @@ Add to Niri config (`~/.config/niri/config.kdl`):
 spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 ```
 
-### Waybar Not Working with Niri
-
-Update Waybar config to use Niri modules instead of Hyprland:
-- Replace `hyprland/workspaces` with `niri/workspaces`
-- Replace `hyprland/window` with `niri/window`
 
 ---
 
@@ -278,7 +273,6 @@ Update Waybar config to use Niri modules instead of Hyprland:
 - Cross-platform (Windows/Linux)
 - AUR support (Arch Linux)
 - Niri window manager support
-- Security-focused (*-git sources from AUR)
 
 ---
 
