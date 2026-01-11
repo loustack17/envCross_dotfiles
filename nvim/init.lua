@@ -7,7 +7,23 @@ require("config.lazy")
 require("config.codecompanion.mapping")
 vim.lsp.enable('pyright')
 -- For init.lua
-vim.opt.shell = "nu"
+-- detect OS
+local is_windows = vim.loop.os_uname().sysname:find("Windows") ~= nil
+
+if is_windows then
+  -- Windows use Nushell
+  vim.opt.shell = "nu"
+else
+  -- Linux use Fish
+  -- Make sure fish exists
+  if vim.fn.executable("fish") == 1 then
+    vim.opt.shell = "fish"
+  else
+    vim.opt.shell = "bash"   -- second choice
+  end
+end
+
+
 -- vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""

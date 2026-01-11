@@ -1,0 +1,325 @@
+{
+  // Workspaces
+  "niri/workspaces": {
+    "on-click": "activate"
+  },
+
+  // Taskbar
+  "wlr/taskbar": {
+    "format": "{icon} {title:.16}",
+    "icon-size": 18,
+    "icon-theme": "BeautyLine",
+    "tooltip-format": "{title}",
+    "on-click": "activate",
+    "on-click-middle": "close",
+    "ignore-list": ["kitty", "ghostty"],
+    "app_ids-mapping": {
+      "firefoxdeveloperedition": "firefox-developer-edition"
+    },
+    "rewrite": {
+      "Firefox Web Browser": "Firefox",
+      "Foot Server": "Terminal"
+    }
+  },
+
+  // niri Window
+  "niri/window": {
+    "swap-icon-label": true,
+    "format": "{}",
+    "max-length": 50,
+    "rewrite": {
+      "(.*) - Brave": "$1",
+      "(.*) - Chromium": "$1",
+      "(.*) - Brave Search": "$1",
+      "(.*) - Outlook": "$1",
+      "(.*) Microsoft Teams": "$1"
+    },
+    "separate-outputs": true
+  },
+
+  // Empty
+  "custom/empty": {
+    "format": ""
+  },
+
+  "privacy": {
+    "icon-spacing": 4,
+    "icon-size": 14,
+    "transition-duration": 250,
+    "modules": [
+     {
+       "type": "screenshare",
+       "tooltip": true,
+       "tooltip-icon-size": 14
+     },
+     {
+       "type": "audio-out",
+       "tooltip": true,
+       "tooltip-icon-size": 14
+     },
+     {
+       "type": "audio-in",
+       "tooltip": true,
+       "tooltip-icon-size": 14
+     }
+    ]
+   },
+
+   "wireplumber": {
+      "format": "{icon} {volume}%",
+      "format-muted": " Muted",
+      "format-icons": [" ", " ", " "],
+      "scroll-step": 0.2,
+      "max-volume": 100,
+      "on-click": "pavucontrol",
+      "on-click-right": "qpwgraph"
+    },
+    "mpris": {
+      "format": "{player_icon} {dynamic}",
+      "format-paused": "{status_icon} <i>{dynamic}</i>",
+      "max-length": 30,
+      "player-icons": {
+        "default": "󰎆 ",
+        "cmus": "",
+        "mpv": "🎵",
+        "vlc": "🎬",
+        "spotify": " "
+      },
+      "status-icons": {
+        "paused": "⏸"
+      },
+      "on-click": "playerctl play-pause",
+      "on-click-right": "playerctl next",
+      "smooth-scrolling-threshold": 10,
+      "on-scroll-down": "playerctl previous"
+    },
+
+
+  // Tools
+  "custom/tools": {
+    "format": "",
+    "tooltip-format": "Tools"
+  },
+
+  // Updates Count
+  "custom/updates": {
+      "format": "{} {icon}",
+      "return-type": "json",
+      "format-icons": {
+          "has-updates": "󱍷",
+          "updated": "󰂪"
+      },
+      "exec-if": "which waybar-module-pacman-updates",
+      "exec": "waybar-module-pacman-updates --interval-seconds 5 --network-interval-seconds 300"
+  },
+
+  // wofi Application Launcher
+  "custom/appmenu": {
+    "format": "   ",
+    "on-click": "sleep 0.2;wofi -show drun -replace",
+    "tooltip-format": "Left: Open the application launcher\nRight: Show all keybindings"
+  },
+
+  // wofi Application Launcher
+  "custom/appmenuicon": {
+    "format": "",
+    "on-click": "sleep 0.2;wofi -show drun -replace",
+    "tooltip-format": "Left: Open the application launcher\nRight: Show all keybindings"
+  },
+
+  // Power Menu
+  "custom/exit": {
+    "format": " 󰐥 ",
+    "on-click": "~/.config/waybar/scripts/power-menu.sh",
+    "tooltip-format": "Power Menu"
+  },
+
+  // Keyboard State
+  "keyboard-state": {
+    "numlock": true,
+    "capslock": true,
+    "format": "{name} {icon}",
+    "format-icons": {
+      "locked": "",
+      "unlocked": ""
+    }
+  },
+
+  // System tray
+  "tray": {
+    "icon-size": 16,
+    "spacing": 10
+  },
+
+  // Clock
+  "clock": {
+    "format": "⏰{:%I:%M %p}",
+    "format-alt": "📅{:%A, %B %d, %Y (%I:%M %p)}",
+    //"format": "{:%H:%M %a}",
+    //"on-click": "ags -t calendar",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "mode": "year",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "on-click-right": "mode",
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-click-forward": "tz_up",
+      "on-click-backward": "tz_down",
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  },
+
+  "niri/language": {
+    "format": "/ K {short}"
+  },
+
+  // Battery
+  "battery": {
+    "interval": 60,
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 20
+    },
+    "format": "{icon} {capacity}%",
+    "format-warning": "{icon} {capacity}%",
+    "format-charging": "  {capacity}%",
+    "format-plugged": "  {capacity}%",
+    "tooltip": "{time} {icon}",
+    // "format-alt": "{timeTo} / {health}",
+    // "format-good": "", // An empty format will hide the module
+    "format-full": "⚡ {capacity}%",
+    "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+  },
+
+  // Pulseaudio
+  "pulseaudio": {
+    // "scroll-step": 1, // %, can be a float
+    "format": "{icon}  {volume}%",
+    "format-bluetooth": "{volume}% {icon} {format_source}",
+    "format-bluetooth-muted": " {icon} {format_source}",
+    "format-muted": " {format_source}",
+    "format-source": "{volume}% ",
+    "format-source-muted": "",
+    "format-icons": {
+	    "headphone": "",
+            "hands-free": "󱡒",
+            "headset": "󰋎",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+    },
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "tooltip-format": "{desc} | {format_source}"
+  },
+  "pulseaudio/slider": {
+    "min": 0,
+    "max": 100,
+    "orientation": "vertical"
+  },
+  "group/audio": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 400,
+      "children-class": "audio",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "pulseaudio",
+      "pulseaudio/slider"
+    ]
+  },
+
+  // Bluetooth
+  "bluetooth": {
+    "format": " {status}",
+    "format-connected": " {device_alias}",
+    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
+    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+    "interval": 30,
+    "on-click": "blueman-manager",
+    "format-no-controller": ""
+  },
+
+  // Other
+  "user": {
+    "format": "{user}",
+    "interval": 60,
+    "icon": false
+  },
+
+  // backlight:
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon} {percent}%",
+    "format-icons": [ "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" ],
+    "scroll-step": 1,
+    "on-scroll-up": "brightnessctl set 1%+",
+    "on-scroll-down": "brightnessctl set 1%-"
+  },
+
+  // Vitals (CPU/MEM)
+  "cpu": {
+    "tooltip": "{avg_frequency}",
+    "format": " {usage}%",
+    "interval": 1
+  },
+  "temperature": {
+    "interval": 2,
+    "critical-threshold": 80,
+    "format": "{icon} {temperatureC}°C",
+    "format-icons": ["", "", ""],
+    "tooltip": false
+  },
+  "memory": {
+    "format": "  {used:0.1f}G",
+    "interval": 5,
+    "tooltip": true,
+    "tooltip-format": "{used:0.1f}G/{total:0.1f}G"
+  },
+  "custom/gpu": {
+    "exec": "nvidia-smi --query-gpu=utilization.gpu,temperature.gpu --format=csv,noheader,nounits | awk -F', ' '{print \"󰢮 \"$1\"% \"$2\"°C\"}'",
+    "interval": 5,
+    "format": "{}",
+    "tooltip": false
+  },
+
+  "network": {
+    "format": "{ifname} [󰾆 {bandwidthTotalBytes}]",
+    "format-wifi": "{icon} {essid} [󰾆 {bandwidthTotalBytes}]",
+    "format-ethernet": "󱘖  {ifname} [󰾆 {bandwidthTotalBytes}]",
+    "format-disconnected": "󰌙 Disconnected ⚠",
+    "format-alt": "  {ipaddr}  {bandwidthUpBytes}  {bandwidthDownBytes}",
+    "tooltip-format": "{ifname} via {gwaddr} ",
+    "tooltip-format-wifi": "{frequency} MHz ({signalStrength}%)",
+    "tooltip-format-ethernet": "{ipaddr}/{cidr}  {bandwidthUpBytes}  {bandwidthDownBytes}",
+    "tooltip-format-disconnected": "Disconnected ⚠",
+    "max-length": 50,
+    "format-icons": ["󰤯 ", "󰤟 ", "󰤢 ", "󰤢 ", "󰤨 "],
+    "on-click": "nm-connection-editor"
+  },
+
+  "custom/notification": {
+    "format": "󰂚",
+    "on-click": "makoctl dismiss -a",
+    "on-click-right": "makoctl restore",
+    "tooltip-format": "Left: Clear all\nRight: Restore last"
+  }
+}
