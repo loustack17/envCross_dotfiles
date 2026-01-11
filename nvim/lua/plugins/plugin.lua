@@ -26,17 +26,17 @@ return {
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
-	opts = {
-	},
-	keys = {
-	  {
-		"<leader>?",
-		function()
-		require("which-key").show({ global = false })
-		end,
-		desc = "Buffer Local Keymaps (which-key)",
-	  },
-	},
+    opts = {
+    },
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
   },
   -- Fuzzy Finding (Telescope)
   {
@@ -57,12 +57,12 @@ return {
     "rmagatti/auto-session",
     lazy = false, -- Must load immediately to restore session
     init = function()
-        -- If Neovim is started with a directory arg (e.g., from yazi), disable auto-session restore/save
-        local arg0 = vim.fn.argv(0)
-        if arg0 ~= "" and vim.fn.isdirectory(arg0) == 1 then
-          vim.g.auto_session_enabled = false
-        end
-      end,
+      -- If Neovim is started with a directory arg (e.g., from yazi), disable auto-session restore/save
+      local arg0 = vim.fn.argv(0)
+      if arg0 ~= "" and vim.fn.isdirectory(arg0) == 1 then
+        vim.g.auto_session_enabled = false
+      end
+    end,
     opts = {
       suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
     }
@@ -110,4 +110,5 @@ return {
   },
   'norcalli/nvim-colorizer.lua',
   { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
+  'mg979/vim-visual-multi',
 }
