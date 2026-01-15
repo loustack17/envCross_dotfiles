@@ -1,1 +1,4 @@
 backup/
+
+# Zed settings contains secrets (GitHub PAT, API keys)
+zed/settings.json

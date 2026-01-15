@@ -9,9 +9,20 @@
 {
   "vim_mode": true,
   "context_servers": {
+    "mcp-server-github": {
+      "enabled": true,
+      "settings": {
+        "github_personal_access_token": ""
+      }
+    },
     "mcp-server-markitdown": {
       "enabled": true,
       "settings": {
+        "args": [
+          "-y",
+          "markitdown-mcp-npx"
+        ],
+        "command": "npx",
         "package_version": "latest",
       },
     },
@@ -21,15 +32,11 @@
         "enable_production_credentials": false,
       },
     },
-    "mcp-server-github": {
-      "enabled": true,
-      "settings": {
-        "github_personal_access_token": "",
-      },
-    },
     "playwright": {
       "command": "npx",
-      "args": ["@playwright/mcp@latest"],
+      "args": [
+        "@playwright/mcp@latest"
+      ],
       "env": {},
     },
   },
@@ -49,19 +56,9 @@
     "allowed": true,
   },
   "agent": {
+    "always_allow_tool_actions": true,
     "dock": "left",
-    "profiles": {
-      "agent": {
-        "default_model": {
-          "provider": "copilot_chat",
-          "model": "claude-opus-4.5",
-        },
-        "name": "Agent",
-        "tools": {},
-        "enable_all_context_servers": false,
-        "context_servers": {},
-      },
-    },
+    "profiles": {},
     "default_model": {
       "provider": "copilot_chat",
       "model": "claude-sonnet-4.5",
@@ -75,11 +72,13 @@
     "toolbar": {
       "breadcrumbs": true,
     },
-    "shell": {
-      "program": "nu.exe",
-    },
+    "shell": "system",
     "font_family": "SFMono Nerd Font",
-    "font_fallbacks": ["Hack Nerd Font Mono", "Fira Code Retina", "MesloLGS NF"],
+    "font_fallbacks": [
+      "Hack Nerd Font Mono",
+      "FiraCode Nerd Font Mono",
+      "JetBrainsMono Nerd Font Mono",
+    ],
   },
   "node": {
     "npm_path": "pnpm",
@@ -88,11 +87,18 @@
   "minimap": {
     "show": "auto",
   },
-  "buffer_font_fallbacks": ["Hack Nerd Font Mono", "Fira Code Retina"],
+  "buffer_font_fallbacks": [
+    "Hack Nerd Font Mono",
+    "FiraCode Nerd Font Mono"
+  ],
   "buffer_font_family": "SFMono Nerd Font",
   "file_types": {
-    "msbuild": ["*.csproj"],
-    "tailwindcss": ["*.css"],
+    "msbuild": [
+      "*.csproj"
+    ],
+    "tailwindcss": [
+      "*.css"
+    ],
   },
   "auto_indent_on_paste": true,
   "linked_edits": true,
@@ -107,6 +113,10 @@
     "dark": "Catppuccin Mocha",
   },
   "languages": {
+    "CSharp": {
+      "format_on_save": "on",
+      "formatter": "language_server",
+    },
     // JS, TS, TSX, Vue：Prettier + ESLint
     "JavaScript": {
       "formatter": "prettier",
@@ -114,34 +124,46 @@
       "code_actions_on_format": {
         "source.fixAll.eslint": true,
       },
-      "language_servers": ["typescript-language-server", "!vtsls", "..."],
+      "language_servers": [
+        "typescript-language-server",
+        "!vtsls",
+        "..."
+      ],
     },
     "TypeScript": {
-      "formatter": "prettier",
       "format_on_save": "on",
+      "formatter": "prettier",
       "code_actions_on_format": {
         "source.fixAll.eslint": true,
       },
-      "language_servers": ["typescript-language-server", "!vtsls", "..."],
+      "language_servers": [
+        "typescript-language-server",
+        "!vtsls",
+        "..."
+      ],
     },
     "TSX": {
-      "formatter": "prettier",
       "format_on_save": "on",
+      "formatter": "prettier",
       "code_actions_on_format": {
         "source.fixAll.eslint": true,
       },
-      "language_servers": ["typescript-language-server", "!vtsls", "..."],
+      "language_servers": [
+        "typescript-language-server",
+        "!vtsls",
+        "..."
+      ],
     },
     // JSON, JSONC：Prettier + generic fixAll
     "JSON": {
-      "formatter": "prettier",
+      "formatter": "language_server",
       "format_on_save": "on",
       "code_actions_on_format": {
         "source.fixAll": true,
       },
     },
     "JSONC": {
-      "formatter": "prettier",
+      "formatter": "language_server",
       "format_on_save": "on",
       "code_actions_on_format": {
         "source.fixAll": true,
@@ -179,7 +201,7 @@
       },
     },
     "YAML": {
-      "formatter": "prettier",
+      "formatter": "language_server",
       "format_on_save": "on",
       "tab_size": 2,
       "hard_tabs": false,
@@ -193,14 +215,62 @@
         "source.fixAll": true,
       },
     },
-    "Python": {
-      "formatter": "language_server",
+    "Go": {
       "format_on_save": "on",
-      "language_servers": ["ty", "!basedpyright"],
+      "formatter": "language_server",
+      "code_actions_on_format": {
+        "source.organizeImports": true,
+      },
+    },
+    "Python": {
+      "format_on_save": "on",
+      "formatter": {
+        "external": {
+          "command": "ruff",
+          "arguments": [
+            "format",
+            "--stdin-filename",
+            "{buffer_path}"
+          ],
+        },
+      },
+      "language_servers": [
+        "pyright",
+        "ruff",
+        "ty"
+      ],
       "tab_size": 2,
       "hard_tabs": false,
       "code_actions_on_format": {
         "source.fixAll": true,
+      },
+    },
+  },
+  "lsp": {
+    "omnisharp": {
+      "initialization_options": {
+        "EnableEditorConfigSupport": true,
+        "AnalyzeOpenDocumentsOnly": true,
+      },
+    },
+    "gopls": {
+      "initialization_options": {
+        "analyses": {
+          "unusedparams": true,
+          "nilness": true,
+        },
+        "staticcheck": true,
+        "formatting.gofumpt": true,
+      },
+    },
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          "args": [
+            "--ignore",
+            "E501"
+          ],
+        },
       },
     },
   },
