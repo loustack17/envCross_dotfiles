@@ -20,7 +20,8 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
 - **File Manager**: Yazi, Thunar
 - **Git UI**: Lazygit
 - **Niri Ecosystem**:
-  - Waybar (status bar)
+  - Zellij (terminal multiplexer)
+  - Ironbar (status bar)
   - Mako (notifications)
   - Walker (launcher - requires Elephant)
   - HyprLock (screen lock)
@@ -35,7 +36,7 @@ Personal dotfiles for Windows and Linux with automatic tool installation.
   - Elephant (Walker dependency - required)
   - Slurp (screen region select)
   - Satty (screenshot annotation)
-  - Impala-nm (TUI network manager for NetworkManager)
+  - Impala (TUI network manager for iwd)
   - yt-dlp (optional for mpv streaming)
 
 ---
@@ -75,7 +76,7 @@ nu install.nu --only [nvim lazygit]
 
 **Requirements**:
 
-- AUR helper (yay or paru) for specific packages
+- AUR helper (paru recommended, yay also supported) for specific packages
 - Priority: CachyOS official repository > AUR
 - Kitty: Always install latest from kitty-git (AUR)
 - Supported: Arch Based distros
@@ -100,7 +101,8 @@ dotfiles/
 │   ├── kitty/              # Kitty terminal
 │   ├── ghostty/            # Ghostty terminal
 │   ├── fish/               # Fish shell
-│   ├── waybar/             # Waybar
+│   ├── zellij/             # Zellij multiplexer
+│   ├── ironbar/            # Ironbar (contains config.yaml, style.css, scripts/)
 │   ├── mako/               # Mako
 │   ├── walker/             # Walker launcher
 │   ├── elephant/           # Elephant
@@ -141,11 +143,12 @@ dotfiles/
 | Kitty    | `~/.config/kitty`              |
 | Ghostty  | `~/.config/ghostty`            |
 | Fish     | `~/.config/fish`               |
+| Zellij   | `~/.config/zellij`             |
 | Neovim   | `~/.config/nvim`               |
 | Zed      | `~/.config/zed`                |
 | Yazi     | `~/.config/yazi`               |
 | Lazygit  | `~/.config/lazygit`            |
-| Waybar   | `~/.config/waybar`             |
+| Ironbar  | `~/.config/ironbar`            |
 | Mako     | `~/.config/mako`               |
 | Walker   | `~/.config/walker`             |
 | Elephant | `~/.config/elephant`           |
@@ -183,7 +186,7 @@ nu install.nu --dry-run
 
 ```bash
 # Skip tools
-./install.sh --skip-ghostty --skip-waybar
+./install.sh --skip-ghostty --skip-ironbar
 nu install.nu --skip [wezterm yazi]
 
 # Install specific tools only
@@ -238,8 +241,12 @@ nvim
 ### Linux: AUR Helper Required
 
 ```bash
-# Install yay
+# Install paru (recommended)
 sudo pacman -S --needed git base-devel
+git clone https://aur.archlinux.org/paru.git
+cd paru && makepkg -si
+
+# Or install yay (alternative)
 git clone https://aur.archlinux.org/yay.git
 cd yay && makepkg -si
 ```
@@ -290,8 +297,9 @@ spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 - **Walker**: <https://github.com/abenz1267/walker>
 - **Niri**: <https://github.com/YaLTeR/niri>
 - **CachyOS**: <https://cachyos.org>
-- **Waybar**: <https://github.com/Alexays/Waybar>
-- **Impala-mn**: <https://github.com/aashish-thapa/wlctl>
+- **Ironbar**: <https://github.com/JakeStanger/ironbar>
+- **Impala**: <https://github.com/aashish-thapa/impala>
+- **Zellij**: <https://zellij.dev>
 
 ---
 
