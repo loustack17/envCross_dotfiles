@@ -11,19 +11,35 @@
     "context": "Editor",
     "bindings": {
       "ctrl-j": "editor::ShowCompletions",
-      "alt-enter": "editor::ToggleCodeActions"
-    }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      // "shift shift": "file_finder::Toggle"
-      "alt-`": "workspace::ToggleBottomDock"
-    }
+      "alt-enter": "editor::ToggleCodeActions",
+    },
   },
   {
     "bindings": {
-      "alt-v": "markdown::OpenPreviewToTheSide"
-    }
-  }
+      "alt-v": "markdown::OpenPreviewToTheSide",
+    },
+  },
+  {
+    "context": "(ProjectPanel && not_editing)",
+    "bindings": {
+      "ctrl-d": null,
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "alt-shift-f": "editor::Format",
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-d": [
+        "editor::SelectNext",
+        {
+          "replace_newest": false,
+        },
+      ],
+    },
+  },
 ]

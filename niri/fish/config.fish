@@ -34,3 +34,11 @@ end
 
 # uv
 fish_add_path "/home/lou/.local/bin"
+/home/linuxbrew/.linuxbrew/bin/brew shellenv | source
+
+# pnpm
+set -gx PNPM_HOME "/home/lou/.local/share/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end

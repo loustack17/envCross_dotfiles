@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+#nvidia-smi \
+#  --query-gpu=utilization.gpu,temperature.gpu \
+#  --format=csv,noheader,nounits |
+#awk -F', ' '{printf "󰢮 %3s%% %3s°C", $1, $2}'
+
+HISTORY_DIR="/tmp/ironbar_gpu_history"
+mkdir -p "$HISTORY_DIR"
+
+# 查詢所有 GPU 使用率與溫度
+nvidia-smi --query-gpu=utilization.gpu,temperature.gpu --format=csv,noheader,nounits | \
+while IFS=',' read -r util temp; do
+    gpu_id=$(echo "$util" | md5sum | cut -c1-6)  # 簡單唯一 ID
+    HIST_FILE="$HISTORY_DIR/gpu_$gpu_id"
+
+    # 建立歷史檔案
+    if [ ! -f "$HIST_FILE" ]; then
+        touch "$HIST_FILE"
+    fi
+
+    # 將新的使用率加入歷史
+    echo "$util" >> "$HIST_FILE"
+
+    # 只保留最近 5 筆
+    tail -n 5 "$HIST_FILE" > "${HIST_FILE}_tmp"
+    mv "${HIST_FILE}_tmp" "$HIST_FILE"
+
+    # 計算平均
+    avg_util=$(awk '{sum+=$1} END{printf "%d", sum/NR}' "$HIST_FILE")
+
+    # 輸出單行固定欄位
+    printf "󰢮 %2d%% %2d°C " "$avg_util" "$temp"
+done
+
+# 最後換行以結束 stdout
+echo

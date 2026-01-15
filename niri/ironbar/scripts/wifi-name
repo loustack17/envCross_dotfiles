@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Ironbar script - 顯示目前 Wi-Fi 名稱 (SSID)
+
+# detect SSID from iwd
+SSID=$(iwctl station wlan0 show | grep 'Connected network' | sed 's/.*Connected network[[:space:]]*//')
+
+# detect RSSI from iwd
+RSSI=$(iwctl station wlan0 show | awk '/^ *RSSI/ {print $2+0; exit}')
+
+ICONS=("󰤯 " "󰤟 " "󰤢 " "󰤢 " "󰤨 ")
+
+# Convert RSSI to percentage
+if [ -n "$RSSI" ]; then
+    RSSI_PERCENT=$((100 * (RSSI + 100) / 70))
+    [ $RSSI_PERCENT -gt 100 ] && RSSI_PERCENT=100
+    [ $RSSI_PERCENT -lt 0 ] && RSSI_PERCENT=0
+
+    INDEX=$(( RSSI_PERCENT / 20 ))
+    [ $INDEX -gt 4 ] && INDEX=4
+    ICON=${ICONS[$INDEX]}
+else
+    ICON="󰌙"
+fi
+
+# If no SSID, show Disconnected
+if [ -z "$SSID" ]; then
+    echo "󰌙 Disconnected"
+else
+    echo "$ICON $SSID"
+fi
+
