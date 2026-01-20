@@ -19,7 +19,7 @@ else
   if vim.fn.executable("fish") == 1 then
     vim.opt.shell = "fish"
   else
-    vim.opt.shell = "bash"   -- second choice
+    vim.opt.shell = "bash" -- second choice
   end
 end
 
@@ -28,3 +28,4 @@ end
 vim.opt.shellquote = ""
 vim.opt.shellxquote = ""
 vim.api.nvim_set_option("clipboard", "unnamed")
+vim.opt.clipboard = "unnamedplus"

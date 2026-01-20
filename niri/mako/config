@@ -25,7 +25,7 @@ padding=16
 
 border-color=#89B4FA
 border-size=2
-border-radius=0
+border-radius=10
 
 icons=1
 max-icon-size=48
@@ -35,12 +35,12 @@ format= <b>%s</b>\n%b
 text-alignment=left
 max-visible=5
 layer=overlay
-anchor=top-right
+anchor=top-center
 
 default-timeout=5000
 ignore-timeout=0
 
-[app-name=Volume]
+[app-name=wp-vol]
 anchor=bottom-center
 text-alignment=center
 width=200
@@ -56,7 +56,11 @@ padding=2
 layer=overlay
 ignore-timeout=1
 default-timeout=1000
-format=<b>%s</b>
+group-by=app-name
+format=<b>%s</b>\n%b
+
+[app-name=volume group-index=0]
+invisible=0
 
 [app-name="Volume Mute"]
 anchor=bottom-center
