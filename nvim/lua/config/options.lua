@@ -34,3 +34,11 @@ vim.keymap.set("n", "rh", "<C-w><")
 vim.keymap.set("n", "rj", "<C-w>+")
 vim.keymap.set("n", "rk", "<C-w>-")
 vim.keymap.set("n", "rl", "<C-w>>")
+
+-- Mode: Normal move one line
+vim.keymap.set("n", 'mj', ':m .+1<CR>==', { desc = 'Move line down' })
+vim.keymap.set("n", 'mk', ':m .-2<CR>==', { desc = 'Move line up' })
+
+-- Mode: Visual move block
+vim.keymap.set("v", 'mj', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set("v", 'mk', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })

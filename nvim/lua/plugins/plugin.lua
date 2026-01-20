@@ -111,4 +111,5 @@ return {
   'norcalli/nvim-colorizer.lua',
   { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
   'mg979/vim-visual-multi',
+  'nanotee/zoxide.vim'
 }

@@ -7,77 +7,70 @@ start:
   - type: bluetooth
     icon_size: 32
     format:
-      not_found: ""
-      disabled: " Off"
-      enabled: " On"
-      connected: " {device_alias}"
-      connected_battery: " {device_alias} • {device_battery_percent}%"
+      not_found: ''
+      disabled: ' Off'
+      enabled: ' On'
+      connected: ' {device_alias}'
+      connected_battery: ' {device_alias} • {device_battery_percent}%'
     popup:
       max_height:
         devices: 5
-      header: " Enable Bluetooth"
-      disabled: "{adapter_status}"
+      header: ' Enable Bluetooth'
+      disabled: '{adapter_status}'
       device:
-        header: "{device_alias}"
-        header_battery: "{device_alias}"
-        footer: "{device_status}"
-        footer_battery: "{device_status} • Battery {device_battery_percent}%"
+        header: '{device_alias}'
+        header_battery: '{device_alias}'
+        footer: '{device_status}'
+        footer_battery: '{device_status} • Battery {device_battery_percent}%'
     adapter_status:
-      not_found: "No Bluetooth adapters found"
-      enabled: "Bluetooth enabled"
-      enabling: "Enabling Bluetooth..."
-      disabled: "Bluetooth disabled"
-      disabling: "Disabling Bluetooth..."
+      not_found: 'No Bluetooth adapters found'
+      enabled: 'Bluetooth enabled'
+      enabling: 'Enabling Bluetooth...'
+      disabled: 'Bluetooth disabled'
+      disabling: 'Disabling Bluetooth...'
     device_status:
-      connected: "Connected"
-      connecting: "Connecting..."
-      disconnected: "Disconnect"
-      disconnecting: "Disconnecting..."
+      connected: 'Connected'
+      connecting: 'Connecting...'
+      disconnected: 'Disconnect'
+      disconnecting: 'Disconnecting...'
   - type: custom
     name: wifi
     class: network
     bar:
       - type: button
         name: wifi-label
-        label: "{{~/.config/ironbar/scripts/wifi-name}}"
-        on_click: "!ghostty -e impala"
+        label: '{{~/.config/ironbar/scripts/wifi-name}}'
+        on_click: '!ghostty -e impala'
   - type: music
     player_type: mpris
-    format: "󰝚 {title} / {artist}"
+    format: '󰝚 {title} / {artist}'
     truncate:
       mode: end
       max_length: 20
       show_status_icon: false
     icons:
-      play: ""
-      pause: "󰏥"
-      prev: "󰙣"
-      next: "󰙡"
-      volume: "󰕾"
+      play: ''
+      pause: '󰏥'
+      prev: '󰙣'
+      next: '󰙡'
+      volume: '󰕾'
 center:
   - type: focused
     icon_size: 16
 end:
-  - type: battery
-    show_if: "[ -f /sys/class/power_supply/BAT0 ]"
   - type: volume
-    format: "{icon} {percentage}%"
+    format: '{icon} {percentage}%'
     max_volume: 100
-    on_scroll_up: pactl set-sink-volume @DEFAULT_SINK@ +10%
-    on_scroll_down: pactl set-sink-volume @DEFAULT_SINK@ -10%
+    truncate: 'middle'
     icons:
-      volume_high: 󰕾
-      volume_medium: 󰖀
-      volume_low: 󰕿
-      muted: 󰝟
-    truncate:
-      mode: end
-      length: 50
+      volume_high: '󰕾'
+      volume_medium: '󰖀'
+      volume_low: '󰕿'
+      muted: '󰝟'
   - type: sys_info
     format:
-      #- "󰓢 {net_down@wlan0} / {net_up@wlan0} Mbps"
-      - " {cpu_percent: <2}% {temp_c@mean}°C"
-      - " {memory_percent}%"
+      - ' {cpu_percent: <2}% {temp_c@mean}°C'
+      - ' {memory_percent}%'
     interval:
       cpu: 1
       memory: 30
@@ -87,9 +80,15 @@ end:
     class: gpu
     mode: poll
     interval: 5000
-    cmd: "~/.config/ironbar/scripts/nvidia-gpu"
+    cmd: '~/.config/ironbar/scripts/nvidia-gpu'
   - type: tray
   - type: clock
+    format: '%Y/%m/%d %H:%M'
+  - type: battery
+    format: '{percentage}%'
+    thresholds:
+      critical: 5
+      warning: 20
   - type: custom
     name: power-menu
     class: power_menu
@@ -111,11 +110,11 @@ end:
               - type: button
                 class: power-btn
                 label: <span>󰐥</span>
-                on_click: "!shutdown now"
+                on_click: '!shutdown now'
               - type: button
                 class: power-btn
                 label: <span>󰜉</span>
-                on_click: "!reboot"
+                on_click: '!reboot'
 #  - type: notifications
 #    show_count: true
 #    icons:
