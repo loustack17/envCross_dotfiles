@@ -24,7 +24,6 @@ return {
       --   dynamicRegistration = false,
       --   lineFoldingOnly = true,
       -- }
-
     end
     -----------
   },
@@ -56,13 +55,4 @@ return {
       require("rzls").setup()
     end,
   },
-  -- 5. LSP UI Enhancements
-  {
-    "onsails/lspkind.nvim",
-    opts = {
-      symbol_map = {
-        Copilot = "",
-      },
-    }
-  }
 }
