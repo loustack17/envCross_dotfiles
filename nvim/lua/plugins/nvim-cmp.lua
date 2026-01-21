@@ -3,6 +3,7 @@ return {
   "hrsh7th/nvim-cmp",
   dependencies = {
     "L3MON4D3/LuaSnip",
+    "onsails/lspkind.nvim",
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-path",
@@ -15,6 +16,7 @@ return {
   opts = function()
     local cmp = require("cmp")
     local luasnip = require("luasnip")
+    local lspkind = require('lspkind')
 
 
     local has_words_before = function()
@@ -37,6 +39,7 @@ return {
 
       sources = cmp.config.sources({
         { name = "copilot" },
+        { name = "codeium" },
         { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "path" },
@@ -56,43 +59,53 @@ return {
         end,
       },
 
+
+      formatting = {
+        format = lspkind.cmp_format({
+          mode = "symbol",
+          maxwidth = 50,
+          ellipsis_char = "...",
+          symbol_map = { Codeium = "" },
+        }),
+      },
+
       mapping = cmp.mapping.preset.insert({
         -- Tab: confirm selection, jump snippets, or trigger completion_preview
-        ["<Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.confirm({ select = true }) -- 類似 VSCode：Tab 接受目前 suggestion
-            return
-          end
+        -- ["<Tab>"] = cmp.mapping(function(fallback)
+        --   if cmp.visible() then
+        --     cmp.confirm({ select = true }) -- 類似 VSCode：Tab 接受目前 suggestion
+        --     return
+        --   end
 
-          local ok_sm, sm = pcall(require, "supermaven-nvim.completion_preview")
-          if ok_sm and sm and sm.has_suggestion and sm.has_suggestion() then
-            sm.on_accept_suggestion()
-            return
-          end
+        -- local ok_sm, sm = pcall(require, "supermaven-nvim.completion_preview")
+        -- if ok_sm and sm and sm.has_suggestion and sm.has_suggestion() then
+        --   sm.on_accept_suggestion()
+        --   return
+        -- end
 
-          if luasnip.expand_or_jumpable() then
-            luasnip.expand_or_jump()
-            return
-          end
+        --   if luasnip.expand_or_jumpable() then
+        --     luasnip.expand_or_jump()
+        --     return
+        --   end
 
-          if has_words_before() then
-            cmp.complete()
-            return
-          end
+        --   if has_words_before() then
+        --     cmp.complete()
+        --     return
+        --   end
 
-          fallback()
-        end, { "i", "s" }),
+        --   fallback()
+        -- end, { "i", "s" }),
 
         -- Shift-Tab: select previous item or jump backwards in snippets
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_prev_item()
-          elseif luasnip.jumpable(-1) then
-            luasnip.jump(-1)
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
+        -- ["<S-Tab>"] = cmp.mapping(function(fallback)
+        --   if cmp.visible() then
+        --     cmp.select_prev_item()
+        --   elseif luasnip.jumpable(-1) then
+        --     luasnip.jump(-1)
+        --   else
+        --     fallback()
+        --   end
+        -- end, { "i", "s" }),
 
         -- Enter: confirm selection
         ["<CR>"] = cmp.mapping(function(fallback)

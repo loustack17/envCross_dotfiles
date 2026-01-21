@@ -25,7 +25,27 @@
 # ==========================
 # # The config file consists of simple key-value pairs,
 # # separated by equals signs.
-# font-family = Iosevka
+theme = Dracula
+font-family = SFMono Nerd Font
+font-size = 12
+cursor-style = block
+adjust-cell-height = 0
+adjust-font-baseline = 0
+
+
+# Mouse and scrolling
+# mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
+focus-follows-mouse = true
+scrollback-limit = 50000
+
+
+# Window management
+window-padding-balance = true
+window-save-state = always
+window-colorspace = "display-p3"
+background-opacity = 0.985
+
 # window-padding-x = 2
 #
 # # Spacing around the equals sign does not matter.
@@ -42,7 +62,46 @@
 #
 # # Empty values are used to reset config keys to default.
 # key =
-#
+
+# Keybindings
+# # General
+#keybind = ctrl+comma=open_config
+keybind = ctrl+shift+v=paste_from_clipboard
+keybind = ctrl+shift+c=copy_to_clipboard
+
+# # Window Manager
+keybind = ctrl+shift+Enter=new_window
+keybind = F5=new_split:right
+keybind = F6=new_split:down
+
+# # Layouts
+keybind = ctrl+shift+z=toggle_split_zoom
+keybind = F7=equalize_splits
+
+# # Window Movement
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+l=goto_split:right
+keybind = ctrl+shift+k=goto_split:up
+keybind = ctrl+shift+j=goto_split:down
+
+# # Close
+keybind = ctrl+shift+w=close_surface
+keybind = ctrl+shift+q=close_tab
+
+# # Resize pane
+keybind = ctrl+left=resize_split:left,10
+keybind = ctrl+right=resize_split:right,10
+keybind = ctrl+up=resize_split:up,10
+keybind = ctrl+down=resize_split:down,10
+
+keybind = ctrl+home=equalize_splits
+
+# # Tab Management
+keybind = ctrl+shift+t=new_tab
+keybind = ctrl+page_down=next_tab
+keybind = ctrl+page_up=previous_tab
+
+
 # # Some config options have unique syntaxes for their value,
 # # which is explained in the docs for that config option.
 # # Just for example:

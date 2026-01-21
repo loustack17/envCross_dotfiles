@@ -61,7 +61,10 @@ end:
   - type: volume
     format: '{icon} {percentage}%'
     max_volume: 100
-    truncate: 'middle'
+    #truncate: 'middle'
+    marquee: 
+      enable: true
+      on_hover: 'play'
     icons:
       volume_high: '󰕾'
       volume_medium: '󰖀'
