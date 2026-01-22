@@ -51,3 +51,4 @@ $env.config.keybindings ++= [
 
 source ./catppuccin_mocha.nu
 source ./aliases.nu
+source ./zoxide.nu
