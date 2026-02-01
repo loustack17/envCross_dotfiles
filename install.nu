@@ -47,9 +47,7 @@ def main [
         }
 
         try {
-            ^powershell.exe -NoProfile -ExecutionPolicy Bypass -Command `
-                "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; `
-                 Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression"
+            ^powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression"
             
             if (check_cmd "scoop") {
                 log_info "Scoop installed"
