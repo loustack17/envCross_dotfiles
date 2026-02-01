@@ -110,6 +110,26 @@ return {
   },
   'norcalli/nvim-colorizer.lua',
   { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
-  'mg979/vim-visual-multi',
+  {
+    'mg979/vim-visual-multi',
+    init = function()
+      vim.g.VM_maps = {
+        -- VSCode-style Ctrl+D to add next occurrence
+        ['Find Under'] = '<C-d>',
+        ['Find Subword Under'] = '<C-d>',
+        -- Add cursors vertically (Ctrl+Alt+Up/Down in VSCode)
+        -- Using Ctrl+Shift+Up/Down as alternative since Ctrl+Alt often conflicts
+        ['Add Cursor Down'] = '<C-S-Down>',
+        ['Add Cursor Up'] = '<C-S-Up>',
+        -- Alternative: also bind to Ctrl+Shift+j/k for terminal compatibility
+        ['Select Cursor Down'] = '<C-S-j>',
+        ['Select Cursor Up'] = '<C-S-k>',
+      }
+      -- Enable mouse support for adding cursors
+      vim.g.VM_mouse_mappings = 1
+      -- Show warnings
+      vim.g.VM_show_warnings = 1
+    end,
+  },
   'nanotee/zoxide.vim'
 }

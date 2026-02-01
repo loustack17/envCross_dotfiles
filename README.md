@@ -1,308 +1,128 @@
-# Cross-Platform Dotfiles
+# Dotfiles
 
-Personal dotfiles for Windows and Linux with automatic tool installation.
+## Tools
 
-## Platforms
-
-### Windows
-
-- **Terminal**: WezTerm
-- **Shell**: Nushell
-- **Editor**: Neovim
-- **File Manager**: Yazi
-- **Git UI**: Lazygit
-
-### Linux (CachyOS with Niri)
-
-- **Terminal**: Kitty, Ghostty
-- **Shell**: Fish
-- **Editor**: Neovim, Zed
-- **File Manager**: Yazi, Thunar
-- **Git UI**: Lazygit
-- **Niri Ecosystem**:
-  - Zellij (terminal multiplexer)
-  - Ironbar (status bar)
-  - Mako (notifications)
-  - Walker (launcher - requires Elephant)
-  - HyprLock (screen lock)
-  - swww (wallpaper)
-  - Zathura (PDF viewer)
-  - Polkit-gnome (authentication)
-  - MPV (media player)
-- **Utilities**:
-  - Playerctl (media control)
-  - Brightnessctl (brightness control)
-  - Bluez/Blueman (Bluetooth)
-  - Elephant (Walker dependency - required)
-  - Slurp (screen region select)
-  - Satty (screenshot annotation)
-  - Impala (TUI network manager for iwd)
-  - yt-dlp (optional for mpv streaming)
-
----
-
-## Installation
+### Linux (Niri)
+```
+niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij,
+ironbar, mako, walker, thunar, zathura, mpv, elephant, hyprlock,
+playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
+yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
+```
 
 ### Windows
+```
+wezterm, nushell, neovim, yazi, lazygit
+```
 
+## Install
+
+### Linux
+```bash
+./install.sh                  # full install
+./install.sh --dry-run        # preview
+./install.sh --no-install     # symlink only
+./install.sh --skip-kitty     # skip tool
+./install.sh --only-neovim    # specific tool
+```
+
+### Windows
 ```powershell
-# Install via Nushell
 nu install.nu
-
-# Options
 nu install.nu --dry-run
-nu install.nu --no-backup
-nu install.nu --skip [wezterm yazi]
+nu install.nu --skip [wezterm]
 nu install.nu --only [nvim lazygit]
 ```
 
-**Requirements**:
+## Structure
 
-- Administrator or Developer Mode enabled
-- Automatically installs Scoop if missing
-
-### Linux (CachyOS with Niri)
-
-```bash
-# Full installation
-./install.sh
-
-# Options
-./install.sh --dry-run
-./install.sh --no-backup
-./install.sh --skip-ghostty --skip-waybar
-./install.sh --only-nvim --only-yazi
 ```
-
-**Requirements**:
-
-- AUR helper (paru recommended, yay also supported) for specific packages
-- Priority: CachyOS official repository > AUR
-- Kitty: Always install latest from kitty-git (AUR)
-- Supported: Arch Based distros
-
----
-
-## Directory Structure
-
-```text
 dotfiles/
-├── install.sh              # Linux installer (Niri edition)
-├── install.nu              # Windows installer
+├── install.sh          # Linux
+├── install.nu          # Windows
 │
-# Shared configs
-├── nvim/                   # Neovim
-├── yazi/                   # Yazi
-├── lazygit/                # Lazygit
-├── mpv/                    # MPV
+├── nvim/               # Neovim (shared)
+├── yazi/               # Yazi (shared)
+├── lazygit/            # Lazygit (shared)
+├── mpv/                # MPV
+├── zed/                # Zed
 │
-# Linux-specific (Niri)
-├── niri/                   # Niri ecosystem configs
-│   ├── kitty/              # Kitty terminal
-│   ├── ghostty/            # Ghostty terminal
-│   ├── fish/               # Fish shell
-│   ├── zellij/             # Zellij multiplexer
-│   ├── ironbar/            # Ironbar (contains config.yaml, style.css, scripts/)
-│   ├── mako/               # Mako
-│   ├── walker/             # Walker launcher
-│   ├── elephant/           # Elephant
-│   ├── hyprlock/           # HyprLock
-│   ├── swww/               # swww
-│   ├── thunar/             # Thunar
-│   └── zathura/            # Zathura
-├── zed/                    # Zed editor
+├── niri/
+│   ├── config.kdl      # Niri config
+│   ├── kitty/
+│   ├── ghostty/
+│   ├── fish/
+│   ├── zellij/
+│   ├── ironbar/
+│   ├── mako/
+│   ├── walker/
+│   ├── elephant/
+│   ├── hyprlock/
+│   ├── thunar/
+│   └── zathura/
 │
-# Windows-specific
-├── wezterm/                # WezTerm
-├── .wezterm.lua            # WezTerm main config
-├── nushell/                # Nushell
+├── wezterm/            # Windows
+├── .wezterm.lua
+├── nushell/
 │
-# Other
-├── chrome/                 # Zen Browser themes
-└── backup/                 # Auto-backups
+└── backup/
 ```
 
----
+## Paths
 
-## Configuration Paths
+### Linux
+| Tool | Path |
+|------|------|
+| niri | `~/.config/niri/config.kdl` |
+| kitty | `~/.config/kitty` |
+| ghostty | `~/.config/ghostty` |
+| fish | `~/.config/fish` |
+| neovim | `~/.config/nvim` |
+| zed | `~/.config/zed` |
+| yazi | `~/.config/yazi` |
+| lazygit | `~/.config/lazygit` |
+| zellij | `~/.config/zellij` |
+| ironbar | `~/.config/ironbar` |
+| mako | `~/.config/mako` |
+| walker | `~/.config/walker` |
+| elephant | `~/.config/elephant` |
+| hyprlock | `~/.config/hypr` |
+| thunar | `~/.config/Thunar` |
+| zathura | `~/.config/zathura` |
+| mpv | `~/.config/mpv` |
 
 ### Windows
+| Tool | Path |
+|------|------|
+| wezterm | `%USERPROFILE%\.config\wezterm` |
+| nushell | `%APPDATA%\nushell` |
+| neovim | `%LOCALAPPDATA%\nvim` |
+| yazi | `%APPDATA%\yazi\config` |
+| lazygit | `%LOCALAPPDATA%\lazygit` |
 
-| Tool    | Config Path                     |
-| ------- | ------------------------------- |
-| WezTerm | `%USERPROFILE%\.config\wezterm` |
-| Nushell | `%APPDATA%\nushell`             |
-| Neovim  | `%LOCALAPPDATA%\nvim`           |
-| Yazi    | `%APPDATA%\yazi`                |
-| Lazygit | `%LOCALAPPDATA%\lazygit`        |
+## Post-Install
 
-### Linux (Niri)
-
-| Tool     | Config Path                    |
-| -------- | ------------------------------ |
-| Kitty    | `~/.config/kitty`              |
-| Ghostty  | `~/.config/ghostty`            |
-| Fish     | `~/.config/fish`               |
-| Zellij   | `~/.config/zellij`             |
-| Neovim   | `~/.config/nvim`               |
-| Zed      | `~/.config/zed`                |
-| Yazi     | `~/.config/yazi`               |
-| Lazygit  | `~/.config/lazygit`            |
-| Ironbar  | `~/.config/ironbar`            |
-| Mako     | `~/.config/mako`               |
-| Walker   | `~/.config/walker`             |
-| Elephant | `~/.config/elephant`           |
-| HyprLock | `~/.config/niri/hyprlock.conf` |
-| swww     | `~/.config/swww`               |
-| Thunar   | `~/.config/Thunar`             |
-| Zathura  | `~/.config/zathura`            |
-| MPV      | `~/.config/mpv`                |
-
----
-
-## Usage Examples
-
-### Basic
-
+### Linux
 ```bash
-# Windows
-nu install.nu
-
-# Linux
-./install.sh
-```
-
-### Dry Run
-
-```bash
-# Windows
-nu install.nu --dry-run
-
-# Linux
-./install.sh --dry-run
-```
-
-### Selective Installation
-
-```bash
-# Skip tools
-./install.sh --skip-ghostty --skip-ironbar
-nu install.nu --skip [wezterm yazi]
-
-# Install specific tools only
-./install.sh --only-nvim --only-yazi
-nu install.nu --only [nvim lazygit]
-```
-
-### Config Only (No Package Installation)
-
-```bash
-./install.sh --no-install
-nu install.nu --no-install
-```
-
----
-
-## Post-Installation
-
-### Linux (Niri)
-
-```bash
-# Set Fish as default shell
-chsh -s $(which fish)
-
-# Open Neovim to install plugins
-nvim
-:Lazy
-
-# Add Polkit to Niri config (~/.config/niri/config.kdl)
-spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-
-# Initialize swww
-swww-daemon
-swww img ~/Pictures/wallpaper.jpg
+chsh -s $(which fish)         # set fish as default
+nvim                          # install plugins
+awww-daemon                   # start wallpaper daemon
 ```
 
 ### Windows
-
-```powershell
-# Restart terminal and launch WezTerm
-wezterm.exe
-
-# Open Neovim to install plugins
-nvim
-:Lazy
 ```
-
----
-
-## Troubleshooting
-
-### Linux: AUR Helper Required
-
-```bash
-# Install paru (recommended)
-sudo pacman -S --needed git base-devel
-git clone https://aur.archlinux.org/paru.git
-cd paru && makepkg -si
-
-# Or install yay (alternative)
-git clone https://aur.archlinux.org/yay.git
-cd yay && makepkg -si
+wezterm.exe                   # launch terminal
+nvim                          # install plugins
 ```
-
-### Windows: Symlink Failed
-
-Enable Developer Mode:
-
-1. Open Settings
-2. Privacy & Security → For developers
-3. Enable Developer Mode
-
-Or run terminal as Administrator.
-
-### Linux: Polkit Not Working
-
-Check binary exists:
-
-```bash
-ls /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
-```
-
-Add to Niri config (`~/.config/niri/config.kdl`):
-
-```conf
-spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-```
-
----
-
-## Features
-
-- Automatic package installation
-- Automatic backup before changes
-- Symlink-based config management
-- Selective tool installation
-- Dry-run mode
-- Cross-platform (Windows/Linux)
-- AUR support (Arch Linux)
-- Niri window manager support
-
----
 
 ## References
 
-- **Ghostty**: <https://ghostty.org>
-- **Zed**: <https://zed.dev>
-- **Walker**: <https://github.com/abenz1267/walker>
-- **Niri**: <https://github.com/YaLTeR/niri>
-- **CachyOS**: <https://cachyos.org>
-- **Ironbar**: <https://github.com/JakeStanger/ironbar>
-- **Impala**: <https://github.com/aashish-thapa/impala>
-- **Zellij**: <https://zellij.dev>
-
----
-
-## License
-
-MIT
+- [Niri](https://github.com/YaLTeR/niri)
+- [Ghostty](https://ghostty.org)
+- [Zed](https://zed.dev)
+- [Ironbar](https://github.com/JakeStanger/ironbar)
+- [Walker](https://github.com/abenz1267/walker)
+- [awww](https://codeberg.org/LGFae/awww)
+- [Zellij](https://zellij.dev)
+- [Impala](https://github.com/pythops/impala)
+- [CachyOS](https://cachyos.org)
