@@ -3,6 +3,7 @@ return {
   opts = {
     symbol_map = {
       Copilot = "",
+      Codeium = "",
     },
   }
 }

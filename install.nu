@@ -230,10 +230,11 @@ def main [
     }
 
     if (should_install "yazi" $skip $only) {
+        # Windows yazi expects config in %APPDATA%\yazi\config\
         $targets ++= [{
             name: "Yazi"
             source: ($repo_root | path join "yazi")
-            dest: ($appdata | path join "yazi")
+            dest: ($appdata | path join "yazi" | path join "config")
             is_file: false
         }]
     }

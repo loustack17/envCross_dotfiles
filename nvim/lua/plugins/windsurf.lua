@@ -7,7 +7,7 @@ return {
   config = function()
     require("codeium").setup({
       virtual_text = {
-        enabled = true,
+        enabled = false,
 
         -- These are the defaults
 

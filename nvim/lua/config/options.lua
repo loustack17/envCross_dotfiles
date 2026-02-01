@@ -35,10 +35,20 @@ vim.keymap.set("n", "rj", "<C-w>+")
 vim.keymap.set("n", "rk", "<C-w>-")
 vim.keymap.set("n", "rl", "<C-w>>")
 
--- Mode: Normal move one line
-vim.keymap.set("n", 'mj', ':m .+1<CR>==', { desc = 'Move line down' })
-vim.keymap.set("n", 'mk', ':m .-2<CR>==', { desc = 'Move line up' })
+-- Mode: Normal move one line (VSCode-style: Alt+Up/Down)
+vim.keymap.set("n", '<A-Down>', ':m .+1<CR>==', { desc = 'Move line down' })
+vim.keymap.set("n", '<A-Up>', ':m .-2<CR>==', { desc = 'Move line up' })
+vim.keymap.set("n", '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
+vim.keymap.set("n", '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
 
--- Mode: Visual move block
-vim.keymap.set("v", 'mj', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
-vim.keymap.set("v", 'mk', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+-- Mode: Visual move block (VSCode-style: Alt+Up/Down)
+vim.keymap.set("v", '<A-Down>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set("v", '<A-Up>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+vim.keymap.set("v", '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
+vim.keymap.set("v", '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+
+-- Mode: Insert move line (VSCode-style)
+vim.keymap.set("i", '<A-Down>', '<Esc>:m .+1<CR>==gi', { desc = 'Move line down' })
+vim.keymap.set("i", '<A-Up>', '<Esc>:m .-2<CR>==gi', { desc = 'Move line up' })
+vim.keymap.set("i", '<A-j>', '<Esc>:m .+1<CR>==gi', { desc = 'Move line down' })
+vim.keymap.set("i", '<A-k>', '<Esc>:m .-2<CR>==gi', { desc = 'Move line up' })
