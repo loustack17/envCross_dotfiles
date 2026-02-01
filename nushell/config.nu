@@ -49,6 +49,19 @@ $env.config.keybindings ++= [
   }
 ]
 
+
+# Yazi wrapper
+def --env y [...args] {
+	let tmp = (mktemp -t "yazi-cwd.XXXXXX")
+	^yazi ...$args --cwd-file $tmp
+	let cwd = (open $tmp)
+	if $cwd != $env.PWD and ($cwd | path exists) {
+		cd $cwd
+	}
+	rm -fp $tmp
+}
+
+source ./claude-switch.nu
 source ./catppuccin_mocha.nu
 source ./aliases.nu
 source ./zoxide.nu
