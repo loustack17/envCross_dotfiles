@@ -130,6 +130,8 @@ alias hx="helix"
 alias nv="nvim"
 alias du="dust"
 alias df="dysk"
+alias cco="claude-switch claude"
+alias ccg="claude-switch glm"
 
 starship init fish | source
 zoxide init fish | source
