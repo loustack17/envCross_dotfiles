@@ -132,6 +132,11 @@ alias du="dust"
 alias df="dysk"
 alias cco="claude-switch claude"
 alias ccg="claude-switch glm"
+alias ven="install-vencord"
+
 
 starship init fish | source
 zoxide init fish | source
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc' ]; . '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc'; end

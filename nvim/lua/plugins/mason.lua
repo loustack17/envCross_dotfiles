@@ -1,7 +1,8 @@
 local LSPS = {
   "lua_ls",
   "rust_analyzer",
-  "ts_ls",    -- JavaScript/TypeScript
+  "pyright",
+  "ts_ls",     -- JavaScript/TypeScript
   "vtsls",
   "csharp_ls", -- C# primary LSP
   "omnisharp",
@@ -11,7 +12,9 @@ local LSPS = {
   "ty",
   "html",
   "emmet_language_server",
-  "cssls"
+  "cssls",
+  "terraformls",
+  "tflint"
 }
 
 
@@ -38,5 +41,9 @@ return {
       { "mason-org/mason.nvim", opts = {} },
       "neovim/nvim-lspconfig",
     },
+    config = function(_, opts)
+      require("mason-lspconfig").setup(opts)
+      vim.lsp.enable(LSPS)
+    end,
   },
 }

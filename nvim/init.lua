@@ -5,7 +5,7 @@ require("config.options")
 require("config.lazy")
 -- require("config.avante.config")
 require("config.codecompanion.mapping")
-vim.lsp.enable('pyright')
+
 -- For init.lua
 -- detect OS
 local is_windows = vim.loop.os_uname().sysname:find("Windows") ~= nil

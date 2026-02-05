@@ -5,6 +5,9 @@ vim.opt.softtabstop = 2  -- 在 insert mode 按 Tab 的寬度
 vim.opt.expandtab = true -- 用空白取代 Tab 字元
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
+vim.o.showtabline = 2
+vim.o.termguicolors = true
+
 -- Line numbers
 vim.opt.number = true
 vim.opt.relativenumber = false
@@ -19,6 +22,17 @@ vim.opt.fillchars = vim.opt.fillchars + {
   foldclose = ">",
   foldsep = " ",
   fold = " ",
+}
+
+-- vimtex
+vim.g.vimtex_compiler_method = "latexmk"
+vim.g.vimtex_compiler_latexmk = {
+  executable = "latexmk",
+  options = {
+    "-xelatex",
+    "-synctex=1",
+    "-interaction=nonstopmode",
+  },
 }
 
 -- Folding
