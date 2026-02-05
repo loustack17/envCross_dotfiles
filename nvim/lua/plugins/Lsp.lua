@@ -10,20 +10,11 @@ return {
       { 'hrsh7th/cmp-nvim-lsp' }
     },
     config = function()
-      local lspconfig_defaults = require('lspconfig').util.default_config
-      -- 1) merge cmp capabilities
-      lspconfig_defaults.capabilities = vim.tbl_deep_extend(
-        'force',
-        lspconfig_defaults.capabilities,
-        require('cmp_nvim_lsp').default_capabilities()
-      )
-
-      -- -- 2) add foldingRange capability (ufo + LSP folding needs this)
-      -- lspconfig_defaults.capabilities.textDocument = lspconfig_defaults.capabilities.textDocument or {}
-      -- lspconfig_defaults.capabilities.textDocument.foldingRange = {
-      --   dynamicRegistration = false,
-      --   lineFoldingOnly = true,
-      -- }
+      -- Set default capabilities for ALL LSP servers
+      -- (replaces the old lspconfig.util.default_config.capabilities pattern)
+      vim.lsp.config('*', {
+        capabilities = require('cmp_nvim_lsp').default_capabilities()
+      })
     end
     -----------
   },
@@ -41,9 +32,6 @@ return {
         enable_fix_all = true,
         enable_organize_imports = true,
       })
-
-      local lspconfig = require("lspconfig")
-      lspconfig.csharp_ls.setup {}
     end,
   },
   -- 4. NEW: Rizin/Rada2 LSP Client

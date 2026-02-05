@@ -131,5 +131,6 @@ return {
       vim.g.VM_show_warnings = 1
     end,
   },
-  'nanotee/zoxide.vim'
+  'nanotee/zoxide.vim',
+  'lervag/vimtex',
 }
