@@ -1,11 +1,7 @@
 local LSPS = {
   "lua_ls",
   "rust_analyzer",
-  "pyright",
-  "ts_ls",     -- JavaScript/TypeScript
-  "vtsls",
-  "csharp_ls", -- C# primary LSP
-  "omnisharp",
+  "vtsls",     -- JavaScript/TypeScript
   "tailwindcss",
   "gopls",
   "ruff",

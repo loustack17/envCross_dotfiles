@@ -134,11 +134,4 @@ return {
 		end)
 	  end
 	},
-	{
-		{
-			'MoaidHathot/dotnet.nvim',
-				cmd = "DotnetUI",
-				opts = {},
-		}
-	}
 }

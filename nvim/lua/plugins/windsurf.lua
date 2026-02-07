@@ -6,6 +6,8 @@ return {
   },
   config = function()
     require("codeium").setup({
+      -- virtual_text is disabled, so Tab keybinding below won't activate
+      -- (completions are served through nvim-cmp source instead)
       virtual_text = {
         enabled = false,
 

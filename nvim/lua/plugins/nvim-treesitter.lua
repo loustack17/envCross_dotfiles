@@ -19,6 +19,7 @@ return {
       "json",
       "jsonc",
       "markdown",
+      "markdown_inline",
       "c_sharp",
       "go",
       "powershell",
@@ -48,6 +49,9 @@ return {
     },
   },
   config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
-    end,
+    require("nvim-treesitter.configs").setup(opts)
+    -- Make Octo buffers use the markdown parser
+    vim.treesitter.language.register("markdown", "octo")
+    vim.treesitter.language.register("markdown", "octo_panel")
+  end,
 }
