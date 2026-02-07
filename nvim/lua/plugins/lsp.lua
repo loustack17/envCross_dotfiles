@@ -18,27 +18,11 @@ return {
     end
     -----------
   },
-  -- Roslyn.nvim (C# Code Actions)
-  {
-    "seblyng/roslyn.nvim",
-    dependencies = { "neovim/nvim-lspconfig" },
-    ft = "cs", -- Only load for C# files
-
-    config = function()
-      require("roslyn").setup({
-        server_path = vim.fn.expand("~/.local/share/nvim/mason/bin/roslyn_nvim"),
-
-        enable_code_actions = true,
-        enable_fix_all = true,
-        enable_organize_imports = true,
-      })
-    end,
-  },
-  -- 4. NEW: Rizin/Rada2 LSP Client
+  -- Razor Language Server (ASP.NET Razor/Blazor)
   {
     "tris203/rzls.nvim",
     dependencies = { "neovim/nvim-lspconfig" },
-    ft = "rizin", -- Only load for Rizin filetype
+    ft = "razor",
     config = function()
       require("rzls").setup()
     end,

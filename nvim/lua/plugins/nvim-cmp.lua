@@ -9,7 +9,6 @@ return {
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-cmdline",
     "saadparwaiz1/cmp_luasnip",
-    "zbirenbaum/copilot-cmp",
   },
 
   opts = function()
@@ -37,7 +36,6 @@ return {
       },
 
       sources = cmp.config.sources({
-        { name = "copilot" },
         { name = "codeium" },
         { name = "nvim_lsp" },
         { name = "luasnip" },

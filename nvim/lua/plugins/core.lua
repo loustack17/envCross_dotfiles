@@ -1,9 +1,4 @@
 return {
-  -- Core Dependencies & Utility
-  "nvim-lua/plenary.nvim",
-  "onsails/lspkind.nvim", -- Adds icons to LSP suggestions
-  "nvimtools/none-ls.nvim",
-  "tpope/vim-dadbod",
   -- UI & Editor Enhancements
   {
     "catppuccin/nvim",
@@ -18,11 +13,6 @@ return {
       vim.cmd.colorscheme "catppuccin-mocha"
     end,
   }, -- Color scheme
-  {
-    "vhyrro/luarocks.nvim",
-    priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
-    config = true,
-  },
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -67,9 +57,6 @@ return {
       suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
     }
   },
-  {
-    "MunifTanjim/nui.nvim",
-  },
   -- Commenting
   {
     'numToStr/Comment.nvim',
@@ -99,7 +86,10 @@ return {
       { 'rafamadriz/friendly-snippets' },
     },
     -- install jsregexp (optional!).
-    build = "make install_jsregexp"
+    build = "make install_jsregexp",
+    config = function()
+      require("luasnip.loaders.from_vscode").lazy_load()
+    end,
   },
   {
     'windwp/nvim-autopairs',
@@ -108,8 +98,6 @@ return {
     -- use opts = {} for passing setup options
     -- this is equivalent to setup({}) function
   },
-  'norcalli/nvim-colorizer.lua',
-  { 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
   {
     'mg979/vim-visual-multi',
     init = function()
@@ -132,5 +120,4 @@ return {
     end,
   },
   'nanotee/zoxide.vim',
-  'lervag/vimtex',
 }

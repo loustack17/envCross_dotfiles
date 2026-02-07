@@ -2,8 +2,6 @@ return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
-    local cc_component = require("config.codecompanion.codecompanion_lualine")
-
     require("lualine").setup({
       options = {
         theme = "catppuccin",
@@ -14,13 +12,10 @@ return {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { "filename" },
-
-        -- CodeCompanion status on right corner
         lualine_x = {
           "encoding",
           "fileformat",
           "filetype",
-          { cc_component },
         },
         lualine_y = { "progress" },
         lualine_z = { "location" },

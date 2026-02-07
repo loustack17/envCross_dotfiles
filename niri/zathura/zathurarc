@@ -1,4 +1,4 @@
-#set selection-clipboard         clipboard
+set selection-clipboard         clipboard
 set notification-error-bg       "#F38BA8"
 set notification-error-fg       "#A6ADC8"
 set notification-warning-bg     "#F9E2AF"
