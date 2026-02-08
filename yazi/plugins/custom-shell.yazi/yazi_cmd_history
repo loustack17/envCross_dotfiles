@@ -1,0 +1,2 @@
+fish -c 'cco;exit'
+fish -c 'ccg;exit'

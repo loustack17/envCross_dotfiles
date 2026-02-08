@@ -3,5 +3,10 @@ use = "Lil-Dank/lazygit"
 rev = "0e56060"
 hash = "ab2e66065a94cca4886b303518e44bd8"
 
+[[plugin.deps]]
+use = "AnirudhG07/custom-shell"
+rev = "3449686"
+hash = "8009873342496fdb042bba09e239eef3"
+
 [flavor]
 deps = []
