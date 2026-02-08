@@ -76,8 +76,12 @@ TOOLS=(
 )
 
 # Format: "name|src|dst"
+#   dst: relative to CONFIG_HOME, or absolute if starts with /
 FILE_SYMLINKS=(
     "niri-config|niri/config.kdl|niri/config.kdl"
+    "claude-code-config|AI-Supporter/Claude Code/CLAUDE.md|$HOME/.claude/CLAUDE.md"
+    "claude-code-skills|AI-Supporter/Claude Code/skills|$HOME/.claude/skills"
+    "codex-skills|AI-Supporter/Codex/skills|$HOME/.codex/skills"
 )
 
 
@@ -373,7 +377,12 @@ step_backup_configs() {
     for entry in "${FILE_SYMLINKS[@]}"; do
         IFS='|' read -r name src dst <<< "$entry"
 
-        local full_dst="$CONFIG_HOME/$dst"
+        local full_dst
+        if [[ "$dst" == /* ]]; then
+            full_dst="$dst"
+        else
+            full_dst="$CONFIG_HOME/$dst"
+        fi
         backup_path "$full_dst" "$name"
     done
 }
@@ -406,8 +415,12 @@ step_symlink_configs() {
         IFS='|' read -r name src dst <<< "$entry"
 
         local full_src="$REPO_ROOT/$src"
-        local full_dst="$CONFIG_HOME/$dst"
-
+        local full_dst
+        if [[ "$dst" == /* ]]; then
+            full_dst="$dst"
+        else
+            full_dst="$CONFIG_HOME/$dst"
+        fi
 
         mkdir -p "$(dirname "$full_dst")"
 
