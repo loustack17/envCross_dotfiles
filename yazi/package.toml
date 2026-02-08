@@ -1,7 +1,7 @@
 [[plugin.deps]]
 use = "Lil-Dank/lazygit"
-rev = "8f37dc5"
-hash = "57afbeb06b937f24f0e37cc11f5b5f9b"
+rev = "0e56060"
+hash = "ab2e66065a94cca4886b303518e44bd8"
 
 [flavor]
 deps = []
