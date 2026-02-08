@@ -83,3 +83,11 @@ require("whoosh"):setup {
   history_fzf_path_truncate_long_names_enabled = false, -- Enable/disable long folder name truncation for history
   history_fzf_path_max_folder_name_length = 30,         -- Maximum length for folder names in history (default 30)
 }
+
+local ok_custom_shell, custom_shell = pcall(require, "custom-shell")
+if ok_custom_shell then
+  custom_shell:setup({
+    history_path = "default",
+    save_history = true,
+  })
+end
