@@ -5,3 +5,4 @@ zed/settings.json
 
 # Codex system-managed skills (auto-updated by codex)
 AI-Supporter/Codex/skills/.system/
+/lazygit/state.yml
