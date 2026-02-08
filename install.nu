@@ -1,15 +1,16 @@
 # Windows dotfiles installer via Scoop
-# Tools: WezTerm, Nushell, Neovim, Yazi, Lazygit
+# Tools: WezTerm, Windows Terminal, Nushell, Neovim, Yazi, Lazygit
 
 def main [
     --dry-run (-n)
     --no-backup
     --no-install
     --force-install
-    --skip: list<string> = []
-    --only: list<string> = []
+    --skip: any = []
+    --only: any = []
 ] {
     let repo_root = (pwd)
+    let windows_root = ($repo_root | path join "Windows")
     let backup_root = ($repo_root | path join $"backup/(date now | format date '%Y%m%d-%H%M%S')")
     
     let home = $env.USERPROFILE
@@ -20,6 +21,31 @@ def main [
     def log_info [msg: string] { print $"(ansi green)[INFO](ansi reset) ($msg)" }
     def log_warn [msg: string] { print $"(ansi yellow)[WARN](ansi reset) ($msg)" }
     def log_error [msg: string] { print $"(ansi red)[ERROR](ansi reset) ($msg)" }
+
+    # Normalize list args
+    def normalize_list [val: any]: nothing -> list<string> {
+        if ($val == null) { return [] }
+
+        let t = ($val | describe)
+
+        if ($t | str starts-with "list") { return $val }
+
+        if $t == "string" {
+            let s = ($val | str trim)
+            if ($s | str length) == 0 { return [] }
+
+            if ($s | str contains ",") {
+                return ($s | split row "," | each { $in | str trim } | where { $in | is-not-empty })
+            }
+
+            return [$s]
+        }
+
+        return [($val | into string)]
+    }
+
+    let skip_list = (normalize_list $skip)
+    let only_list = (normalize_list $only)
 
     # Filter
     def should_install [tool: string, skip_list: list<string>, only_list: list<string>]: nothing -> bool {
@@ -164,6 +190,7 @@ def main [
 
         let tools = [
             {name: "WezTerm", pkg: "wezterm", cmd: "wezterm"}
+            {name: "Windows-Terminal", pkg: "windows-terminal", cmd: "wt"}
             {name: "Nushell", pkg: "nu", cmd: "nu"}
             {name: "Neovim", pkg: "neovim", cmd: "nvim"}
             {name: "Yazi", pkg: "yazi", cmd: "yazi"}
@@ -171,7 +198,7 @@ def main [
         ]
 
         for tool in $tools {
-            if (should_install ($tool.name | str downcase) $skip $only) {
+            if (should_install ($tool.name | str downcase) $skip_list $only_list) {
                 install_tool $tool.name $tool.pkg $tool.cmd $dry_run $force_install
             }
         }
@@ -187,8 +214,15 @@ def main [
 
     mut targets = []
 
-    if (should_install "wezterm" $skip $only) {
-        let wezterm_dir = ($repo_root | path join "wezterm")
+    if (should_install "wezterm" $skip_list $only_list) {
+        mut wezterm_dir = ($windows_root | path join "wezterm")
+        if not ($wezterm_dir | path exists) {
+            let fallback = ($repo_root | path join "wezterm")
+            if ($fallback | path exists) {
+                log_warn "WezTerm dir missing under Windows/; using repo root fallback"
+                $wezterm_dir = $fallback
+            }
+        }
         if ($wezterm_dir | path exists) {
             $targets ++= [{
                 name: "WezTerm"
@@ -198,8 +232,17 @@ def main [
             }]
         }
         
-        let wezterm_lua = ($repo_root | path join ".wezterm.lua")
-        if ($wezterm_lua | path exists) {
+        let wezterm_lua_win = ($windows_root | path join ".wezterm.lua")
+        let wezterm_lua_root = ($repo_root | path join ".wezterm.lua")
+        let wezterm_lua = if ($wezterm_lua_win | path exists) {
+            $wezterm_lua_win
+        } else if ($wezterm_lua_root | path exists) {
+            log_warn "WezTerm .wezterm.lua missing under Windows/; using repo root fallback"
+            $wezterm_lua_root
+        } else {
+            ""
+        }
+        if (($wezterm_lua | str length) > 0) and ($wezterm_lua | path exists) {
             $targets ++= [{
                 name: ".wezterm.lua"
                 source: $wezterm_lua
@@ -209,16 +252,93 @@ def main [
         }
     }
 
-    if (should_install "nushell" $skip $only) {
+    if (should_install "windows-terminal" $skip_list $only_list) {
+        mut wt_src = ($windows_root | path join "windows terminal" | path join "settings.json")
+        if not ($wt_src | path exists) {
+            let fallback = ($repo_root | path join "windows terminal" | path join "settings.json")
+            if ($fallback | path exists) {
+                log_warn "Windows Terminal settings missing under Windows/; using repo root fallback"
+                $wt_src = $fallback
+            }
+        }
+        let scoop_root = ($env.SCOOP? | default "")
+        if ($scoop_root | str length) == 0 {
+            log_warn "SCOOP env not set; skip Windows Terminal linking"
+        } else {
+            let wt_dest = ($scoop_root | path join "apps" | path join "windows-terminal" | path join "current" | path join "settings" | path join "settings.json")
+            $targets ++= [{
+                name: "Windows Terminal"
+                source: $wt_src
+                dest: $wt_dest
+                is_file: true
+            }]
+        }
+    }
+
+    mut pwsh_profile = ($windows_root | path join "powershell" | path join "Microsoft.PowerShell_profile.ps1")
+    if not ($pwsh_profile | path exists) {
+        let fallback = ($repo_root | path join "powershell" | path join "Microsoft.PowerShell_profile.ps1")
+        if ($fallback | path exists) {
+            log_warn "PowerShell profile missing under Windows/; using repo root fallback"
+            $pwsh_profile = $fallback
+        }
+    }
+    if ($pwsh_profile | path exists) {
+        $targets ++= [{
+            name: "PowerShell profile"
+            source: $pwsh_profile
+            dest: ($home | path join "Documents" | path join "PowerShell" | path join "Microsoft.PowerShell_profile.ps1")
+            is_file: true
+        }]
+    }
+
+    # AI-Supporter (Claude Code / Codex)
+    let ai_root = ($repo_root | path join "AI-Supporter")
+    let claude_md = ($ai_root | path join "Claude Code" | path join "CLAUDE.md")
+    let claude_skills = ($ai_root | path join "Claude Code" | path join "skills")
+    let codex_skills = ($ai_root | path join "Codex" | path join "skills")
+
+    if ($claude_md | path exists) {
+        $targets ++= [{
+            name: "Claude Code CLAUDE.md"
+            source: $claude_md
+            dest: ($home | path join ".claude" | path join "CLAUDE.md")
+            is_file: true
+        }]
+    }
+
+    if ($claude_skills | path exists) {
+        $targets ++= [{
+            name: "Claude Code skills"
+            source: $claude_skills
+            dest: ($home | path join ".claude" | path join "skills")
+            is_file: false
+        }]
+    }
+
+    if ($codex_skills | path exists) {
+        $targets ++= [{
+            name: "Codex skills"
+            source: $codex_skills
+            dest: ($home | path join ".codex" | path join "skills")
+            is_file: false
+        }]
+    }
+    if (should_install "nushell" $skip_list $only_list) {
         $targets ++= [{
             name: "Nushell"
-            source: ($repo_root | path join "nushell")
+            source: (if (($windows_root | path join "nushell") | path exists) {
+                $windows_root | path join "nushell"
+            } else {
+                log_warn "Nushell dir missing under Windows/; using repo root fallback"
+                $repo_root | path join "nushell"
+            })
             dest: ($appdata | path join "nushell")
             is_file: false
         }]
     }
 
-    if (should_install "neovim" $skip $only) {
+    if (should_install "neovim" $skip_list $only_list) {
         $targets ++= [{
             name: "Neovim"
             source: ($repo_root | path join "nvim")
@@ -227,7 +347,7 @@ def main [
         }]
     }
 
-    if (should_install "yazi" $skip $only) {
+    if (should_install "yazi" $skip_list $only_list) {
         # Windows yazi expects config in %APPDATA%\yazi\config\
         $targets ++= [{
             name: "Yazi"
@@ -237,7 +357,7 @@ def main [
         }]
     }
 
-    if (should_install "lazygit" $skip $only) {
+    if (should_install "lazygit" $skip_list $only_list) {
         $targets ++= [{
             name: "Lazygit"
             source: ($repo_root | path join "lazygit")
@@ -270,3 +390,4 @@ def main [
         }
     }
 }
+

@@ -12,7 +12,7 @@ yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
 
 ### Windows
 ```
-wezterm, nushell, neovim, yazi, lazygit
+windows terminal, wezterm, nushell, neovim, yazi, lazygit
 ```
 
 ## Install
@@ -61,9 +61,13 @@ dotfiles/
 │   ├── thunar/
 │   └── zathura/
 │
-├── wezterm/            # Windows
-├── .wezterm.lua
-├── nushell/
+├── Windows/
+│   ├── wezterm/            # WezTerm
+│   ├── windows terminal/   # Windows Terminal
+│   ├── nushell/            # Nushell
+│   ├── powershell/         # PowerShell (pwsh)
+│   ├── glazeWM/            # GlazeWM
+│   └── .wezterm.lua
 │
 └── backup/
 ```
@@ -73,6 +77,7 @@ dotfiles/
 ### Linux
 | Tool | Path |
 |------|------|
+| windows terminal | `%SCOOP%\apps\windows-terminal\current\settings\settings.json` |
 | niri | `~/.config/niri/config.kdl` |
 | kitty | `~/.config/kitty` |
 | ghostty | `~/.config/ghostty` |
@@ -94,6 +99,8 @@ dotfiles/
 ### Windows
 | Tool | Path |
 |------|------|
+| windows terminal | `%SCOOP%\apps\windows-terminal\current\settings\settings.json` |
+| powershell | `%USERPROFILE%\Documents\PowerShell\Microsoft.PowerShell_profile.ps1` |
 | wezterm | `%USERPROFILE%\.config\wezterm` |
 | nushell | `%APPDATA%\nushell` |
 | neovim | `%LOCALAPPDATA%\nvim` |
@@ -126,3 +133,7 @@ nvim                          # install plugins
 - [Zellij](https://zellij.dev)
 - [Impala](https://github.com/pythops/impala)
 - [CachyOS](https://cachyos.org)
+
+
+
+
