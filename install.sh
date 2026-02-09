@@ -79,6 +79,11 @@ TOOLS=(
 #   dst: relative to CONFIG_HOME, or absolute if starts with /
 FILE_SYMLINKS=(
     "niri-config|niri/config.kdl|niri/config.kdl"
+    "fontconfig|niri/fontconfig/fonts.conf|fontconfig/fonts.conf"
+    "gtk-3-settings|niri/gtk-3.0/settings.ini|gtk-3.0/settings.ini"
+    "gtk-4-settings|niri/gtk-4.0/settings.ini|gtk-4.0/settings.ini"
+    "qt5ct-config|niri/qt5ct/qt5ct.conf|qt5ct/qt5ct.conf"
+    "qt5ct-env|niri/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
     "claude-code-config|AI-Supporter/Claude Code/CLAUDE.md|$HOME/.claude/CLAUDE.md"
     "claude-code-skills|AI-Supporter/Claude Code/skills|$HOME/.claude/skills"
     "codex-skills|AI-Supporter/Codex/skills|$HOME/.codex/skills"
