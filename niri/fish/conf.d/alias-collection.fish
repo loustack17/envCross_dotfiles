@@ -1,0 +1,8 @@
+alias hx="helix"
+alias nv="nvim"
+alias du="dust"
+alias df="dysk"
+alias cco="claude-switch claude"
+alias ccg="claude-switch glm"
+alias ven="install-vencord"
+alias lg="lazygit"

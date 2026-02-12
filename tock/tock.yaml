@@ -1,0 +1,15 @@
+backend: timewarrior
+file:
+  path: /home/lou/Documents/Cases/time-log/time_track.log
+timewarrior:
+  data_path: /home/lou/Documents/Cases/time-log
+time_format: "24"
+theme:
+    faint: '#404040'
+    highlight: '#FFFF00'
+    name: custom
+    primary: '#FF00FF'
+    secondary: '#00FFFF'
+    sub_text: '#B0B0B0'
+    text: '#FFFFFF'
+weekly_target: "40h"
