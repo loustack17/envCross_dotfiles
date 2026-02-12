@@ -296,6 +296,7 @@ def main [
     let ai_root = ($repo_root | path join "AI-Supporter")
     let claude_md = ($ai_root | path join "Claude Code" | path join "CLAUDE.md")
     let claude_skills = ($ai_root | path join "Claude Code" | path join "skills")
+    let codex_agents = ($ai_root | path join "Codex" | path join "AGENTS.md")
     let codex_skills = ($ai_root | path join "Codex" | path join "skills")
 
     if ($claude_md | path exists) {
@@ -322,6 +323,15 @@ def main [
             source: $codex_skills
             dest: ($home | path join ".codex" | path join "skills")
             is_file: false
+        }]
+    }
+
+    if ($codex_agents | path exists) {
+        $targets ++= [{
+            name: "Codex AGENTS.md"
+            source: $codex_agents
+            dest: ($home | path join ".codex" | path join "AGENTS.md")
+            is_file: true
         }]
     }
     if (should_install "nushell" $skip_list $only_list) {
@@ -390,4 +400,3 @@ def main [
         }
     }
 }
-
