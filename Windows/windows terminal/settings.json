@@ -33,7 +33,7 @@
     "copyFormatting": "none",
     "copyOnSelect": false,
     "defaultProfile": "{5920812c-9a20-4791-9deb-b185a6e87947}",
-    "firstWindowPreference": "persistedWindowLayout",
+    "firstWindowPreference": "defaultProfile",
     "keybindings": 
     [
         {
@@ -80,7 +80,7 @@
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "hidden": false,
                 "name": "Windows PowerShell",
-                "startingDirectory": null
+                "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "%SystemRoot%\\System32\\cmd.exe",
@@ -97,13 +97,12 @@
                 "startingDirectory": null
             },
             {
-                "colorScheme": "Catppuccin Mocha",
                 "commandline": "D:\\ProgramData\\Scoop\\apps\\git\\current\\bin\\bash.exe",
                 "guid": "{991ee197-2714-4dfc-8b2d-e88737999366}",
                 "hidden": false,
                 "icon": "D:\\ProgramData\\Scoop\\apps\\git\\current\\mingw64\\share\\git\\git-for-windows.ico",
                 "name": "Git Bash",
-                "startingDirectory": null
+                "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "D:\\ProgramData\\Scoop\\apps\\nu\\current\\nu.exe",
@@ -121,19 +120,7 @@
                 "hidden": false,
                 "icon": "D:\\Program Files\\PowerShell\\7\\assets\\Powershell_black.ico",
                 "name": "PowerShell",
-                "startingDirectory": null
-            },
-            {
-                "guid": "{1c1b3643-3ece-58d2-88c0-27bca293628f}",
-                "hidden": false,
-                "name": "Developer Command Prompt for VS 2022",
-                "source": "Windows.Terminal.VisualStudio"
-            },
-            {
-                "guid": "{4493e632-6fe2-5b38-8367-0c8952d98aab}",
-                "hidden": false,
-                "name": "Developer PowerShell for VS 2022",
-                "source": "Windows.Terminal.VisualStudio"
+                "startingDirectory": "%USERPROFILE%"
             },
             {
                 "guid": "{881c0bf6-b3a1-5338-9b5d-f3047a454045}",
@@ -146,18 +133,6 @@
                 "hidden": false,
                 "name": "Alpine",
                 "source": "Microsoft.WSL"
-            },
-            {
-                "guid": "{7970dc23-ea80-51fe-8e21-54287f6d0c1c}",
-                "hidden": false,
-                "name": "Developer Command Prompt for VS 18",
-                "source": "Windows.Terminal.VisualStudio"
-            },
-            {
-                "guid": "{e0963cc4-056f-5f65-a573-5beb782d190c}",
-                "hidden": false,
-                "name": "Developer PowerShell for VS 18",
-                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
