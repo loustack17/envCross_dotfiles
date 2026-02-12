@@ -86,6 +86,7 @@ FILE_SYMLINKS=(
     "qt5ct-env|niri/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
     "claude-code-config|AI-Supporter/Claude Code/CLAUDE.md|$HOME/.claude/CLAUDE.md"
     "claude-code-skills|AI-Supporter/Claude Code/skills|$HOME/.claude/skills"
+    "codex-config|AI-Supporter/Codex/AGENTS.md|$HOME/.codex/AGENTS.md"
     "codex-skills|AI-Supporter/Codex/skills|$HOME/.codex/skills"
 )
 
