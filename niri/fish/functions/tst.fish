@@ -10,7 +10,7 @@ function __tock_default_project --description "Get default tock project name"
 end
 
 function tst --description "Start tock with description and project"
-    argparse -n tst 'p=' 'd=' -- $argv
+    argparse -n tst 'p/project=' 'd/description=' 't/time=' -- $argv
     or return
 
     set -l project ""
@@ -47,6 +47,11 @@ function tst --description "Start tock with description and project"
 
     if test -z "$project" -o -z "$desc"
         return 1
+    end
+
+    if set -q _flag_t
+        command tock start "$project" "$desc" -t "$_flag_t"
+        return
     end
 
     command tock start "$project" "$desc"
