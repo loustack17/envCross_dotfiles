@@ -1,0 +1,293 @@
+* {
+  font-family: "Noto Sans TC", "Noto Sans CJK TC", "Noto Sans", "Inter", "Segoe UI", "NotoSans Nerd Font", sans-serif;
+  font-size: 13px;
+  min-height: 0;
+}
+
+#waybar {
+  background: transparent;
+  color: #c6d0f5;
+  margin: 0;
+  font-weight: 500;
+}
+
+#workspaces,
+#network,
+#mpris,
+#group-hardware {
+  background-color: #1a1b26;
+  padding: 0.16rem 0.7rem;
+  margin: 2px 0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 0;
+  border: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+#workspaces {
+  padding: 2px;
+  margin-left: 5px;
+  margin-right: 2px;
+}
+
+#network,
+#mpris {
+  margin-right: 4px;
+}
+
+#network,
+#mpris,
+#custom-cpu-temp,
+#custom-gpu,
+#memory {
+  font-family: "Noto Sans TC", "Noto Sans CJK TC", "Noto Sans", "NotoSans Nerd Font", sans-serif;
+}
+
+#network:hover,
+#mpris:hover,
+#group-hardware:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+#workspaces button {
+  color: #babbf1;
+  border-radius: 5px;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  outline: none;
+}
+
+#workspaces button.active {
+  color: #8bd5ca;
+  background-color: rgba(139, 213, 202, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(139, 213, 202, 0.32);
+}
+
+#workspaces button.focused {
+  color: #c6d0f5;
+  background-color: rgba(122, 162, 247, 0.24);
+  box-shadow: inset 0 0 0 1px rgba(122, 162, 247, 0.5);
+}
+
+#workspaces button:hover {
+  background: rgb(41, 42, 53);
+  color: #c6d0f5;
+}
+
+#clock {
+  background-color: #1a1b26;
+  padding: 0.22rem 0.95rem;
+  margin: 2px 2px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(153, 209, 219, 0.2);
+  min-width: 0;
+  border: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  color: #99d1db;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+#clock:hover {
+  background-color: rgba(153, 209, 219, 0.1);
+}
+
+#window {
+  background-color: #1a1b26;
+  color: #c6d0f5;
+  padding: 0.16rem 0.7rem;
+  margin: 2px 2px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+#wireplumber,
+#bluetooth,
+#tray,
+#battery,
+#custom-power,
+#custom-lock,
+#custom-reboot {
+  background-color: #1a1b26;
+  padding: 0.16rem 0.7rem;
+  margin: 1px 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+  border: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+#wireplumber:hover,
+#bluetooth:hover,
+#tray:hover,
+#battery:hover,
+#custom-power:hover,
+#custom-lock:hover,
+#custom-reboot:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+#wireplumber {
+  color: #c6d0f5;
+  margin-left: 0;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+#bluetooth {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+#tray {
+  color: #c6d0f5;
+  border-radius: 6px;
+  margin: 1px 2px;
+}
+
+#bluetooth {
+  color: #888888;
+  font-size: 16px;
+}
+
+#bluetooth.on {
+  color: #2196f3;
+}
+
+#bluetooth.connected {
+  color: #99d1db;
+}
+
+#battery {
+  color: #99d1db;
+  border-radius: 6px;
+}
+
+#battery.charging {
+  color: #a6d189;
+}
+
+#battery.warning:not(.charging) {
+  color: #e78284;
+}
+
+#custom-power,
+#custom-lock,
+#custom-reboot {
+  color: #babbf1;
+  font-family: "Symbols Nerd Font", "NotoSans Nerd Font", "Font Awesome 6 Free", "Font Awesome 5 Free", "Noto Sans", sans-serif;
+}
+
+#custom-power {
+  border-radius: 0;
+}
+
+#custom-reboot {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+#group-battpower:hover #battery {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#group-battpower:hover #custom-reboot {
+  margin-right: 0;
+}
+
+#group-audio,
+#group-hardware,
+#group-battpower {
+  margin-left: 0;
+}
+
+#group-hardware {
+  margin-left: 4px;
+}
+
+#group-audio,
+#group-battpower {
+  margin-left: 1px;
+  margin-right: 1px;
+}
+
+#group-hardware #custom-gpu,
+#group-hardware #custom-cpu-temp,
+#group-hardware #memory {
+  transition: opacity 0.2s ease-in-out, margin 0.2s ease-in-out, padding 0.2s ease-in-out, border-radius 0.2s ease-in-out;
+}
+
+#custom-gpu,
+#custom-cpu-temp,
+#memory {
+  color: #c6d0f5;
+  background-color: #1a1b26;
+  padding: 0.16rem 0.7rem;
+  margin: 1px 0;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+#custom-gpu {
+  border-radius: 6px;
+  margin-left: 0;
+}
+
+#custom-cpu-temp {
+  margin-left: 0;
+}
+
+#memory {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+#group-hardware:hover #custom-gpu {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#custom-gpu:hover,
+#custom-cpu-temp:hover,
+#memory:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+#custom-gpu.hardware-list,
+#custom-cpu-temp.hardware-list,
+#memory.hardware-list,
+#custom-power.battpower-hidden,
+#custom-lock.battpower-hidden,
+#custom-reboot.battpower-hidden {
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  border: none;
+  background-color: transparent;
+}
+
+tooltip {
+  background-color: #1a1b26;
+  color: #dddddd;
+  padding: 12px 16px;
+  margin: 5px 0;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+}
+
+tooltip label {
+  font-family: "Noto Sans TC", "Noto Sans CJK TC", "Noto Sans", "Inter", "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+}

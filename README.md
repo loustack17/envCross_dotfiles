@@ -5,7 +5,7 @@
 ### Linux (Niri)
 ```
 niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij,
-ironbar, mako, walker, thunar, zathura, mpv, elephant, hyprlock,
+waybar, mako, walker, thunar, zathura, mpv, elephant, hyprlock,
 playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
 yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
 ```
@@ -53,7 +53,7 @@ dotfiles/
 │   ├── ghostty/
 │   ├── fish/
 │   ├── zellij/
-│   ├── ironbar/
+│   ├── waybar/
 │   ├── mako/
 │   ├── walker/
 │   ├── elephant/
@@ -87,7 +87,7 @@ dotfiles/
 | yazi | `~/.config/yazi` |
 | lazygit | `~/.config/lazygit` |
 | zellij | `~/.config/zellij` |
-| ironbar | `~/.config/ironbar` |
+| waybar | `~/.config/waybar` |
 | mako | `~/.config/mako` |
 | walker | `~/.config/walker` |
 | elephant | `~/.config/elephant` |
@@ -127,13 +127,12 @@ nvim                          # install plugins
 - [Niri](https://github.com/YaLTeR/niri)
 - [Ghostty](https://ghostty.org)
 - [Zed](https://zed.dev)
-- [Ironbar](https://github.com/JakeStanger/ironbar)
+- [Waybar](https://github.com/Alexays/Waybar)
 - [Walker](https://github.com/abenz1267/walker)
 - [awww](https://codeberg.org/LGFae/awww)
 - [Zellij](https://zellij.dev)
 - [Impala](https://github.com/pythops/impala)
 - [CachyOS](https://cachyos.org)
-
 
 
 

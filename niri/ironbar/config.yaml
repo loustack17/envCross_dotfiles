@@ -64,7 +64,7 @@ end:
   - type: volume
     format: "{icon} {percentage}%"
     max_volume: 100
-    #truncate: 'middle'
+    sink_slider_orientation: "horizontal"
     marquee:
       enable: true
       on_hover: "play"
@@ -121,12 +121,3 @@ end:
                 class: power-btn
                 label: <span>󰜉</span>
                 on_click: "!reboot"
-#  - type: notifications
-#    show_count: true
-#    icons:
-#      closed_none: 󰍥
-#      closed_some: 󱥂
-#      closed_dnd: 󱅯
-#      open_none: 󰍡
-#      open_some: 󱥁
-#      open_dnd: 󱅮

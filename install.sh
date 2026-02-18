@@ -65,7 +65,7 @@ TOOLS=(
     "zellij|zellij|zellij|false|niri/zellij|zellij"
 
     # === Niri Ecosystem ===
-    "ironbar|ironbar|ironbar|true|niri/ironbar|ironbar"
+    "waybar|waybar|waybar|false|niri/waybar|waybar"
     "mako|mako|mako|false|niri/mako|mako"
     "walker|walker|walker-git|true|niri/walker|walker"
     "thunar|thunar|thunar|false|niri/thunar|Thunar"
@@ -123,7 +123,7 @@ Examples:
 
 Tools:
   Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij
-  Niri:   ironbar, mako, walker, thunar, zathura, mpv, elephant, hyprlock
+  Niri:   waybar, mako, walker, thunar, zathura, mpv, elephant, hyprlock
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
           yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
 EOF

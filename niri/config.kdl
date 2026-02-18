@@ -131,8 +131,8 @@ binds {
     // ─── Audio Controls ───
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
-    XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "swayosd-client --output-volume +5"; }
-    XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "swayosd-client --output-volume -5"; }
+    XF86AudioRaiseVolume                allow-when-locked=true { spawn-sh "swayosd-client --output-volume +2"; }
+    XF86AudioLowerVolume                allow-when-locked=true { spawn-sh "swayosd-client --output-volume -2"; }
     XF86AudioMute                       allow-when-locked=true { spawn-sh "swayosd-client --output-volume mute-toggle"; }
     XF86AudioMicMute                    allow-when-locked=true { spawn-sh "swayosd-client --input-volume mute-toggle"; }
     XF86AudioNext                       allow-when-locked=true { spawn-sh "swayosd-client --playerctl next"; }
@@ -255,8 +255,9 @@ binds {
     spawn-sh-at-startup "awww-daemon" // Wallpaper daemon
     // spawn-sh-at-startup "awww img /usr/share/wallpapers/cachyos-wallpapers/north.png" // Set wallpaper
     spawn-sh-at-startup "waypaper --restore"
-    // spawn-sh-at-startup "waybar" // Launch waybar
-    spawn-sh-at-startup "ironbar" // Launch ironbar
+    spawn-at-startup "blueman-applet"
+    spawn-at-startup "waybar"
+    //spawn-sh-at-startup "ironbar" // Launch ironbar
     spawn-at-startup "swayidle -w timeout 900 'hyprlock'"
 
     prefer-no-csd // Disable program decorations
@@ -415,6 +416,3 @@ binds {
     hotkey-overlay {
         skip-at-startup
     }
-
-
-
