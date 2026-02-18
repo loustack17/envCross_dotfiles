@@ -113,7 +113,9 @@
   "custom/cpu-temp": {
     "exec": "$HOME/.config/waybar/scripts/cpu-temp",
     "interval": 1,
-    "tooltip": false
+    "format": "{text}",
+    "return-type": "json",
+    "tooltip": true
   },
   "memory": {
     "interval": 5,
@@ -123,7 +125,9 @@
     "exec": "$HOME/.config/waybar/scripts/nvidia-gpu",
     "interval": 1,
     "hide-empty-text": true,
-    "tooltip": false
+    "format": "{text}",
+    "return-type": "json",
+    "tooltip": true
   },
   "bluetooth": {
     "format": " {status}",

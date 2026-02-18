@@ -115,4 +115,46 @@ if [[ "$temp_raw" =~ ^[0-9]+$ ]] && [ "$temp_raw" -gt 0 ]; then
   temp_c="$(awk -v t="$temp_raw" 'BEGIN {printf "%.1f", t / 1000}')"
 fi
 
-printf '  %s%%  %s°C\n' "$usage" "$temp_c"
+temp_text="N/A"
+if [ "$temp_c" != "0.0" ]; then
+  temp_text="${temp_c}°C"
+fi
+
+freq_ghz="N/A"
+if [ -r /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq ]; then
+  read -r freq_khz < /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq || true
+  if [[ "${freq_khz:-}" =~ ^[0-9]+$ ]] && [ "$freq_khz" -gt 0 ]; then
+    freq_ghz="$(awk -v f="$freq_khz" 'BEGIN {printf "%.2f", f / 1000000}')"
+  fi
+fi
+if [ "$freq_ghz" = "N/A" ]; then
+  cpu_mhz="$(awk -F: '/cpu MHz/ {gsub(/^[ \t]+/, "", $2); print $2; exit}' /proc/cpuinfo 2>/dev/null || true)"
+  if [[ "${cpu_mhz:-}" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    freq_ghz="$(awk -v m="$cpu_mhz" 'BEGIN {printf "%.2f", m / 1000}')"
+  fi
+fi
+
+read -r load1 load5 load15 _ < /proc/loadavg
+cores="$(nproc 2>/dev/null || echo "N/A")"
+
+text="  ${usage}%  ${temp_text}"
+tooltip="CPU Usage: ${usage}%"
+tooltip+=$'\n'"Temperature: ${temp_text}"
+tooltip+=$'\n'"Load Avg: ${load1} ${load5} ${load15}"
+tooltip+=$'\n'"Cores: ${cores}"
+if [ "$freq_ghz" = "N/A" ]; then
+  tooltip+=$'\n'"Frequency: N/A"
+else
+  tooltip+=$'\n'"Frequency: ${freq_ghz} GHz"
+fi
+
+escape_json() {
+  local value
+  value="${1//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  value="${value//$'\n'/\\n}"
+  value="${value//$'\r'/}"
+  printf '%s' "$value"
+}
+
+printf '{"text":"%s","tooltip":"%s"}\n' "$(escape_json "$text")" "$(escape_json "$tooltip")"
