@@ -14,7 +14,7 @@ if command -v flock >/dev/null 2>&1; then
   flock -x 9
 fi
 
-if ! mapfile -t rows < <(nvidia-smi --query-gpu=index,utilization.gpu,temperature.gpu --format=csv,noheader,nounits 2>/dev/null); then
+if ! mapfile -t rows < <(nvidia-smi --query-gpu=index,name,utilization.gpu,temperature.gpu,memory.used,memory.total,power.draw,power.limit --format=csv,noheader,nounits 2>/dev/null); then
   exit 0
 fi
 if [ "${#rows[@]}" -eq 0 ]; then
@@ -22,31 +22,117 @@ if [ "${#rows[@]}" -eq 0 ]; then
 fi
 
 parts=()
+tooltips=()
 for row in "${rows[@]}"; do
-  IFS=',' read -r idx util temp <<< "$row"
+  IFS=',' read -r idx name util temp mem_used mem_total power_draw power_limit <<< "$row"
   idx="$(echo "$idx" | xargs)"
+  name="$(echo "$name" | xargs)"
   util="$(echo "$util" | xargs)"
   temp="$(echo "$temp" | xargs)"
-  if ! [[ "$idx" =~ ^[0-9]+$ && "$util" =~ ^[0-9]+([.][0-9]+)?$ && "$temp" =~ ^-?[0-9]+([.][0-9]+)?$ ]]; then
+  mem_used="$(echo "$mem_used" | xargs)"
+  mem_total="$(echo "$mem_total" | xargs)"
+  power_draw="$(echo "$power_draw" | xargs)"
+  power_limit="$(echo "$power_limit" | xargs)"
+
+  if ! [[ "$idx" =~ ^[0-9]+$ ]]; then
     continue
   fi
 
-  hist_file="$history_dir/gpu_${idx}"
-  printf '%s\n' "$util" >> "$hist_file"
-  tmp_file="$(mktemp "${hist_file}.XXXXXX")"
-  tail -n 5 "$hist_file" > "$tmp_file"
-  mv "$tmp_file" "$hist_file"
+  avg="N/A"
+  if [[ "$util" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    hist_file="$history_dir/gpu_${idx}"
+    printf '%s\n' "$util" >> "$hist_file"
+    tmp_file="$(mktemp "${hist_file}.XXXXXX")"
+    tail -n 5 "$hist_file" > "$tmp_file"
+    mv "$tmp_file" "$hist_file"
+    avg="$(awk '{sum+=$1} END {if (NR > 0) printf "%.1f", sum/NR; else printf "0.0"}' "$hist_file")"
+  fi
 
-  avg="$(awk '{sum+=$1} END {if (NR > 0) printf "%.1f", sum/NR; else printf "0.0"}' "$hist_file")"
-  temp_fmt="$(awk -v t="$temp" 'BEGIN {printf "%.1f", t+0}')"
-  parts+=("󰢮  ${avg}%  ${temp_fmt}°C")
+  util_text="N/A"
+  if [[ "$util" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    util_text="$(awk -v u="$util" 'BEGIN {printf "%.1f", u+0}')"
+  fi
+
+  temp_text="N/A"
+  if [[ "$temp" =~ ^-?[0-9]+([.][0-9]+)?$ ]]; then
+    temp_text="$(awk -v t="$temp" 'BEGIN {printf "%.1f", t+0}')°C"
+  fi
+
+  if [ "$avg" = "N/A" ]; then
+    if [ "$util_text" = "N/A" ]; then
+      parts+=("󰢮  N/A  ${temp_text}")
+    else
+      parts+=("󰢮  ${util_text}%  ${temp_text}")
+    fi
+  else
+    parts+=("󰢮  ${avg}%  ${temp_text}")
+  fi
+
+  tooltip_block="GPU ${idx}: ${name}"
+  if [[ "$util_text" = "N/A" ]]; then
+    tooltip_block+=$'\n'"Utilization: N/A"
+  else
+    tooltip_block+=$'\n'"Utilization: ${util_text}%"
+  fi
+  if [ "$avg" = "N/A" ]; then
+    tooltip_block+=$'\n'"5-sample Avg: N/A"
+  else
+    tooltip_block+=$'\n'"5-sample Avg: ${avg}%"
+  fi
+  tooltip_block+=$'\n'"Temperature: ${temp_text}"
+
+  if [[ "$mem_used" =~ ^[0-9]+([.][0-9]+)?$ && "$mem_total" =~ ^[0-9]+([.][0-9]+)?$ ]] && awk -v t="$mem_total" 'BEGIN {exit !(t > 0)}'; then
+    mem_pct="$(awk -v u="$mem_used" -v t="$mem_total" 'BEGIN {printf "%.1f", (u / t) * 100}')"
+    tooltip_block+=$'\n'"VRAM: ${mem_used} / ${mem_total} MiB (${mem_pct}%)"
+  else
+    tooltip_block+=$'\n'"VRAM: N/A"
+  fi
+
+  if [[ "$power_draw" =~ ^[0-9]+([.][0-9]+)?$ && "$power_limit" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    draw_fmt="$(awk -v p="$power_draw" 'BEGIN {printf "%.1f", p+0}')"
+    limit_fmt="$(awk -v p="$power_limit" 'BEGIN {printf "%.1f", p+0}')"
+    tooltip_block+=$'\n'"Power: ${draw_fmt} / ${limit_fmt} W"
+  elif [[ "$power_draw" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+    draw_fmt="$(awk -v p="$power_draw" 'BEGIN {printf "%.1f", p+0}')"
+    tooltip_block+=$'\n'"Power: ${draw_fmt} W"
+  else
+    tooltip_block+=$'\n'"Power: N/A"
+  fi
+
+  tooltips+=("$tooltip_block")
 done
 
 if [ "${#parts[@]}" -eq 0 ]; then
   exit 0
 fi
 
-(
-  IFS=' | '
-  printf '%s\n' "${parts[*]}"
-)
+join_by() {
+  local delimiter="$1"
+  shift
+  local out=""
+  local first=1
+  local item
+  for item in "$@"; do
+    if [ "$first" -eq 1 ]; then
+      out="$item"
+      first=0
+    else
+      out="${out}${delimiter}${item}"
+    fi
+  done
+  printf '%s' "$out"
+}
+
+escape_json() {
+  local value
+  value="${1//\\/\\\\}"
+  value="${value//\"/\\\"}"
+  value="${value//$'\n'/\\n}"
+  value="${value//$'\r'/}"
+  printf '%s' "$value"
+}
+
+text="$(join_by ' | ' "${parts[@]}")"
+tooltip="$(join_by $'\n\n' "${tooltips[@]}")"
+
+printf '{"text":"%s","tooltip":"%s"}\n' "$(escape_json "$text")" "$(escape_json "$tooltip")"
