@@ -1,0 +1,211 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "modules-left": [
+    "niri/workspaces",
+    "network",
+    "mpris",
+    "group/hardware"
+  ],
+  "modules-center": [
+    "niri/window"
+  ],
+  "modules-right": [
+    "group/audio",
+    "tray",
+    "clock",
+    "group/battpower"
+  ],
+  "niri/workspaces": {
+    "all-outputs": false,
+    "disable-click": false,
+    "format": "{icon}",
+    "format-icons": {
+      "focused": "",
+      "active": "",
+      "default": "",
+      "empty": "",
+      "urgent": ""
+    }
+  },
+  "group/audio": {
+    "orientation": "inherit",
+    "modules": [
+      "wireplumber",
+      "bluetooth"
+    ]
+  },
+  "network": {
+    "interval": 5,
+    "format-wifi": "{icon}  {essid}",
+    "format-icons": [
+      "󰤯",
+      "󰤟",
+      "󰤢",
+      "󰤤",
+      "󰤨"
+    ],
+    "format-disconnected": "󰌙 Disconnected",
+    "format-disabled": "󰌙 Off",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "ghostty -e impala"
+  },
+  "mpris": {
+    "format": "󰝚  {dynamic}",
+    "format-paused": "󰏥  {dynamic}",
+    "format-stopped": "",
+    "dynamic-order": [
+      "title",
+      "artist"
+    ],
+    "dynamic-separator": " / ",
+    "dynamic-len": 20,
+    "title-len": 20,
+    "artist-len": 20,
+    "tooltip-format": "{player} ({status}) {dynamic}",
+    "player-icons": {
+      "default": "󰝚"
+    },
+    "status-icons": {
+      "playing": "",
+      "paused": "󰏥",
+      "stopped": "󰓛"
+    }
+  },
+  "niri/window": {
+    "format": "{}",
+    "icon": true,
+    "icon-size": 16,
+    "separate-outputs": false
+  },
+  "wireplumber": {
+    "scroll-step": 2.0,
+    "format": "{icon}  {volume}%",
+    "format-muted": "󰝟",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ]
+    },
+    "tooltip-format": "{node_name} {volume}%",
+    "on-click": "pavucontrol",
+    "on-click-right": "helvum",
+    "on-click-middle": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+  "group/hardware": {
+    "orientation": "inherit",
+    "drawer": {
+      "click-to-reveal": false,
+      "transition-duration": 220,
+      "children-class": "hardware-list",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/gpu",
+      "custom/cpu-temp",
+      "memory"
+    ]
+  },
+  "custom/cpu-temp": {
+    "exec": "$HOME/.config/waybar/scripts/cpu-temp",
+    "interval": 1,
+    "tooltip": false
+  },
+  "memory": {
+    "interval": 5,
+    "format": "  {used:0.1f}G"
+  },
+  "custom/gpu": {
+    "exec": "$HOME/.config/waybar/scripts/nvidia-gpu",
+    "interval": 1,
+    "hide-empty-text": true,
+    "tooltip": false
+  },
+  "bluetooth": {
+    "format": " {status}",
+    "format-disabled": " Off",
+    "format-off": " Off",
+    "format-on": " On",
+    "format-connected": " {device_alias}",
+    "format-connected-battery": " {device_battery_percentage}%",
+    "format-no-controller": " Off",
+    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+    "on-click-right": "bluetoothctl power off"
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 10,
+    "show-passive-items": true
+  },
+  "clock": {
+    "format": "{:%Y/%m/%d %H:%M}",
+    "tooltip": true,
+    "tooltip-format": "<span font='monospace 13'><tt>{calendar}</tt></span>",
+    "calendar": {
+      "mode": "month",
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#ffffff'><b>{}</b></span>",
+        "days": "<span color='#ffffff'>{}</span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#6699cc'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  },
+  "battery": {
+    "states": {
+      "warning": 20,
+      "critical": 5
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "{icon} {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{icon} {time}",
+    "format-icons": {
+        "default": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "charging": ["󰢟", "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"]
+    }
+  },
+  "group/battpower": {
+    "orientation": "inherit",
+    "drawer": {
+        "click-to-reveal": false,
+        "transition-duration": 500,
+        "children-class": "battpower-hidden",
+        "transition-left-to-right": true
+    },
+    "modules": [
+        "battery",
+        "custom/power",
+        "custom/lock",
+        "custom/reboot"
+    ]
+  },
+  "custom/lock": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "hyprlock"
+  },
+  "custom/reboot": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "reboot"
+  },
+  "custom/power": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "shutdown now"
+  }
+}

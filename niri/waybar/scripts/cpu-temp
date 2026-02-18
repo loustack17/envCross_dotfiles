@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+state_file="/tmp/waybar_cpu_stat"
+
+read -r _ user nice system idle iowait irq softirq steal _ _ < /proc/stat
+total=$((user + nice + system + idle + iowait + irq + softirq + steal))
+idle_all=$((idle + iowait))
+
+usage="0.0"
+if [ -f "$state_file" ]; then
+  read -r prev_total prev_idle < "$state_file" || true
+  if [ -n "${prev_total:-}" ] && [ -n "${prev_idle:-}" ]; then
+    delta_total=$((total - prev_total))
+    delta_idle=$((idle_all - prev_idle))
+    if [ "$delta_total" -gt 0 ]; then
+      usage="$(awk -v dt="$delta_total" -v di="$delta_idle" 'BEGIN {printf "%.1f", (dt - di) * 100 / dt}')"
+    fi
+  fi
+fi
+printf '%s %s\n' "$total" "$idle_all" > "$state_file"
+
+read_temp_from_labels() {
+  local label_file label input_file value
+  shopt -s nocasematch
+  for label_file in /sys/class/hwmon/hwmon*/temp*_label; do
+    [ -r "$label_file" ] || continue
+    label="$(cat "$label_file" 2>/dev/null || true)"
+    case "$label" in
+      "Package id "*|Tctl|Tdie|"CPU"*|"Core "*|"Physical id "*)
+        input_file="${label_file%_label}_input"
+        [ -r "$input_file" ] || continue
+        value="$(cat "$input_file" 2>/dev/null || true)"
+        if [[ "$value" =~ ^[0-9]+$ ]]; then
+          printf '%s\n' "$value"
+          shopt -u nocasematch
+          return 0
+        fi
+        ;;
+    esac
+  done
+  shopt -u nocasematch
+  return 1
+}
+
+read_temp_from_hwmon_names() {
+  local hwmon name temp_file value sum count
+  sum=0
+  count=0
+  shopt -s nocasematch
+  for hwmon in /sys/class/hwmon/hwmon*; do
+    [ -r "$hwmon/name" ] || continue
+    name="$(cat "$hwmon/name" 2>/dev/null || true)"
+    case "$name" in
+      coretemp|k10temp|zenpower|cpu_thermal)
+        for temp_file in "$hwmon"/temp*_input; do
+          [ -r "$temp_file" ] || continue
+          value="$(cat "$temp_file" 2>/dev/null || true)"
+          if [[ "$value" =~ ^[0-9]+$ ]]; then
+            sum=$((sum + value))
+            count=$((count + 1))
+          fi
+        done
+        ;;
+    esac
+  done
+  shopt -u nocasematch
+  if [ "$count" -gt 0 ]; then
+    awk -v s="$sum" -v c="$count" 'BEGIN {printf "%.0f", s / c}'
+    return 0
+  fi
+  return 1
+}
+
+read_temp_from_thermal_zone() {
+  local zone type value sum count
+  sum=0
+  count=0
+  shopt -s nocasematch
+  for zone in /sys/class/thermal/thermal_zone*; do
+    [ -r "$zone/type" ] || continue
+    [ -r "$zone/temp" ] || continue
+    type="$(cat "$zone/type" 2>/dev/null || true)"
+    case "$type" in
+      x86_pkg_temp|cpu-thermal|cpu_thermal|k10temp|soc_thermal)
+        value="$(cat "$zone/temp" 2>/dev/null || true)"
+        if [[ "$value" =~ ^[0-9]+$ ]]; then
+          sum=$((sum + value))
+          count=$((count + 1))
+        fi
+        ;;
+    esac
+  done
+  shopt -u nocasematch
+  if [ "$count" -gt 0 ]; then
+    awk -v s="$sum" -v c="$count" 'BEGIN {printf "%.0f", s / c}'
+    return 0
+  fi
+  return 1
+}
+
+temp_raw=""
+if temp_raw="$(read_temp_from_labels 2>/dev/null)"; then
+  :
+elif temp_raw="$(read_temp_from_hwmon_names 2>/dev/null)"; then
+  :
+elif temp_raw="$(read_temp_from_thermal_zone 2>/dev/null)"; then
+  :
+else
+  temp_raw="0"
+fi
+
+temp_c="0.0"
+if [[ "$temp_raw" =~ ^[0-9]+$ ]] && [ "$temp_raw" -gt 0 ]; then
+  temp_c="$(awk -v t="$temp_raw" 'BEGIN {printf "%.1f", t / 1000}')"
+fi
+
+printf '  %s%%  %s°C\n' "$usage" "$temp_c"
