@@ -6,6 +6,7 @@
 ```
 niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij,
 waybar, mako, walker, thunar, zathura, mpv, elephant, hyprlock,
+claude-code, codex,
 playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
 yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
 ```
@@ -41,14 +42,12 @@ dotfiles/
 ├── install.sh          # Linux
 ├── install.nu          # Windows
 │
-├── nvim/               # Neovim (shared)
-├── yazi/               # Yazi (shared)
-├── lazygit/            # Lazygit (shared)
-├── mpv/                # MPV
-├── zed/                # Zed
+├── AI-Supporter/       # Shared AI configs (Linux + Windows)
+│   ├── Claude Code/
+│   └── Codex/
 │
-├── niri/
-│   ├── config.kdl      # Niri config
+├── Linux-config/       # Linux-only config packages
+│   ├── niri/
 │   ├── kitty/
 │   ├── ghostty/
 │   ├── fish/
@@ -56,10 +55,20 @@ dotfiles/
 │   ├── waybar/
 │   ├── mako/
 │   ├── walker/
+│   ├── thunar/
+│   ├── zathura/
 │   ├── elephant/
 │   ├── hyprlock/
-│   ├── thunar/
-│   └── zathura/
+│   ├── fontconfig/
+│   ├── gtk-3.0/
+│   ├── gtk-4.0/
+│   └── qt5ct/
+│
+├── nvim/               # Neovim (shared)
+├── yazi/               # Yazi (shared)
+├── lazygit/            # Lazygit (shared)
+├── mpv/                # MPV
+├── zed/                # Zed
 │
 ├── Windows/
 │   ├── wezterm/            # WezTerm
@@ -95,6 +104,8 @@ dotfiles/
 | thunar | `~/.config/Thunar` |
 | zathura | `~/.config/zathura` |
 | mpv | `~/.config/mpv` |
+| claude-code | `~/.claude` |
+| codex | `~/.codex` |
 
 ### Windows
 | Tool | Path |
@@ -133,6 +144,4 @@ nvim                          # install plugins
 - [Zellij](https://zellij.dev)
 - [Impala](https://github.com/pythops/impala)
 - [CachyOS](https://cachyos.org)
-
-
 

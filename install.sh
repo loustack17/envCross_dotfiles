@@ -54,40 +54,37 @@ TOOLS=(
     "awww|awww|awww-git|true||"
 
     # === Core Tools ===
-    "niri|niri|niri|false||"
-    "kitty|kitty|kitty-git|true|niri/kitty|kitty"
-    "ghostty|ghostty|ghostty-git|true|niri/ghostty|ghostty"
-    "fish|fish|fish|false|niri/fish|fish"
+    "niri|niri|niri|false|Linux-config/niri|niri"
+    "kitty|kitty|kitty-git|true|Linux-config/kitty|kitty"
+    "ghostty|ghostty|ghostty-git|true|Linux-config/ghostty|ghostty"
+    "fish|fish|fish|false|Linux-config/fish|fish"
     "neovim|nvim|neovim|false|nvim|nvim"
     "zed|zed|zed-git|true|zed|zed"
     "yazi|yazi|yazi|false|yazi|yazi"
     "lazygit|lazygit|lazygit|false|lazygit|lazygit"
-    "zellij|zellij|zellij|false|niri/zellij|zellij"
+    "claude-code|claude||false|AI-Supporter/Claude Code|$HOME/.claude"
+    "codex|codex||false|AI-Supporter/Codex|$HOME/.codex"
+    "zellij|zellij|zellij|false|Linux-config/zellij|zellij"
 
     # === Niri Ecosystem ===
-    "waybar|waybar|waybar|false|niri/waybar|waybar"
-    "mako|mako|mako|false|niri/mako|mako"
-    "walker|walker|walker-git|true|niri/walker|walker"
-    "thunar|thunar|thunar|false|niri/thunar|Thunar"
-    "zathura|zathura|zathura,zathura-pdf-mupdf|false|niri/zathura|zathura"
+    "waybar|waybar|waybar|false|Linux-config/waybar|waybar"
+    "mako|mako|mako|false|Linux-config/mako|mako"
+    "walker|walker|walker-git|true|Linux-config/walker|walker"
+    "thunar|thunar|thunar|false|Linux-config/thunar|Thunar"
+    "zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura"
     "mpv|mpv|mpv|false|mpv|mpv"
-    "elephant|elephant|elephant-all-git|true|niri/elephant|elephant"
-    "hyprlock|hyprlock|hyprlock|false|niri/hyprlock|hypr"
+    "elephant|elephant|elephant-all-git|true|Linux-config/elephant|elephant"
+    "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
 )
 
 # Format: "name|src|dst"
 #   dst: relative to CONFIG_HOME, or absolute if starts with /
 FILE_SYMLINKS=(
-    "niri-config|niri/config.kdl|niri/config.kdl"
-    "fontconfig|niri/fontconfig/fonts.conf|fontconfig/fonts.conf"
-    "gtk-3-settings|niri/gtk-3.0/settings.ini|gtk-3.0/settings.ini"
-    "gtk-4-settings|niri/gtk-4.0/settings.ini|gtk-4.0/settings.ini"
-    "qt5ct-config|niri/qt5ct/qt5ct.conf|qt5ct/qt5ct.conf"
-    "qt5ct-env|niri/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
-    "claude-code-config|AI-Supporter/Claude Code/CLAUDE.md|$HOME/.claude/CLAUDE.md"
-    "claude-code-skills|AI-Supporter/Claude Code/skills|$HOME/.claude/skills"
-    "codex-config|AI-Supporter/Codex/AGENTS.md|$HOME/.codex/AGENTS.md"
-    "codex-skills|AI-Supporter/Codex/skills|$HOME/.codex/skills"
+    "fontconfig|Linux-config/fontconfig/fonts.conf|fontconfig/fonts.conf"
+    "gtk-3-settings|Linux-config/gtk-3.0/settings.ini|gtk-3.0/settings.ini"
+    "gtk-4-settings|Linux-config/gtk-4.0/settings.ini|gtk-4.0/settings.ini"
+    "qt5ct-config|Linux-config/qt5ct/qt5ct.conf|qt5ct/qt5ct.conf"
+    "qt5ct-env|Linux-config/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
 )
 
 
@@ -123,6 +120,7 @@ Examples:
 
 Tools:
   Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij
+  AI:     claude-code, codex
   Niri:   waybar, mako, walker, thunar, zathura, mpv, elephant, hyprlock
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
           yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
@@ -249,6 +247,30 @@ install_tool() {
     fi
 }
 
+ensure_stow() {
+    if command -v stow &>/dev/null; then
+        log_info "stow: already installed"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_dry "Would install required tool: stow"
+        return 0
+    fi
+
+    if [[ "$NO_INSTALL" == "true" ]]; then
+        log_warn "stow is required; installing even with --no-install"
+    fi
+
+    log_info "stow: not found, installing..."
+    if install_packages "stow" "false" && command -v stow &>/dev/null; then
+        log_info "stow: installed successfully"
+        return 0
+    fi
+
+    die "failed to install required tool: stow"
+}
+
 
 init_backup_dir() {
     if [[ "$NO_BACKUP" == "true" ]]; then
@@ -338,6 +360,58 @@ create_symlink() {
     fi
 }
 
+create_stow_package() {
+    local src="$1"
+    local dst="$2"
+    local name="$3"
+
+    if [[ ! -d "$src" ]]; then
+        log_warn "$name: stow source is not a directory ($src)"
+        return 1
+    fi
+
+    local stow_dir
+    stow_dir="$(dirname "$src")"
+    local package
+    package="$(basename "$src")"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_dry "Would stow: $name ($package) -> $dst"
+        return 0
+    fi
+
+    if [[ -e "$dst" || -L "$dst" ]]; then
+        if [[ ! -d "$dst" || -L "$dst" ]]; then
+            backup_path "$dst" "$name"
+            rm -rf "$dst"
+        fi
+    fi
+
+    mkdir -p "$dst"
+
+    local item
+    local base_name
+    local target_path
+    shopt -s dotglob nullglob
+    for item in "$src"/*; do
+        base_name="$(basename "$item")"
+        target_path="$dst/$base_name"
+        if [[ ! -e "$target_path" && ! -L "$target_path" ]]; then
+            continue
+        fi
+        backup_path "$target_path" "$name/$base_name"
+        rm -rf "$target_path"
+    done
+    shopt -u dotglob nullglob
+
+    if stow -d "$stow_dir" -t "$dst" "$package"; then
+        log_info "$name: stowed -> $dst"
+    else
+        log_error "$name: failed to stow"
+        return 1
+    fi
+}
+
 
 step_install_tools() {
     [[ "$NO_INSTALL" == "true" ]] && return
@@ -395,7 +469,7 @@ step_backup_configs() {
 
 step_symlink_configs() {
     echo ""
-    log_step "=== Step 3: Creating Symlinks ==="
+    log_step "=== Step 3: Creating Links ==="
     echo ""
 
 
@@ -413,7 +487,7 @@ step_symlink_configs() {
             full_dst="$CONFIG_HOME/$dst"
         fi
 
-        create_symlink "$full_src" "$full_dst" "$name"
+        create_stow_package "$full_src" "$full_dst" "$name"
     done
 
 
@@ -492,6 +566,8 @@ main() {
         [[ -n "$BACKUP_DIR" ]] && log_info "Backup complete: $BACKUP_DIR"
         exit 0
     fi
+
+    ensure_stow
 
 
     step_install_tools
