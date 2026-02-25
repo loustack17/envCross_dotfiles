@@ -5,10 +5,11 @@
 ### Linux (Niri)
 ```
 niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij,
-waybar, mako, thunar, zathura, mpv, hyprlock, vicinae,
+waybar, mako, zathura, mpv, hyprlock, vicinae,
 claude-code, codex,
 playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
-yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
+yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww, ripdrag,
+pcmanfm-qt
 ```
 
 ### Windows
@@ -55,7 +56,7 @@ dotfiles/
 │   ├── waybar/
 │   ├── mako/
 │   ├── vicinae/
-│   ├── thunar/
+│   ├── pcmanfm-qt/
 │   ├── zathura/
 │   ├── hyprlock/
 │   ├── fontconfig/
@@ -98,8 +99,8 @@ dotfiles/
 | waybar | `~/.config/waybar` |
 | mako | `~/.config/mako` |
 | vicinae | `~/.config/vicinae` |
+| pcmanfm-qt | `~/.config/pcmanfm-qt` |
 | hyprlock | `~/.config/hypr` |
-| thunar | `~/.config/Thunar` |
 | zathura | `~/.config/zathura` |
 | mpv | `~/.config/mpv` |
 | claude-code | `~/.claude` |
