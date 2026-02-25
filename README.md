@@ -56,6 +56,7 @@ dotfiles/
 │   ├── waybar/
 │   ├── mako/
 │   ├── vicinae/
+│   ├── vicinae-extensions/
 │   ├── pcmanfm-qt/
 │   ├── zathura/
 │   ├── hyprlock/

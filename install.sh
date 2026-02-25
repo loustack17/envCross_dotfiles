@@ -21,19 +21,10 @@ readonly YELLOW='\033[0;33m'
 readonly BLUE='\033[0;34m'
 readonly NC='\033[0m'
 
-# =============================================================================
-# Tool Definitions
-# =============================================================================
 # Format: "name|cmd|pkg|aur|src|dst"
-#   name: Display name
-#   cmd:  Command to check (or path for binaries)
-#   pkg:  Package name(s), comma-separated for multiple
-#   aur:  true if AUR package
-#   src:  Source path in repo (relative to REPO_ROOT)
-#   dst:  Destination path (relative to CONFIG_HOME, or absolute if starts with /)
-#
-# Leave src/dst empty for install-only tools (no config)
-# =============================================================================
+#   - Leave cmd/pkg empty for config-only entries (stow only, no install)
+#   - Leave src/dst empty for install-only entries (no config)
+#   - dst is relative to CONFIG_HOME, or absolute if starts with /
 
 TOOLS=(
     # === Utilities (no config files) ===
@@ -53,7 +44,7 @@ TOOLS=(
     "polkit-gnome|/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1|polkit-gnome|false||"
     "awww|awww|awww-git|true||"
     "ripdrag|ripdrag|ripdrag-git|true||"
-    "pcmanfm-qt|pcmanfm-qt|pcmanfm-qt|false||"
+    "pcmanfm-qt|pcmanfm-qt|pcmanfm-qt|false|Linux-config/pcmanfm-qt|pcmanfm-qt"
 
     # === Core Tools ===
     "niri|niri|niri|false|Linux-config/niri|niri"
@@ -74,19 +65,15 @@ TOOLS=(
     "zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura"
     "mpv|mpv|mpv|false|mpv|mpv"
     "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
-)
 
-# Format: "name|src|dst"
-#   dst: relative to CONFIG_HOME, or absolute if starts with /
-FILE_SYMLINKS=(
-    "fontconfig|Linux-config/fontconfig/fonts.conf|fontconfig/fonts.conf"
-    "gtk-3-settings|Linux-config/gtk-3.0/settings.ini|gtk-3.0/settings.ini"
-    "gtk-4-settings|Linux-config/gtk-4.0/settings.ini|gtk-4.0/settings.ini"
-    "qt5ct-config|Linux-config/qt5ct/qt5ct.conf|qt5ct/qt5ct.conf"
-    "qt5ct-env|Linux-config/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
-    "vicinae-config|Linux-config/vicinae/settings.json|vicinae/settings.json"
-    "vicinae-bitwarden|Linux-config/vicinae/extensions/bitwarden|$HOME/.local/share/vicinae/extensions/bitwarden"
-    "pcmanfm-qt-config|Linux-config/pcmanfm-qt/default/settings.conf|pcmanfm-qt/default/settings.conf"
+    # === Config-only (no package to install, stow only) ===
+    "fontconfig|||false|Linux-config/fontconfig|fontconfig"
+    "gtk-3|||false|Linux-config/gtk-3.0|gtk-3.0"
+    "gtk-4|||false|Linux-config/gtk-4.0|gtk-4.0"
+    "qt5ct|||false|Linux-config/qt5ct|qt5ct"
+    "qt5ct-env|||false|Linux-config/environment.d|environment.d"
+    "vicinae|||false|Linux-config/vicinae|vicinae"
+    "vicinae-bitwarden|||false|Linux-config/vicinae-extensions/bitwarden|$HOME/.local/share/vicinae/extensions/bitwarden"
 )
 
 
@@ -169,14 +156,12 @@ detect_system() {
 should_process() {
     local name="$1"
 
-
     if [[ ${#ONLY_TOOLS[@]} -gt 0 ]]; then
         for only in "${ONLY_TOOLS[@]}"; do
             [[ "$name" == "$only" ]] && return 0
         done
         return 1
     fi
-
 
     for skip in "${SKIP_TOOLS[@]}"; do
         [[ "$name" == "$skip" ]] && return 1
@@ -321,46 +306,22 @@ backup_path() {
 }
 
 
-create_symlink() {
-    local src="$1"
-    local dst="$2"
-    local name="$3"
+remove_stow_conflicts() {
+    local src_dir="$1"
+    local dst_dir="$2"
+    local item base target
 
-    if [[ ! -e "$src" ]]; then
-        log_warn "$name: source not found ($src)"
-        return 1
-    fi
-
-    if [[ -L "$dst" ]]; then
-        local current_target
-        current_target=$(readlink -f "$dst" 2>/dev/null || true)
-        local expected_target
-        expected_target=$(readlink -f "$src" 2>/dev/null || true)
-
-        if [[ "$current_target" == "$expected_target" ]]; then
-            log_info "$name: already linked"
-            return 0
+    shopt -s dotglob nullglob
+    for item in "$src_dir"/*; do
+        base="$(basename "$item")"
+        target="$dst_dir/$base"
+        if [[ -d "$item" && ! -L "$item" ]]; then
+            [[ -d "$target" ]] && remove_stow_conflicts "$item" "$target"
+        else
+            [[ -e "$target" || -L "$target" ]] && rm -f "$target"
         fi
-    fi
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log_dry "Would link: $name -> $dst"
-        return 0
-    fi
-
-    if [[ -e "$dst" || -L "$dst" ]]; then
-        backup_path "$dst" "$name"
-        rm -rf "$dst"
-    fi
-
-    mkdir -p "$(dirname "$dst")"
-
-    if ln -sf "$src" "$dst"; then
-        log_info "$name: linked -> $dst"
-    else
-        log_error "$name: failed to create symlink"
-        return 1
-    fi
+    done
+    shopt -u dotglob nullglob
 }
 
 create_stow_package() {
@@ -369,45 +330,20 @@ create_stow_package() {
     local name="$3"
 
     if [[ ! -d "$src" ]]; then
-        log_warn "$name: stow source is not a directory ($src)"
+        log_warn "$name: source not found ($src)"
         return 1
     fi
 
-    local stow_dir
-    stow_dir="$(dirname "$src")"
-    local package
-    package="$(basename "$src")"
-
     if [[ "$DRY_RUN" == "true" ]]; then
-        log_dry "Would stow: $name ($package) -> $dst"
+        log_dry "Would stow: $name -> $dst"
         return 0
     fi
 
-    if [[ -e "$dst" || -L "$dst" ]]; then
-        if [[ ! -d "$dst" || -L "$dst" ]]; then
-            backup_path "$dst" "$name"
-            rm -rf "$dst"
-        fi
-    fi
-
+    [[ -L "$dst" ]] && rm -f "$dst"
     mkdir -p "$dst"
+    remove_stow_conflicts "$src" "$dst"
 
-    local item
-    local base_name
-    local target_path
-    shopt -s dotglob nullglob
-    for item in "$src"/*; do
-        base_name="$(basename "$item")"
-        target_path="$dst/$base_name"
-        if [[ ! -e "$target_path" && ! -L "$target_path" ]]; then
-            continue
-        fi
-        backup_path "$target_path" "$name/$base_name"
-        rm -rf "$target_path"
-    done
-    shopt -u dotglob nullglob
-
-    if stow -d "$stow_dir" -t "$dst" "$package"; then
+    if stow --no-folding -d "$(dirname "$src")" -t "$dst" "$(basename "$src")"; then
         log_info "$name: stowed -> $dst"
     else
         log_error "$name: failed to stow"
@@ -456,25 +392,12 @@ step_backup_configs() {
 
         backup_path "$full_dst" "$name"
     done
-
-    for entry in "${FILE_SYMLINKS[@]}"; do
-        IFS='|' read -r name src dst <<< "$entry"
-
-        local full_dst
-        if [[ "$dst" == /* ]]; then
-            full_dst="$dst"
-        else
-            full_dst="$CONFIG_HOME/$dst"
-        fi
-        backup_path "$full_dst" "$name"
-    done
 }
 
 step_symlink_configs() {
     echo ""
     log_step "=== Step 3: Creating Links ==="
     echo ""
-
 
     for entry in "${TOOLS[@]}"; do
         IFS='|' read -r name cmd pkg is_aur src dst <<< "$entry"
@@ -492,23 +415,6 @@ step_symlink_configs() {
 
         create_stow_package "$full_src" "$full_dst" "$name"
     done
-
-
-    for entry in "${FILE_SYMLINKS[@]}"; do
-        IFS='|' read -r name src dst <<< "$entry"
-
-        local full_src="$REPO_ROOT/$src"
-        local full_dst
-        if [[ "$dst" == /* ]]; then
-            full_dst="$dst"
-        else
-            full_dst="$CONFIG_HOME/$dst"
-        fi
-
-        mkdir -p "$(dirname "$full_dst")"
-
-        create_symlink "$full_src" "$full_dst" "$name"
-    done
 }
 
 show_summary() {
@@ -520,7 +426,6 @@ show_summary() {
         log_info "Dry run completed. No changes were made."
         return
     fi
-
 
     if should_process "fish" && command -v fish &>/dev/null; then
         echo "  Set Fish as default shell: chsh -s \$(which fish)"
@@ -563,7 +468,6 @@ main() {
     log_info "AUR Helper: ${AUR_HELPER:-none}"
     [[ "$DRY_RUN" == "true" ]] && log_warn "DRY RUN MODE - No changes will be made"
 
-
     if [[ "$BACKUP_ONLY" == "true" ]]; then
         step_backup_configs
         [[ -n "$BACKUP_DIR" ]] && log_info "Backup complete: $BACKUP_DIR"
@@ -571,7 +475,6 @@ main() {
     fi
 
     ensure_stow
-
 
     step_install_tools
     step_backup_configs
