@@ -33,3 +33,7 @@ zoxide init fish | source
 
 # google cloud sdk
 if [ -f '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc' ]; . '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc'; end
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
