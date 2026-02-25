@@ -69,11 +69,9 @@ TOOLS=(
     # === Niri Ecosystem ===
     "waybar|waybar|waybar|false|Linux-config/waybar|waybar"
     "mako|mako|mako|false|Linux-config/mako|mako"
-    "walker|walker|walker-git|true|Linux-config/walker|walker"
     "thunar|thunar|thunar|false|Linux-config/thunar|Thunar"
     "zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura"
     "mpv|mpv|mpv|false|mpv|mpv"
-    "elephant|elephant|elephant-all-git|true|Linux-config/elephant|elephant"
     "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
 )
 
@@ -86,6 +84,7 @@ FILE_SYMLINKS=(
     "qt5ct-config|Linux-config/qt5ct/qt5ct.conf|qt5ct/qt5ct.conf"
     "qt5ct-env|Linux-config/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
     "vicinae-config|Linux-config/vicinae/settings.json|vicinae/settings.json"
+    "vicinae-bitwarden|Linux-config/vicinae/extensions/bitwarden|$HOME/.local/share/vicinae/extensions/bitwarden"
 )
 
 
@@ -122,7 +121,7 @@ Examples:
 Tools:
   Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij
   AI:     claude-code, codex
-  Niri:   waybar, mako, walker, thunar, zathura, mpv, elephant, hyprlock
+  Niri:   waybar, mako, thunar, zathura, mpv, hyprlock
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
           yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww
 EOF

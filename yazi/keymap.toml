@@ -153,6 +153,7 @@ prepend_keymap = [
   # Rename bookmarks
   { on = [ "]", "r"], run = "plugin whoosh rename_by_key", desc = "Rename bookmark by key" },
   { on = [ "]", "R"], run = "plugin whoosh rename_by_fzf", desc = "Rename bookmark by fzf" },
+  { on = "<C-d>", run = "shell 'ripdrag -x \"$@\"'", desc="Drag selected files" }
 ]
 
 [tasks]
