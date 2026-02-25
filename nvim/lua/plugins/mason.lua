@@ -1,7 +1,7 @@
 local LSPS = {
   "lua_ls",
   "rust_analyzer",
-  "vtsls",     -- JavaScript/TypeScript
+  "vtsls", -- JavaScript/TypeScript
   "tailwindcss",
   "gopls",
   "ruff",
@@ -10,7 +10,11 @@ local LSPS = {
   "emmet_language_server",
   "cssls",
   "terraformls",
-  "tflint"
+  "tflint",
+  "csharp_ls",
+  "jsonls",
+  "yamlls",
+  "tinymist"
 }
 
 

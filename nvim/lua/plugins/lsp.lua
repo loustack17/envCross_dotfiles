@@ -15,6 +15,17 @@ return {
       vim.lsp.config('*', {
         capabilities = require('cmp_nvim_lsp').default_capabilities()
       })
+
+      -- Configure tinymist for Typst
+      vim.lsp.config('tinymist', {
+        cmd = { 'tinymist' },
+        filetypes = { 'typst' },
+        settings = {
+          exportPdf = 'onSave', -- or 'onType' for real-time preview
+        },
+      })
+
+      vim.lsp.enable('tinymist')
     end
     -----------
   },

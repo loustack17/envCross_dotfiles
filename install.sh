@@ -85,6 +85,7 @@ FILE_SYMLINKS=(
     "gtk-4-settings|Linux-config/gtk-4.0/settings.ini|gtk-4.0/settings.ini"
     "qt5ct-config|Linux-config/qt5ct/qt5ct.conf|qt5ct/qt5ct.conf"
     "qt5ct-env|Linux-config/environment.d/qt5ct.conf|environment.d/qt5ct.conf"
+    "vicinae-config|Linux-config/vicinae/settings.json|vicinae/settings.json"
 )
 
 

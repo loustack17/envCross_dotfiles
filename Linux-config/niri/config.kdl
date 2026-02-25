@@ -72,12 +72,15 @@ binds {
 
     // Apps
     MOD+RETURN hotkey-overlay-title="Open Terminal: Kitty" { spawn-sh "kitty"; }
-    MOD+SPACE hotkey-overlay-title="Open App Launcher: walker" { spawn-sh "walker"; }
+    // MOD+SPACE hotkey-overlay-title="Open App Launcher: walker" { spawn-sh "walker"; }
+    MOD+SPACE hotkey-overlay-title="Open App Launcher: Vicinae" repeat=false { spawn "vicinae" "toggle"; }
     MOD+B hotkey-overlay-title="Open Browser: zen browser" { spawn-sh "zen-browser"; }
     MOD+ALT+L hotkey-overlay-title="Lock Screen: hyprlock" { spawn-sh "hyprlock"; }
-    CTRL+SHIFT+SPACE hotkey-overlay-title="Open 1password Quick Access: 1password" { spawn-sh "1password --quick-access"; }
+    // CTRL+SHIFT+SPACE hotkey-overlay-title="Open 1password Quick Access: 1password" { spawn-sh "1password --quick-access"; }
     MOD+E hotkey-overlay-title="File Manager: Thunar" { spawn-sh "thunar"; }
-    MOD+V hotkey-overlay-title="Clipboard Manager: Walker" { spawn-sh "walker --provider clipboard"; }
+    // MOD+V hotkey-overlay-title="Clipboard Manager: Walker" { spawn-sh "walker --provider clipboard"; }
+    MOD+V hotkey-overlay-title="Clipboard Manager: Vicinae" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/clipboard/history"; }
+    MOD+semicolon hotkey-overlay-title="Search Emoji" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/core/search-emojis"; }
     Print hotkey-overlay-title="ScreenShots: Satty" { spawn-sh "grim -g \"$(slurp)\" - | satty --filename -"; }
 
     // Audio
@@ -186,6 +189,7 @@ spawn-at-startup "swayosd-server"
 spawn-sh-at-startup "awww-daemon"
 spawn-sh-at-startup "waypaper --restore"
 spawn-at-startup "blueman-applet"
+spawn-at-startup "vicinae" "server"
 spawn-at-startup "waybar"
 // spawn-sh-at-startup "ironbar" // Launch ironbar
 spawn-at-startup "swayidle -w timeout 900 'hyprlock'"
@@ -332,4 +336,9 @@ environment {
 
 hotkey-overlay {
     skip-at-startup
+}
+
+
+debug {
+	honor-xdg-activation-with-invalid-serial
 }
