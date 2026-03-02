@@ -1251,7 +1251,7 @@ action_save = function(path, is_temp)
 
   while true do
     local title = is_temp and "Tag ⟨alias name⟩ [TEMPORARY]" or "Tag ⟨alias name⟩"
-    local value, event = ya.input({ title = title, value = tag, position = { "top-center", y = 3, w = 40 } })
+    local value, event = ya.input({ title = title, value = tag, pos = { "top-center", y = 3, w = 40 } })
     if event ~= 1 then return end
     tag = value or ''
     if #tag == 0 then
@@ -1282,7 +1282,7 @@ action_save = function(path, is_temp)
     local value, event = ya.input({
       title = "Keys ⟨space, comma or empty separator⟩",
       value = key_display,
-      position = { "top-center", y = 3, w = 50 }
+      pos = { "top-center", y = 3, w = 50 }
     })
     if event ~= 1 then return end
 
@@ -1324,8 +1324,8 @@ action_save = function(path, is_temp)
 
     if check(all_bookmarks) or check(temp_bookmarks) then
       local msg = (conflict == "duplicate")
-        and ("Duplicated key sequence: " .. _seq_to_string(new_seq))
-        or ("Ambiguous with existing sequence: " .. _seq_to_string(conflict_seq))
+          and ("Duplicated key sequence: " .. _seq_to_string(new_seq))
+          or ("Ambiguous with existing sequence: " .. _seq_to_string(conflict_seq))
       ya.notify { title = "Bookmarks", content = msg, timeout = 2, level = "info" }
       key_display = input_str
     else
@@ -1434,7 +1434,7 @@ end
 local action_delete_all = function(temp_only)
   local mb_path = get_state_attr("path")
   local title = temp_only and "Delete all temporary bookmarks? ⟨y/n⟩" or "Delete all user bookmarks? ⟨y/n⟩"
-  local value, event = ya.input({ title = title, position = { "top-center", y = 3, w = 45 } })
+  local value, event = ya.input({ title = title, pos = { "top-center", y = 3, w = 45 } })
   if event ~= 1 or string.lower(value or "") ~= "y" then
     ya.notify { title = "Bookmarks", content = "Cancel delete", timeout = 1, level = "info" }
     return
@@ -1456,9 +1456,9 @@ return {
         (os.getenv("HOME") .. "/.config/yazi/bookmarks")
     local bookmarks_path = options.bookmarks_path or options.path
     if type(bookmarks_path) == "string" and bookmarks_path ~= '' then
-        state.path = bookmarks_path
+      state.path = bookmarks_path
     else
-        state.path = default_path
+      state.path = default_path
     end
     state.jump_notify = options.jump_notify == nil and false or options.jump_notify
     state.home_alias_enabled = options.home_alias_enabled == nil and true or options.home_alias_enabled

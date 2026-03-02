@@ -194,8 +194,14 @@
         "battery",
         "custom/power",
         "custom/lock",
-        "custom/reboot"
+        "custom/reboot",
+        "custom/quit"
     ]
+  },
+  "custom/quit": {
+    "format": "󰗼",
+    "tooltip": false,
+    "on-click": "niri msg action quit"
   },
   "custom/lock": {
     "format": "",

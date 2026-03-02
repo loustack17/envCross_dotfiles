@@ -153,7 +153,10 @@ prepend_keymap = [
   # Rename bookmarks
   { on = [ "]", "r"], run = "plugin whoosh rename_by_key", desc = "Rename bookmark by key" },
   { on = [ "]", "R"], run = "plugin whoosh rename_by_fzf", desc = "Rename bookmark by fzf" },
-  { on = "<C-d>", run = "shell 'ripdrag -x \"$@\"'", desc="Drag selected files" }
+  { on = "<C-d>", run = "shell 'ripdrag -x \"$@\"'", desc = "Drag selected files" },
+  { on = ["R","o"], run = "cd ~/.local/share/Trash/", desc = "Open Trash" },
+  { on = ["R","e"], run = "shell 'read -p \"Empty trash? (y/N) \" c; [ \"$c\" = y ] && trash-empty 0' --block", desc = "Empty Trash" },
+  { on = ["R","r"], run = "shell 'trash-restore' --block", desc = "Restore from Trash" },
 ]
 
 [tasks]
