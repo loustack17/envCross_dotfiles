@@ -1,0 +1,62 @@
+personality = "pragmatic"
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+[projects."/home/lou/Documents/Cases/2026/scio-ai-backend"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Cases/2026/pebble"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/WorkFlow/envCross_dotfiles"]
+trust_level = "trusted"
+
+[projects."/home/lou/.claude"]
+trust_level = "untrusted"
+
+[projects."/home/lou"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Personal_Notes"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/LazyBlog"]
+trust_level = "untrusted"
+
+[projects."/home/lou/Documents/Practise/DevOps"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/WorkFlow/Rime_Etem_26Keys"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Practise/go-Api"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/WorkFlow/Bopomofo_Eten26_Rime"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Job/LouChangCV"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Job/MyCV/brilliant-cv"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Job/loustack17"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Job/MyCV/typst_invoice"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/Cases/time-log"]
+trust_level = "trusted"
+
+[projects."/home/lou/Documents/WorkFlow/tock"]
+trust_level = "trusted"
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.3-codex"
+
+[tui]
+status_line = ["model-with-reasoning", "context-remaining", "current-dir"]

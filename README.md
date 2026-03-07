@@ -1,19 +1,21 @@
 # Dotfiles
 
+`AI-Supporter/AGENTS.md` is the only shared AI instructions file in this repo. Claude Code and Gemini CLI use official wrapper files that import it. Codex and OpenCode link that same file directly to their official `AGENTS.md` paths during install. Shared skills live in `AI-Supporter/SKILLS/` and the whole directory is linked to each supported tool during install.
+
 ## Tools
 
-### Linux (Niri)
-```
+### Linux
+```text
 niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij,
-waybar, mako, zathura, mpv, hyprlock, vicinae,
-claude-code, codex,
+waybar, mako, zathura, mpv, hyprlock, vicinae, qt6ct,
+claude-code, codex, gemini-cli, opencode,
 playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
 yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww, ripdrag,
 pcmanfm-qt
 ```
 
 ### Windows
-```
+```text
 windows terminal, wezterm, nushell, neovim, yazi, lazygit
 ```
 
@@ -21,11 +23,11 @@ windows terminal, wezterm, nushell, neovim, yazi, lazygit
 
 ### Linux
 ```bash
-./install.sh                  # full install
-./install.sh --dry-run        # preview
-./install.sh --no-install     # symlink only
-./install.sh --skip-kitty     # skip tool
-./install.sh --only-neovim    # specific tool
+./install.sh
+./install.sh --dry-run
+./install.sh --no-install
+./install.sh --skip-kitty
+./install.sh --only-neovim
 ```
 
 ### Windows
@@ -36,58 +38,40 @@ nu install.nu --skip [wezterm]
 nu install.nu --only [nvim lazygit]
 ```
 
-## Structure
+## AI Structure
 
-```
-dotfiles/
-├── install.sh          # Linux
-├── install.nu          # Windows
-│
-├── AI-Supporter/       # Shared AI configs (Linux + Windows)
-│   ├── Claude Code/
-│   └── Codex/
-│
-├── Linux-config/       # Linux-only config packages
-│   ├── niri/
-│   ├── kitty/
-│   ├── ghostty/
-│   ├── fish/
-│   ├── zellij/
-│   ├── waybar/
-│   ├── mako/
-│   ├── vicinae/
-│   ├── vicinae-extensions/
-│   ├── pcmanfm-qt/
-│   ├── zathura/
-│   ├── hyprlock/
-│   ├── fontconfig/
-│   ├── gtk-3.0/
-│   ├── gtk-4.0/
-│   └── qt5ct/
-│
-├── nvim/               # Neovim (shared)
-├── yazi/               # Yazi (shared)
-├── lazygit/            # Lazygit (shared)
-├── mpv/                # MPV
-├── zed/                # Zed
-│
-├── Windows/
-│   ├── wezterm/            # WezTerm
-│   ├── windows terminal/   # Windows Terminal
-│   ├── nushell/            # Nushell
-│   ├── powershell/         # PowerShell (pwsh)
-│   ├── glazeWM/            # GlazeWM
-│   └── .wezterm.lua
-│
-└── backup/
+```text
+AI-Supporter/
+├── AGENTS.md
+├── SKILLS/
+│   └── no-comments/
+│       └── SKILL.md
+├── Claude Code/
+│   ├── CLAUDE.md
+│   ├── settings.claude.json
+│   └── settings.json
+├── Codex/
+│   └── config.toml
+├── Gemini CLI/
+│   └── GEMINI.md
 ```
 
-## Paths
+Official install targets:
 
-### Linux
+```text
+~/.claude/CLAUDE.md                  <- AI-Supporter/Claude Code/CLAUDE.md
+~/.gemini/GEMINI.md                  <- AI-Supporter/Gemini CLI/GEMINI.md
+~/.codex/AGENTS.md                   <- AI-Supporter/AGENTS.md
+~/.config/opencode/AGENTS.md         <- AI-Supporter/AGENTS.md
+~/.claude/skills                     <- AI-Supporter/SKILLS
+~/.codex/skills                      <- AI-Supporter/SKILLS
+~/.config/opencode/skills            <- AI-Supporter/SKILLS
+```
+
+## Linux Paths
+
 | Tool | Path |
 |------|------|
-| windows terminal | `%SCOOP%\apps\windows-terminal\current\settings\settings.json` |
 | niri | `~/.config/niri/config.kdl` |
 | kitty | `~/.config/kitty` |
 | ghostty | `~/.config/ghostty` |
@@ -104,10 +88,22 @@ dotfiles/
 | hyprlock | `~/.config/hypr` |
 | zathura | `~/.config/zathura` |
 | mpv | `~/.config/mpv` |
-| claude-code | `~/.claude` |
-| codex | `~/.codex` |
+| qt6ct | `~/.config/qt6ct` |
+| qt6ct-env | `~/.config/environment.d/qt6ct.conf` |
+| mimeapps | `~/.config/mimeapps.list` |
+| niri-mimeapps | `~/.config/niri-mimeapps.list` |
+| xdg-terminals | `~/.config/xdg-terminals.list` |
+| niri-xdg-terminals | `~/.config/niri-xdg-terminals.list` |
+| user-dirs | `~/.config/user-dirs.dirs` |
+| user-dirs-locale | `~/.config/user-dirs.locale` |
+| claude-code | `~/.claude/{CLAUDE.md,settings*.json,skills}` |
+| codex | `~/.codex/{AGENTS.md,config.toml,skills}` |
+| gemini-cli | `~/.gemini/GEMINI.md` |
+| opencode | `~/.config/opencode/{AGENTS.md,skills}` |
+| gitconfig | `~/.gitconfig` |
 
-### Windows
+## Windows Paths
+
 | Tool | Path |
 |------|------|
 | windows terminal | `%SCOOP%\apps\windows-terminal\current\settings\settings.json` |
@@ -117,31 +113,3 @@ dotfiles/
 | neovim | `%LOCALAPPDATA%\nvim` |
 | yazi | `%APPDATA%\yazi\config` |
 | lazygit | `%LOCALAPPDATA%\lazygit` |
-
-## Post-Install
-
-### Linux
-```bash
-chsh -s $(which fish)         # set fish as default
-nvim                          # install plugins
-awww-daemon                   # start wallpaper daemon
-```
-
-### Windows
-```
-wezterm.exe                   # launch terminal
-nvim                          # install plugins
-```
-
-## References
-
-- [Niri](https://github.com/YaLTeR/niri)
-- [Ghostty](https://ghostty.org)
-- [Zed](https://zed.dev)
-- [Waybar](https://github.com/Alexays/Waybar)
-- [Vicinae](https://vicinae.com)
-- [awww](https://codeberg.org/LGFae/awww)
-- [Zellij](https://zellij.dev)
-- [Impala](https://github.com/pythops/impala)
-- [CachyOS](https://cachyos.org)
-

@@ -22,7 +22,7 @@ readonly BLUE='\033[0;34m'
 readonly NC='\033[0m'
 
 # Format: "name|cmd|pkg|aur|src|dst"
-#   - Leave cmd/pkg empty for config-only entries (stow only, no install)
+#   - Leave cmd/pkg empty for config-only entries (link only, no install)
 #   - Leave src/dst empty for install-only entries (no config)
 #   - dst is relative to CONFIG_HOME, or absolute if starts with /
 
@@ -57,6 +57,9 @@ TOOLS=(
     "lazygit|lazygit|lazygit|false|lazygit|lazygit"
     "claude-code|claude||false|AI-Supporter/Claude Code|$HOME/.claude"
     "codex|codex||false|AI-Supporter/Codex|$HOME/.codex"
+    "gemini-cli|||false|AI-Supporter/Gemini CLI|$HOME/.gemini"
+    "opencode|||false||$HOME/.config/opencode"
+    "gitconfig|||false|.gitconfig|$HOME/.gitconfig"
     "zellij|zellij|zellij|false|Linux-config/zellij|zellij"
 
     # === Niri Ecosystem ===
@@ -66,12 +69,18 @@ TOOLS=(
     "mpv|mpv|mpv|false|mpv|mpv"
     "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
 
-    # === Config-only (no package to install, stow only) ===
+    # === Config-only (no package to install, link only) ===
     "fontconfig|||false|Linux-config/fontconfig|fontconfig"
     "gtk-3|||false|Linux-config/gtk-3.0|gtk-3.0"
     "gtk-4|||false|Linux-config/gtk-4.0|gtk-4.0"
-    "qt5ct|||false|Linux-config/qt5ct|qt5ct"
-    "qt5ct-env|||false|Linux-config/environment.d|environment.d"
+    "qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct"
+    "qt6ct-env|||false|Linux-config/environment.d|environment.d"
+    "mimeapps|||false|Linux-config/mimeapps.list|mimeapps.list"
+    "niri-mimeapps|||false|Linux-config/niri-mimeapps.list|niri-mimeapps.list"
+    "xdg-terminals|||false|Linux-config/xdg-terminals.list|xdg-terminals.list"
+    "niri-xdg-terminals|||false|Linux-config/niri-xdg-terminals.list|niri-xdg-terminals.list"
+    "user-dirs|||false|Linux-config/user-dirs.dirs|user-dirs.dirs"
+    "user-dirs-locale|||false|Linux-config/user-dirs.locale|user-dirs.locale"
     "vicinae|||false|Linux-config/vicinae|vicinae"
     "vicinae-bitwarden|||false|Linux-config/vicinae-extensions/bitwarden|$HOME/.local/share/vicinae/extensions/bitwarden"
 )
@@ -108,12 +117,15 @@ Examples:
   ./install.sh --only-neovim          # Only install neovim
 
 Tools:
-  Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij
-  AI:     claude-code, codex
+  Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij, qt6ct
+  AI:     claude-code, codex, gemini-cli, opencode
   Niri:   waybar, mako, zathura, mpv, hyprlock
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
           yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww,
           ripdrag, pcmanfm-qt
+  Config: gitconfig, qt6ct-env, mimeapps, niri-mimeapps, xdg-terminals,
+          niri-xdg-terminals, user-dirs, user-dirs-locale, fontconfig, gtk-3,
+          gtk-4, vicinae, vicinae-bitwarden
 EOF
     exit 0
 }
@@ -351,6 +363,83 @@ create_stow_package() {
     fi
 }
 
+create_file_link() {
+    local src="$1"
+    local dst="$2"
+    local name="$3"
+
+    if [[ ! -f "$src" ]]; then
+        log_warn "$name: source not found ($src)"
+        return 1
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_dry "Would link: $name -> $dst"
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$dst")"
+    [[ -L "$dst" || -f "$dst" ]] && rm -f "$dst"
+
+    if ln -s "$src" "$dst"; then
+        log_info "$name: linked -> $dst"
+    else
+        log_error "$name: failed to link"
+        return 1
+    fi
+}
+
+create_path_link() {
+    local src="$1"
+    local dst="$2"
+    local name="$3"
+
+    if [[ ! -e "$src" ]]; then
+        log_warn "$name: source not found ($src)"
+        return 1
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_dry "Would link: $name -> $dst"
+        return 0
+    fi
+
+    mkdir -p "$(dirname "$dst")"
+
+    if [[ -L "$dst" || -f "$dst" ]]; then
+        rm -f "$dst"
+    elif [[ -d "$dst" ]]; then
+        rm -rf "$dst"
+    fi
+
+    if ln -s "$src" "$dst"; then
+        log_info "$name: linked -> $dst"
+    else
+        log_error "$name: failed to link"
+        return 1
+    fi
+}
+
+link_ai_shared_files() {
+    local name="$1"
+    local shared_agents="$REPO_ROOT/AI-Supporter/AGENTS.md"
+    local shared_skills="$REPO_ROOT/AI-Supporter/SKILLS"
+
+    case "$name" in
+        claude-code)
+            create_path_link "$shared_skills" "$HOME/.claude/skills" "claude-skills"
+            ;;
+        codex)
+            create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules"
+            create_path_link "$shared_skills" "$HOME/.codex/skills" "codex-skills"
+            ;;
+        opencode)
+            create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules"
+            create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills"
+            ;;
+    esac
+}
+
 
 step_install_tools() {
     [[ "$NO_INSTALL" == "true" ]] && return
@@ -401,11 +490,10 @@ step_symlink_configs() {
 
     for entry in "${TOOLS[@]}"; do
         IFS='|' read -r name cmd pkg is_aur src dst <<< "$entry"
-        [[ -z "$src" || -z "$dst" ]] && continue
+        [[ -z "$dst" ]] && continue
 
         should_process "$name" || continue
 
-        local full_src="$REPO_ROOT/$src"
         local full_dst
         if [[ "$dst" == /* ]]; then
             full_dst="$dst"
@@ -413,7 +501,19 @@ step_symlink_configs() {
             full_dst="$CONFIG_HOME/$dst"
         fi
 
-        create_stow_package "$full_src" "$full_dst" "$name"
+        if [[ -n "$src" ]]; then
+            local full_src="$REPO_ROOT/$src"
+
+            if [[ -d "$full_src" ]]; then
+                create_stow_package "$full_src" "$full_dst" "$name"
+            elif [[ -f "$full_src" ]]; then
+                create_file_link "$full_src" "$full_dst" "$name"
+            else
+                log_warn "$name: source not found ($full_src)"
+            fi
+        fi
+
+        link_ai_shared_files "$name"
     done
 }
 

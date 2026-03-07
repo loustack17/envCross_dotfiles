@@ -2,7 +2,11 @@ backup/
 
 # Zed settings contains secrets (GitHub PAT, API keys)
 zed/settings.json
+zed/settings_backup.json
 
 # Codex system-managed skills (auto-updated by codex)
 AI-Supporter/Codex/skills/.system/
 /lazygit/state.yml
+nvim/lazy-lock.json
+yazi/plugins/custom-shell.yazi/yazi_cmd_history
+yazi/plugins/whoosh.yazi/bookmarks

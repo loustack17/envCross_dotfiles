@@ -1,5 +1,31 @@
 // Docs: https://github.com/YaLTeR/niri/wiki
 
+environment {
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    KDE_WALLET_DISABLED "1"
+    QT_QPA_PLATFORM "wayland"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    QT_QPA_PLATFORMTHEME "qt6ct"
+    XDG_SESSION_TYPE "wayland"
+    XDG_CURRENT_DESKTOP "niri"
+    CHROME_FLAGS "--password-store=gnome --ozone-platform=wayland --use-gl=egl"
+}
+
+spawn-sh-at-startup "/usr/lib/polkit-kde-authentication-agent-1 &"
+spawn-at-startup "blueman-applet"
+spawn-at-startup "mako"
+spawn-at-startup "vicinae" "server"
+spawn-at-startup "swayosd-server"
+spawn-sh-at-startup "awww-daemon"
+spawn-sh-at-startup "waypaper --restore"
+spawn-at-startup "waybar"
+// spawn-sh-at-startup "ironbar" // Launch ironbar
+spawn-at-startup "swayidle -w timeout 900 'hyprlock'"
+
+prefer-no-csd
+screenshot-path null
+
+
 cursor {
     xcursor-theme "catppuccin-macchiato-maroon-cursors"
     xcursor-size 24
@@ -67,132 +93,6 @@ layer-rule {
     place-within-backdrop true
 }
 
-binds {
-    MOD+SHIFT+ESCAPE { show-hotkey-overlay; }
-
-    // Apps
-    MOD+RETURN hotkey-overlay-title="Open Terminal: Kitty" { spawn-sh "kitty"; }
-    MOD+SPACE hotkey-overlay-title="Open App Launcher: Vicinae" repeat=false { spawn "vicinae" "toggle"; }
-    MOD+B hotkey-overlay-title="Open Browser: zen browser" { spawn-sh "zen-browser"; }
-    MOD+ALT+L hotkey-overlay-title="Lock Screen: hyprlock" { spawn-sh "hyprlock"; }
-    MOD+E hotkey-overlay-title="File Manager: Pcmanfm-qt" { spawn-sh "pcmanfm-qt"; }
-    MOD+V hotkey-overlay-title="Clipboard Manager: Vicinae" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/clipboard/history"; }
-    MOD+semicolon hotkey-overlay-title="Search Emoji" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/core/search-emojis"; }
-    Print hotkey-overlay-title="ScreenShots: Satty" { spawn-sh "grim -g \"$(slurp)\" - | satty --filename -"; }
-
-    // Audio
-    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume +2"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume -2"; }
-    XF86AudioMute allow-when-locked=true { spawn-sh "swayosd-client --output-volume mute-toggle"; }
-    XF86AudioMicMute allow-when-locked=true { spawn-sh "swayosd-client --input-volume mute-toggle"; }
-    XF86AudioNext allow-when-locked=true { spawn-sh "swayosd-client --playerctl next"; }
-    XF86AudioPause allow-when-locked=true { spawn-sh "swayosd-client --playerctl play-pause"; }
-    XF86AudioPlay allow-when-locked=true { spawn-sh "swayosd-client --playerctl play-pause"; }
-    XF86AudioPrev allow-when-locked=true { spawn-sh "swayosd-client --playerctl previous"; }
-
-    // Focus and move
-    MOD+Q { close-window; }
-    MOD+LEFT { focus-column-left; }
-    MOD+H { focus-column-left; }
-    MOD+RIGHT { focus-column-right; }
-    MOD+L { focus-column-right; }
-    MOD+UP { focus-window-up; }
-    MOD+K { focus-window-up; }
-    MOD+DOWN { focus-window-down; }
-    MOD+J { focus-window-down; }
-    MOD+CTRL+LEFT { move-column-left; }
-    MOD+CTRL+H { move-column-left; }
-    MOD+CTRL+RIGHT { move-column-right; }
-    MOD+CTRL+L { move-column-right; }
-    MOD+CTRL+UP { move-window-up; }
-    MOD+CTRL+K { move-window-up; }
-    MOD+CTRL+DOWN { move-window-down; }
-    MOD+CTRL+J { move-window-down; }
-    MOD+HOME { focus-column-first; }
-    MOD+END { focus-column-last; }
-    MOD+CTRL+HOME { move-column-to-first; }
-    MOD+CTRL+END { move-column-to-last; }
-    MOD+SHIFT+LEFT { focus-monitor-left; }
-    MOD+SHIFT+RIGHT { focus-monitor-right; }
-    MOD+SHIFT+UP { focus-monitor-up; }
-    MOD+SHIFT+DOWN { focus-monitor-down; }
-    MOD+SHIFT+CTRL+LEFT { move-column-to-monitor-left; }
-    MOD+SHIFT+CTRL+RIGHT { move-column-to-monitor-right; }
-    MOD+SHIFT+CTRL+UP { move-column-to-monitor-up; }
-    MOD+SHIFT+CTRL+DOWN { move-column-to-monitor-down; }
-
-    // Workspace
-    MOD+WHEELSCROLLDOWN cooldown-ms=150 { focus-workspace-down; }
-    MOD+WHEELSCROLLUP cooldown-ms=150 { focus-workspace-up; }
-    MOD+CTRL+WHEELSCROLLDOWN cooldown-ms=150 { move-column-to-workspace-down; }
-    MOD+CTRL+WHEELSCROLLUP cooldown-ms=150 { move-column-to-workspace-up; }
-    MOD+WHEELSCROLLRIGHT { focus-column-right; }
-    MOD+WHEELSCROLLLEFT { focus-column-left; }
-    MOD+CTRL+WHEELSCROLLRIGHT { move-column-right; }
-    MOD+CTRL+WHEELSCROLLLEFT { move-column-left; }
-    MOD+SHIFT+WHEELSCROLLDOWN { focus-column-right; }
-    MOD+SHIFT+WHEELSCROLLUP { focus-column-left; }
-    MOD+CTRL+SHIFT+WHEELSCROLLDOWN { move-column-right; }
-    MOD+CTRL+SHIFT+WHEELSCROLLUP { move-column-left; }
-    MOD+1 { focus-workspace 1; }
-    MOD+2 { focus-workspace 2; }
-    MOD+3 { focus-workspace 3; }
-    MOD+4 { focus-workspace 4; }
-    MOD+5 { focus-workspace 5; }
-    MOD+6 { focus-workspace 6; }
-    MOD+7 { focus-workspace 7; }
-    MOD+8 { focus-workspace 8; }
-    MOD+9 { focus-workspace 9; }
-    MOD+CTRL+1 { move-column-to-workspace 1; }
-    MOD+CTRL+2 { move-column-to-workspace 2; }
-    MOD+CTRL+3 { move-column-to-workspace 3; }
-    MOD+CTRL+4 { move-column-to-workspace 4; }
-    MOD+CTRL+5 { move-column-to-workspace 5; }
-    MOD+CTRL+6 { move-column-to-workspace 6; }
-    MOD+CTRL+7 { move-column-to-workspace 7; }
-    MOD+CTRL+8 { move-column-to-workspace 8; }
-    MOD+CTRL+9 { move-column-to-workspace 9; }
-    MOD+TAB { focus-workspace-previous; }
-
-    // Layout and modes
-    MOD+CTRL+F { expand-column-to-available-width; }
-    MOD+C { center-column; }
-    MOD+CTRL+C { center-visible-columns; }
-    MOD+MINUS { set-column-width "-10%"; }
-    MOD+EQUAL { set-column-width "+10%"; }
-    MOD+SHIFT+MINUS { set-window-height "-10%"; }
-    MOD+SHIFT+EQUAL { set-window-height "+10%"; }
-    MOD+CTRL+W { consume-window-into-column; }
-    MOD+CTRL+X { expel-window-from-column; }
-    MOD+T { toggle-window-floating; }
-    MOD+F { fullscreen-window; }
-    MOD+W { toggle-column-tabbed-display; }
-    MOD+O repeat=false { toggle-overview; }
-
-    // Screenshot
-    CTRL+SHIFT+1 { screenshot; }
-    CTRL+SHIFT+2 { screenshot-screen; }
-    CTRL+SHIFT+3 { screenshot-window; }
-
-    // System
-    MOD+ESCAPE allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-    CTRL+ALT+DELETE { quit; }
-    MOD+SHIFT+P { power-off-monitors; }
-}
-
-spawn-sh-at-startup "/usr/lib/polkit-kde-authentication-agent-1 &"
-spawn-at-startup "blueman-applet"
-spawn-at-startup "mako"
-spawn-at-startup "vicinae" "server"
-spawn-at-startup "swayosd-server"
-spawn-sh-at-startup "awww-daemon"
-spawn-sh-at-startup "waypaper --restore"
-spawn-at-startup "waybar"
-// spawn-sh-at-startup "ironbar" // Launch ironbar
-spawn-at-startup "swayidle -w timeout 900 'hyprlock'"
-
-prefer-no-csd
-screenshot-path null
 
 layout {
     gaps 5
@@ -323,19 +223,127 @@ window-rule {
     opacity 0.9
 }
 
-environment {
-    ELECTRON_OZONE_PLATFORM_HINT "auto"
-    QT_QPA_PLATFORM "wayland"
-    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
-    XDG_SESSION_TYPE "wayland"
-    XDG_CURRENT_DESKTOP "niri"
-}
-
 hotkey-overlay {
     skip-at-startup
 }
 
-
 debug {
 	honor-xdg-activation-with-invalid-serial
+}
+
+
+binds {
+    MOD+SHIFT+ESCAPE { show-hotkey-overlay; }
+
+    // Apps
+    MOD+RETURN hotkey-overlay-title="Open Terminal: Kitty" { spawn-sh "kitty"; }
+    MOD+SPACE hotkey-overlay-title="Open App Launcher: Vicinae" repeat=false { spawn "vicinae" "toggle"; }
+    MOD+B hotkey-overlay-title="Open Browser: zen browser" { spawn-sh "zen-browser"; }
+    MOD+ALT+L hotkey-overlay-title="Lock Screen: hyprlock" { spawn-sh "hyprlock"; }
+    MOD+E hotkey-overlay-title="File Manager: Pcmanfm-qt" { spawn-sh "pcmanfm-qt"; }
+    MOD+V hotkey-overlay-title="Clipboard Manager: Vicinae" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/clipboard/history"; }
+    MOD+semicolon hotkey-overlay-title="Search Emoji" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/core/search-emojis"; }
+
+
+    // Audio
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume +2"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "swayosd-client --output-volume -2"; }
+    XF86AudioMute allow-when-locked=true { spawn-sh "swayosd-client --output-volume mute-toggle"; }
+    XF86AudioMicMute allow-when-locked=true { spawn-sh "swayosd-client --input-volume mute-toggle"; }
+    XF86AudioNext allow-when-locked=true { spawn-sh "swayosd-client --playerctl next"; }
+    XF86AudioPause allow-when-locked=true { spawn-sh "swayosd-client --playerctl play-pause"; }
+    XF86AudioPlay allow-when-locked=true { spawn-sh "swayosd-client --playerctl play-pause"; }
+    XF86AudioPrev allow-when-locked=true { spawn-sh "swayosd-client --playerctl previous"; }
+
+    // Focus and move
+    MOD+Q { close-window; }
+    MOD+LEFT { focus-column-left; }
+    MOD+H { focus-column-left; }
+    MOD+RIGHT { focus-column-right; }
+    MOD+L { focus-column-right; }
+    MOD+UP { focus-window-up; }
+    MOD+K { focus-window-up; }
+    MOD+DOWN { focus-window-down; }
+    MOD+J { focus-window-down; }
+    MOD+CTRL+LEFT { move-column-left; }
+    MOD+CTRL+H { move-column-left; }
+    MOD+CTRL+RIGHT { move-column-right; }
+    MOD+CTRL+L { move-column-right; }
+    MOD+CTRL+UP { move-window-up; }
+    MOD+CTRL+K { move-window-up; }
+    MOD+CTRL+DOWN { move-window-down; }
+    MOD+CTRL+J { move-window-down; }
+    MOD+HOME { focus-column-first; }
+    MOD+END { focus-column-last; }
+    MOD+CTRL+HOME { move-column-to-first; }
+    MOD+CTRL+END { move-column-to-last; }
+    MOD+SHIFT+LEFT { focus-monitor-left; }
+    MOD+SHIFT+RIGHT { focus-monitor-right; }
+    MOD+SHIFT+UP { focus-monitor-up; }
+    MOD+SHIFT+DOWN { focus-monitor-down; }
+    MOD+SHIFT+CTRL+LEFT { move-column-to-monitor-left; }
+    MOD+SHIFT+CTRL+RIGHT { move-column-to-monitor-right; }
+    MOD+SHIFT+CTRL+UP { move-column-to-monitor-up; }
+    MOD+SHIFT+CTRL+DOWN { move-column-to-monitor-down; }
+
+    // Workspace
+    MOD+WHEELSCROLLDOWN cooldown-ms=150 { focus-workspace-down; }
+    MOD+WHEELSCROLLUP cooldown-ms=150 { focus-workspace-up; }
+    MOD+CTRL+WHEELSCROLLDOWN cooldown-ms=150 { move-column-to-workspace-down; }
+    MOD+CTRL+WHEELSCROLLUP cooldown-ms=150 { move-column-to-workspace-up; }
+    MOD+WHEELSCROLLRIGHT { focus-column-right; }
+    MOD+WHEELSCROLLLEFT { focus-column-left; }
+    MOD+CTRL+WHEELSCROLLRIGHT { move-column-right; }
+    MOD+CTRL+WHEELSCROLLLEFT { move-column-left; }
+    MOD+SHIFT+WHEELSCROLLDOWN { focus-column-right; }
+    MOD+SHIFT+WHEELSCROLLUP { focus-column-left; }
+    MOD+CTRL+SHIFT+WHEELSCROLLDOWN { move-column-right; }
+    MOD+CTRL+SHIFT+WHEELSCROLLUP { move-column-left; }
+    MOD+1 { focus-workspace 1; }
+    MOD+2 { focus-workspace 2; }
+    MOD+3 { focus-workspace 3; }
+    MOD+4 { focus-workspace 4; }
+    MOD+5 { focus-workspace 5; }
+    MOD+6 { focus-workspace 6; }
+    MOD+7 { focus-workspace 7; }
+    MOD+8 { focus-workspace 8; }
+    MOD+9 { focus-workspace 9; }
+    MOD+CTRL+1 { move-column-to-workspace 1; }
+    MOD+CTRL+2 { move-column-to-workspace 2; }
+    MOD+CTRL+3 { move-column-to-workspace 3; }
+    MOD+CTRL+4 { move-column-to-workspace 4; }
+    MOD+CTRL+5 { move-column-to-workspace 5; }
+    MOD+CTRL+6 { move-column-to-workspace 6; }
+    MOD+CTRL+7 { move-column-to-workspace 7; }
+    MOD+CTRL+8 { move-column-to-workspace 8; }
+    MOD+CTRL+9 { move-column-to-workspace 9; }
+    MOD+TAB { focus-workspace-previous; }
+
+    // Layout and modes
+    MOD+CTRL+F { expand-column-to-available-width; }
+    MOD+C { center-column; }
+    MOD+CTRL+C { center-visible-columns; }
+    MOD+MINUS { set-column-width "-10%"; }
+    MOD+EQUAL { set-column-width "+10%"; }
+    MOD+SHIFT+MINUS { set-window-height "-10%"; }
+    MOD+SHIFT+EQUAL { set-window-height "+10%"; }
+    MOD+CTRL+W { consume-window-into-column; }
+    MOD+CTRL+X { expel-window-from-column; }
+    MOD+T { toggle-window-floating; }
+    MOD+F { fullscreen-window; }
+    MOD+W { toggle-column-tabbed-display; }
+    MOD+O repeat=false { toggle-overview; }
+
+    // Screenshot
+    // CTRL+SHIFT+1 { screenshot; }
+    // CTRL+SHIFT+2 { screenshot-screen; }
+    // CTRL+SHIFT+3 { screenshot-window; }
+    Print hotkey-overlay-title="ScreenShots: Satty" { spawn-sh "grim -g \"$(slurp)\" - | satty --filename -"; }
+    // Print hotkey-overlay-title="ScreenShots: Gradia" { spawn-sh "gradia --screenshot=INTERACTIVE"; }
+    CTRL+Print hotkey-overlay-title="ScreenShots: Gradia-screen" { spawn-sh "gradia --screenshot=FULL"; }
+
+    // System
+    MOD+ESCAPE allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    CTRL+ALT+DELETE { quit; }
+    MOD+SHIFT+P { power-off-monitors; }
 }
