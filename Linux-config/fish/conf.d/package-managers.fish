@@ -1,0 +1,8 @@
+abbr --add pga 'pnpm add -g'
+abbr --add pgrm 'pnpm remove -g'
+abbr --add pgu 'pnpm update -g'
+abbr --add badd 'bun add'
+abbr --add baddd 'bun add -d'
+abbr --add brm 'bun remove'
+abbr --add bup 'bun update'
+abbr --add bx 'bunx'

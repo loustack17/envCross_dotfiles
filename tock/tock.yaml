@@ -1,9 +1,10 @@
 backend: timewarrior
+check_updates: true
+export:
+    ical:
+        file_name: tock_export.ics
 file:
-  path: /home/lou/Documents/Cases/time-log/time_track.log
-timewarrior:
-  data_path: /home/lou/Documents/Cases/time-log
-time_format: "24"
+    path: /home/lou/Documents/Cases/time-log/time_track.log
 theme:
     faint: '#404040'
     highlight: '#FFFF00'
@@ -12,4 +13,7 @@ theme:
     secondary: '#00FFFF'
     sub_text: '#B0B0B0'
     text: '#FFFFFF'
-weekly_target: "40h"
+time_format: "24"
+timewarrior:
+    data_path: /home/lou/Documents/Cases/time-log
+weekly_target: 40h
