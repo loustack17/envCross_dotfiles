@@ -7,7 +7,7 @@
 ### Linux
 ```text
 niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij,
-waybar, mako, zathura, mpv, hyprlock, vicinae, qt6ct,
+waybar, mako, zathura, easyeffects, mpv, hyprlock, vicinae, qt6ct,
 claude-code, codex, gemini-cli, opencode,
 playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
 yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww, ripdrag,
@@ -87,6 +87,7 @@ Official install targets:
 | pcmanfm-qt | `~/.config/pcmanfm-qt` |
 | hyprlock | `~/.config/hypr` |
 | zathura | `~/.config/zathura` |
+| easyeffects | `~/.config/easyeffects` |
 | mpv | `~/.config/mpv` |
 | qt6ct | `~/.config/qt6ct` |
 | qt6ct-env | `~/.config/environment.d/qt6ct.conf` |

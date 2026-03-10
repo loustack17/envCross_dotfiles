@@ -66,6 +66,7 @@ TOOLS=(
     "waybar|waybar|waybar|false|Linux-config/waybar|waybar"
     "mako|mako|mako|false|Linux-config/mako|mako"
     "zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura"
+    "easyeffects|easyeffects|easyeffects,calf,lsp-plugins-lv2|false|Linux-config/easyeffects|easyeffects"
     "mpv|mpv|mpv|false|mpv|mpv"
     "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
 
@@ -119,7 +120,7 @@ Examples:
 Tools:
   Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij, qt6ct
   AI:     claude-code, codex, gemini-cli, opencode
-  Niri:   waybar, mako, zathura, mpv, hyprlock
+  Niri:   waybar, mako, zathura, easyeffects, mpv, hyprlock
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
           yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww,
           ripdrag, pcmanfm-qt
