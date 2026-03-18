@@ -1,6 +1,9 @@
 personality = "pragmatic"
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
+[features]
+experimental_use_rmcp_client = true
+
 [projects."/home/lou/Documents/Cases/2026/scio-ai-backend"]
 trust_level = "trusted"
 
