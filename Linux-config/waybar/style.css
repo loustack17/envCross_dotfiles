@@ -112,7 +112,8 @@
 #battery,
 #custom-power,
 #custom-lock,
-#custom-reboot {
+#custom-reboot,
+#custom-quit {
   background-color: #1a1b26;
   padding: 0.16rem 0.7rem;
   margin: 1px 0;
@@ -129,7 +130,8 @@
 #battery:hover,
 #custom-power:hover,
 #custom-lock:hover,
-#custom-reboot:hover {
+#custom-reboot:hover,
+#custom-quit:hover {
   background-color: rgb(41, 42, 53);
 }
 
@@ -179,7 +181,8 @@
 
 #custom-power,
 #custom-lock,
-#custom-reboot {
+#custom-reboot,
+#custom-quit {
   color: #babbf1;
   font-family: "Symbols Nerd Font", "NotoSans Nerd Font", "Font Awesome 6 Free", "Font Awesome 5 Free", "Noto Sans", sans-serif;
 }
@@ -188,7 +191,7 @@
   border-radius: 0;
 }
 
-#custom-reboot {
+#custom-quit {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
 }
@@ -198,7 +201,7 @@
   border-bottom-right-radius: 0;
 }
 
-#group-battpower:hover #custom-reboot {
+#group-battpower:hover #custom-quit {
   margin-right: 0;
 }
 
@@ -266,7 +269,8 @@
 #memory.hardware-list,
 #custom-power.battpower-hidden,
 #custom-lock.battpower-hidden,
-#custom-reboot.battpower-hidden {
+#custom-reboot.battpower-hidden,
+#custom-quit.battpower-hidden {
   opacity: 0;
   margin: 0;
   padding: 0;
