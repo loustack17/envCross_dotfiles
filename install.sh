@@ -21,81 +21,8 @@ readonly YELLOW='\033[0;33m'
 readonly BLUE='\033[0;34m'
 readonly NC='\033[0m'
 
-# Format: "name|cmd|pkg|aur|src|dst"
-#   - Leave cmd/pkg empty for config-only entries (link only, no install)
-#   - Leave src/dst empty for install-only entries (no config)
-#   - dst is relative to CONFIG_HOME, or absolute if starts with /
-
-TOOLS=(
-    # === Utilities (no config files) ===
-    "playerctl|playerctl|playerctl|false||"
-    "brightnessctl|brightnessctl|brightnessctl|false||"
-    "bluez|bluetoothctl|bluez,bluez-utils|false||"
-    "blueman|blueman-manager|blueman|false||"
-    "slurp|slurp|slurp|false||"
-    "grim|grim|grim|false||"
-    "satty|satty|satty-git|true||"
-    "impala|impala|impala|true||"
-    "yt-dlp|yt-dlp|yt-dlp|false||"
-    "wl-clipboard|wl-copy|wl-clipboard|false||"
-    "swayosd|swayosd-server|swayosd|false||"
-    "swayidle|swayidle|swayidle|false||"
-    "wlr-randr|wlr-randr|wlr-randr|false||"
-    "polkit-gnome|/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1|polkit-gnome|false||"
-    "awww|awww|awww-git|true||"
-    "ripdrag|ripdrag|ripdrag-git|true||"
-    "pcmanfm-qt|pcmanfm-qt|pcmanfm-qt|false|Linux-config/pcmanfm-qt|pcmanfm-qt"
-
-    # === Core Tools ===
-    "niri|niri|niri|false|Linux-config/niri|niri"
-    "kitty|kitty|kitty-git|true|Linux-config/kitty|kitty"
-    "ghostty|ghostty|ghostty-git|true|Linux-config/ghostty|ghostty"
-    "fish|fish|fish|false|Linux-config/fish|fish"
-    "neovim|nvim|neovim|false|nvim|nvim"
-    "zed|zed|zed-git|true|zed|zed"
-    "yazi|yazi|yazi|false|yazi|yazi"
-    "lazygit|lazygit|lazygit|false|lazygit|lazygit"
-    "claude-code|claude||false|AI-Supporter/Claude Code|$HOME/.claude"
-    "codex|codex||false|AI-Supporter/Codex|$HOME/.codex"
-    "gemini-cli|||false|AI-Supporter/Gemini CLI|$HOME/.gemini"
-    "opencode|||false||$HOME/.config/opencode"
-    "gitconfig|||false|.gitconfig|$HOME/.gitconfig"
-    "tock|||false|tock|tock"
-    "zellij|zellij|zellij|false|Linux-config/zellij|zellij"
-
-    # === Niri Ecosystem ===
-    "waybar|waybar|waybar|false|Linux-config/waybar|waybar"
-    "mako|mako|mako|false|Linux-config/mako|mako"
-    "zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura"
-    "easyeffects|easyeffects|easyeffects,calf,lsp-plugins-lv2|false|Linux-config/easyeffects|easyeffects"
-    "mpv|mpv|mpv|false|mpv|mpv"
-    "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
-    "waypaper|waypaper|waypaper|false|Linux-config/waypaper|waypaper"
-
-    # === Config-only (no package to install, link only) ===
-    "profile|||false|.profile|$HOME/.profile"
-    "autostart|||false|Linux-config/autostart|autostart"
-    "fcitx5|||false|Linux-config/fcitx5|fcitx5"
-    "fontconfig|||false|Linux-config/fontconfig|fontconfig"
-    "gtk-3|||false|Linux-config/gtk-3.0|gtk-3.0"
-    "gtk-4|||false|Linux-config/gtk-4.0|gtk-4.0"
-    "pipewire|||false|Linux-config/pipewire|pipewire"
-    "qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct"
-    "qt6ct-env|||false|Linux-config/environment.d|environment.d"
-    "mimeapps|||false|Linux-config/mimeapps.list|mimeapps.list"
-    "niri-mimeapps|||false|Linux-config/niri-mimeapps.list|niri-mimeapps.list"
-    "satty-config|||false|Linux-config/satty|satty"
-    "systemd-user|||false|Linux-config/systemd/user|systemd/user"
-    "xdg-terminals|||false|Linux-config/xdg-terminals.list|xdg-terminals.list"
-    "xdg-desktop-portal|||false|Linux-config/xdg-desktop-portal|xdg-desktop-portal"
-    "niri-xdg-terminals|||false|Linux-config/niri-xdg-terminals.list|niri-xdg-terminals.list"
-    "user-dirs|||false|Linux-config/user-dirs.dirs|user-dirs.dirs"
-    "user-dirs-locale|||false|Linux-config/user-dirs.locale|user-dirs.locale"
-    "vicinae|||false|Linux-config/vicinae|vicinae"
-    "vicinae-bitwarden|||false|Linux-config/vicinae-extensions/bitwarden|$HOME/.local/share/vicinae/extensions/bitwarden"
-    "wireplumber|||false|Linux-config/wireplumber|wireplumber"
-    "kitty-desktop|||false|Linux-local-share/applications/kitty.desktop|$HOME/.local/share/applications/kitty.desktop"
-)
+source "$REPO_ROOT/scripts/lib/targets.sh"
+load_install_targets
 
 
 log_info()  { printf "${GREEN}[INFO]${NC}  %s\n" "$1"; }
@@ -129,17 +56,11 @@ Examples:
   ./install.sh --only-neovim          # Only install neovim
 
 Tools:
-  Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij, qt6ct, tock
-  AI:     claude-code, codex, gemini-cli, opencode
-  Niri:   waybar, mako, zathura, easyeffects, mpv, hyprlock, waypaper
-  Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
-          yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww,
-          ripdrag, pcmanfm-qt
-  Config: gitconfig, qt6ct-env, mimeapps, niri-mimeapps, xdg-terminals,
-          niri-xdg-terminals, user-dirs, user-dirs-locale, fontconfig, gtk-3,
-          gtk-4, profile, autostart, fcitx5, pipewire, wireplumber,
-          systemd-user, xdg-desktop-portal, satty-config, kitty-desktop,
-          vicinae, vicinae-bitwarden
+  Core:   $(join_targets_by_group core)
+  AI:     $(join_targets_by_group ai)
+  Niri:   $(join_targets_by_group niri)
+  Utils:  $(join_targets_by_group utilities)
+  Config: $(join_targets_by_group config)
 EOF
     exit 0
 }

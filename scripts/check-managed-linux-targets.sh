@@ -5,6 +5,10 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
+REPO_ROOT="$repo_root"
+source "$repo_root/scripts/lib/targets.sh"
+load_install_targets
+
 declare -A referenced_tops=()
 declare -A referenced_paths=()
 
@@ -19,24 +23,20 @@ while IFS='|' read -r name cmd pkg is_aur src dst; do
             referenced_paths["$src"]=1
             ;;
     esac
-done < <(python - <<'PY'
-from pathlib import Path
-for line in Path("install.sh").read_text().splitlines():
-    line = line.strip()
-    if not line.startswith('"'):
-        continue
-    parts = line.strip('"').split("|")
-    if len(parts) != 6:
-        continue
-    print("|".join(parts))
-PY
-)
+done < <(printf '%s\n' "${TOOLS[@]}")
 
 status=0
 
 for path in "${!referenced_paths[@]}"; do
     if [[ ! -e "$path" ]]; then
         printf 'missing source: %s\n' "$path" >&2
+        status=1
+    fi
+done
+
+for path in AI-Supporter/AGENTS.md AI-Supporter/SKILLS; do
+    if [[ ! -e "$path" ]]; then
+        printf 'missing shared ai path: %s\n' "$path" >&2
         status=1
     fi
 done
