@@ -86,6 +86,7 @@ Non-XDG files such as [`.profile`](/home/lou/Documents/WorkFlow/envCross_dotfile
 | zed | `~/.config/zed` |
 | yazi | `~/.config/yazi` |
 | lazygit | `~/.config/lazygit` |
+| tock | `~/.config/tock` |
 | zellij | `~/.config/zellij` |
 | systemd-user | `~/.config/systemd/user` |
 | waybar | `~/.config/waybar` |

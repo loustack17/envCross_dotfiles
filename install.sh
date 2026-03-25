@@ -60,6 +60,7 @@ TOOLS=(
     "gemini-cli|||false|AI-Supporter/Gemini CLI|$HOME/.gemini"
     "opencode|||false||$HOME/.config/opencode"
     "gitconfig|||false|.gitconfig|$HOME/.gitconfig"
+    "tock|||false|tock|tock"
     "zellij|zellij|zellij|false|Linux-config/zellij|zellij"
 
     # === Niri Ecosystem ===
@@ -128,7 +129,7 @@ Examples:
   ./install.sh --only-neovim          # Only install neovim
 
 Tools:
-  Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij, qt6ct
+  Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij, qt6ct, tock
   AI:     claude-code, codex, gemini-cli, opencode
   Niri:   waybar, mako, zathura, easyeffects, mpv, hyprlock, waypaper
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
