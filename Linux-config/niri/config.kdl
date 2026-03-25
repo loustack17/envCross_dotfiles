@@ -19,7 +19,6 @@ spawn-at-startup "swayosd-server"
 spawn-sh-at-startup "awww-daemon"
 spawn-sh-at-startup "waypaper --restore"
 spawn-at-startup "waybar"
-// spawn-sh-at-startup "ironbar" // Launch ironbar
 spawn-at-startup "swayidle -w timeout 900 'hyprlock'"
 
 prefer-no-csd

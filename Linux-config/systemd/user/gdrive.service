@@ -1,0 +1,15 @@
+[Unit]
+Description=Google Drive Mount
+After=network-online.target graphical-session.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/lou
+ExecStart=/usr/bin/rclone mount gdrive: /home/lou/GoogleDrive --vfs-cache-mode full --allow-non-empty
+ExecStop=/bin/fusermount -u /home/lou/GoogleDrive
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

@@ -69,21 +69,31 @@ TOOLS=(
     "easyeffects|easyeffects|easyeffects,calf,lsp-plugins-lv2|false|Linux-config/easyeffects|easyeffects"
     "mpv|mpv|mpv|false|mpv|mpv"
     "hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr"
+    "waypaper|waypaper|waypaper|false|Linux-config/waypaper|waypaper"
 
     # === Config-only (no package to install, link only) ===
+    "profile|||false|.profile|$HOME/.profile"
+    "autostart|||false|Linux-config/autostart|autostart"
+    "fcitx5|||false|Linux-config/fcitx5|fcitx5"
     "fontconfig|||false|Linux-config/fontconfig|fontconfig"
     "gtk-3|||false|Linux-config/gtk-3.0|gtk-3.0"
     "gtk-4|||false|Linux-config/gtk-4.0|gtk-4.0"
+    "pipewire|||false|Linux-config/pipewire|pipewire"
     "qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct"
     "qt6ct-env|||false|Linux-config/environment.d|environment.d"
     "mimeapps|||false|Linux-config/mimeapps.list|mimeapps.list"
     "niri-mimeapps|||false|Linux-config/niri-mimeapps.list|niri-mimeapps.list"
+    "satty-config|||false|Linux-config/satty|satty"
+    "systemd-user|||false|Linux-config/systemd/user|systemd/user"
     "xdg-terminals|||false|Linux-config/xdg-terminals.list|xdg-terminals.list"
+    "xdg-desktop-portal|||false|Linux-config/xdg-desktop-portal|xdg-desktop-portal"
     "niri-xdg-terminals|||false|Linux-config/niri-xdg-terminals.list|niri-xdg-terminals.list"
     "user-dirs|||false|Linux-config/user-dirs.dirs|user-dirs.dirs"
     "user-dirs-locale|||false|Linux-config/user-dirs.locale|user-dirs.locale"
     "vicinae|||false|Linux-config/vicinae|vicinae"
     "vicinae-bitwarden|||false|Linux-config/vicinae-extensions/bitwarden|$HOME/.local/share/vicinae/extensions/bitwarden"
+    "wireplumber|||false|Linux-config/wireplumber|wireplumber"
+    "kitty-desktop|||false|Linux-local-share/applications/kitty.desktop|$HOME/.local/share/applications/kitty.desktop"
 )
 
 
@@ -120,13 +130,15 @@ Examples:
 Tools:
   Core:   niri, kitty, ghostty, fish, neovim, zed, yazi, lazygit, zellij, qt6ct
   AI:     claude-code, codex, gemini-cli, opencode
-  Niri:   waybar, mako, zathura, easyeffects, mpv, hyprlock
+  Niri:   waybar, mako, zathura, easyeffects, mpv, hyprlock, waypaper
   Utils:  playerctl, brightnessctl, bluez, blueman, slurp, grim, satty, impala,
           yt-dlp, wl-clipboard, swayosd, swayidle, wlr-randr, polkit-gnome, awww,
           ripdrag, pcmanfm-qt
   Config: gitconfig, qt6ct-env, mimeapps, niri-mimeapps, xdg-terminals,
           niri-xdg-terminals, user-dirs, user-dirs-locale, fontconfig, gtk-3,
-          gtk-4, vicinae, vicinae-bitwarden
+          gtk-4, profile, autostart, fcitx5, pipewire, wireplumber,
+          systemd-user, xdg-desktop-portal, satty-config, kitty-desktop,
+          vicinae, vicinae-bitwarden
 EOF
     exit 0
 }

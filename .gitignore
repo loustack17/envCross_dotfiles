@@ -7,6 +7,11 @@ zed/settings_backup.json
 # Codex system-managed skills (auto-updated by codex)
 AI-Supporter/Codex/skills/.system/
 AI-Supporter/SKILLS/.system/
+Linux-config/**/*.bak
+Linux-config/**/*.bak.*
+Linux-config/**/*.backup
+Linux-local-share/**/*.bak
+Linux-local-share/**/*.backup
 /lazygit/state.yml
 nvim/lazy-lock.json
 yazi/plugins/custom-shell.yazi/yazi_cmd_history
