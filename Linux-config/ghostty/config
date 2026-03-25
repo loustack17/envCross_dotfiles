@@ -1,108 +1,55 @@
-# This is the configuration file for Ghostty.
-#
-# This template file has been automatically created at the following
-# path since Ghostty couldn't find any existing config files on your system:
-#
-#   /home/lou/.config/ghostty/config
-#
-# The template does not set any default options, since Ghostty ships
-# with sensible defaults for all options. Users should only need to set
-# options that they want to change from the default.
-#
-# Run `ghostty +show-config --default --docs` to view a list of
-# all available config options and their default values.
-#
-# Additionally, each config option is also explained in detail
-# on Ghostty's website, at https://ghostty.org/docs/config.
-#
-# Ghostty can reload the configuration while running by using the menu
-# options or the bound key (default: Command + Shift + comma on macOS and
-# Control + Shift + comma on other platforms). Not all config options can be
-# reloaded while running; some only apply to new windows and others may require
-# a full restart to take effect.
+theme = Eldritch-Dark
 
-# Config syntax crash course
-# ==========================
-# # The config file consists of simple key-value pairs,
-# # separated by equals signs.
-theme = Dracula
 font-family = SFMono Nerd Font
 font-size = 12
-cursor-style = block
-adjust-cell-height = 0
-adjust-font-baseline = 0
+font-feature = -liga
+font-feature = -calt
 
+cursor-style = bar
+cursor-style-blink = false
+adjust-cell-height = 2
 
-# Mouse and scrolling
-# mouse-hide-while-typing = true
+scrollback-limit = 25000000
 mouse-scroll-multiplier = 2
 focus-follows-mouse = true
-scrollback-limit = 50000
 
-
-# Window management
+window-padding-x = 10
+window-padding-y = 10
 window-padding-balance = true
+window-decoration = false
 window-save-state = always
-window-colorspace = "display-p3"
 background-opacity = 0.985
+window-vsync = true
 
-# window-padding-x = 2
-#
-# # Spacing around the equals sign does not matter.
-# # All of these are identical:
-# key=value
-# key= value
-# key =value
-# key = value
-#
-# # Any line beginning with a # is a comment. It's not possible to put
-# # a comment after a config option, since it would be interpreted as a
-# # part of the value. For example, this will have a value of "#123abc":
-# background = #123abc
-#
-# # Empty values are used to reset config keys to default.
-# key =
+gtk-tabs-location = top
+gtk-wide-tabs = false
+gtk-titlebar = false
+gtk-custom-css = style.css
 
-# Keybindings
-# # General
-#keybind = ctrl+comma=open_config
-keybind = ctrl+shift+v=paste_from_clipboard
-keybind = ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+k=scroll_page_up
+keybind = ctrl+shift+j=scroll_page_down
 
-# # Window Manager
-keybind = ctrl+shift+Enter=new_window
+keybind = ctrl+shift+enter=new_window
 keybind = F5=new_split:right
 keybind = F6=new_split:down
-
-# # Layouts
-keybind = ctrl+shift+z=toggle_split_zoom
 keybind = F7=equalize_splits
 
-# # Window Movement
+keybind = ctrl+shift+w=close_surface
+keybind = ctrl+shift+q=quit
+
+keybind = ctrl+shift+]=goto_split:next
+keybind = ctrl+shift+[=goto_split:previous
 keybind = ctrl+shift+h=goto_split:left
 keybind = ctrl+shift+l=goto_split:right
-keybind = ctrl+shift+k=goto_split:up
-keybind = ctrl+shift+j=goto_split:down
 
-# # Close
-keybind = ctrl+shift+w=close_surface
-keybind = ctrl+shift+q=close_tab
-
-# # Resize pane
 keybind = ctrl+left=resize_split:left,10
 keybind = ctrl+right=resize_split:right,10
 keybind = ctrl+up=resize_split:up,10
 keybind = ctrl+down=resize_split:down,10
-
 keybind = ctrl+home=equalize_splits
 
-# # Tab Management
+keybind = ctrl+shift+z=toggle_split_zoom
+
 keybind = ctrl+shift+t=new_tab
-keybind = ctrl+page_down=next_tab
-keybind = ctrl+page_up=previous_tab
-
-
-# # Some config options have unique syntaxes for their value,
-# # which is explained in the docs for that config option.
-# # Just for example:
-# resize-overlay-duration = 4s 200ms
+keybind = ctrl+shift+right=next_tab
+keybind = ctrl+shift+left=previous_tab
