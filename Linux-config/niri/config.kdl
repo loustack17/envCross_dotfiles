@@ -237,7 +237,7 @@ binds {
     MOD+SHIFT+ESCAPE { show-hotkey-overlay; }
 
     // Apps
-    MOD+RETURN hotkey-overlay-title="Open Terminal: Kitty" { spawn-sh "kitty"; }
+    MOD+RETURN hotkey-overlay-title="Open Terminal: Ghostty" { spawn-sh "ghostty"; }
     MOD+SPACE hotkey-overlay-title="Open App Launcher: Vicinae" repeat=false { spawn "vicinae" "toggle"; }
     MOD+B hotkey-overlay-title="Open Browser: zen browser" { spawn-sh "zen-browser"; }
     MOD+ALT+L hotkey-overlay-title="Lock Screen: hyprlock" { spawn-sh "hyprlock"; }
