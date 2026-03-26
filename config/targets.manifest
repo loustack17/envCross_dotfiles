@@ -38,7 +38,7 @@ niri|linux|zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|
 niri|linux|easyeffects|easyeffects|easyeffects,calf,lsp-plugins-lv2|false|Linux-config/easyeffects|easyeffects
 niri|linux|mpv|mpv|mpv|false|mpv|mpv
 niri|linux|hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr
-niri|linux|waypaper|waypaper|waypaper|false|Linux-config/waypaper|waypaper
+niri|linux|waypaper|waypaper|waypaper|false||
 config|linux|profile|||false|.profile|$HOME/.profile
 config|linux|autostart|||false|Linux-config/autostart|autostart
 config|linux|fcitx5|||false|Linux-config/fcitx5|fcitx5

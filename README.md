@@ -79,6 +79,7 @@ Official install targets:
 Linux config sources live primarily under `Linux-config/`.
 Non-XDG files such as [`.profile`](/home/lou/Documents/WorkFlow/envCross_dotfiles/.profile) stay at repo root.
 `~/.local/share` targets live under [Linux-local-share](/home/lou/Documents/WorkFlow/envCross_dotfiles/Linux-local-share).
+App-managed state files that frequently rewrite themselves, such as `waypaper/config.ini` and `fcitx5` runtime state, are intentionally left unmanaged to avoid constant drift in the repo.
 
 | Tool | Path |
 |------|------|
@@ -98,7 +99,6 @@ Non-XDG files such as [`.profile`](/home/lou/Documents/WorkFlow/envCross_dotfile
 | waybar | `~/.config/waybar` |
 | mako | `~/.config/mako` |
 | vicinae | `~/.config/vicinae` |
-| waypaper | `~/.config/waypaper` |
 | pcmanfm-qt | `~/.config/pcmanfm-qt` |
 | hyprlock | `~/.config/hypr` |
 | zathura | `~/.config/zathura` |
