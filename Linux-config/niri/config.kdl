@@ -6,8 +6,10 @@ environment {
     QT_QPA_PLATFORM "wayland"
     QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
     QT_QPA_PLATFORMTHEME "qt6ct"
+    QT_IM_MODULE "fcitx"
     XDG_SESSION_TYPE "wayland"
     XDG_CURRENT_DESKTOP "niri"
+    XMODIFIERS "@im=fcitx"
     CHROME_FLAGS "--password-store=gnome --ozone-platform=wayland --use-gl=egl"
 }
 
