@@ -21,6 +21,12 @@ Linux installation targets are defined in `config/targets.manifest`. The install
 ./install.sh --only-neovim
 ```
 
+System-level Linux fixes that write to `/etc` are tracked separately under `Linux-system/` and are not part of the regular `install.sh` symlink flow.
+
+```bash
+bash ./scripts/install-udev-rules.sh
+```
+
 ### Windows
 ```powershell
 # Full installation
@@ -72,6 +78,7 @@ During installation, these files are linked to the appropriate locations for eac
 Linux configuration sources live primarily under the `Linux-config/` directory. 
 - Non-XDG files (e.g., `.profile`) remain at the repository root.
 - `~/.local/share` targets live under `Linux-local-share/`.
+- System-level files that target paths such as `/etc/udev/rules.d` live under `Linux-system/`.
 - App-managed state files that frequently rewrite themselves (e.g., `waypaper/config.ini`, `fcitx5` runtime state) are intentionally unmanaged to avoid repository drift.
 
 <details>

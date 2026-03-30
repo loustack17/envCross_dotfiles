@@ -1,0 +1,1 @@
+SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ATTRS{idVendor}=="19f5", ATTRS{idProduct}=="fe70", MODE="0660", GROUP="nuphy"
