@@ -11,7 +11,7 @@ Language and tooling:
 - Terraform: safety first; format and validate before planning; review a saved plan before apply; avoid auto-approve; verify results after apply.
 
 Cloud and DevOps:
-- Default to AWS unless specified.
+- AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
 - Prefer explicit, auditable changes and least privilege.
 
 Git and GitHub:
