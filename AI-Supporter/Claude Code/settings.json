@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'Reminder: when showing commands to the user, provide Fish syntax instead of Bash or Zsh. Use eza instead of ls. Use pnpm or bun instead of npm. Use rg instead of grep. Run /simplify before any git commit.'"
+            "command": "echo 'Reminder: when showing commands to the user, provide Fish syntax instead of Bash or Zsh. Use eza instead of ls. Use pnpm or bun instead of npm. Use rg instead of grep. Run /simplify before any git commit. If /simplify finds issues, fix them, show the user what changed, and wait for approval before committing.'"
           }
         ]
       }
