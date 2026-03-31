@@ -5,6 +5,7 @@ export:
         file_name: tock_export.ics
 file:
     path: /home/lou/Documents/Cases/time-log/time_track.log
+last_update_check: 2026-03-26T17:01:11.731815501-04:00
 sqlite:
     path: /home/lou/.tock.db
 theme:

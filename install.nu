@@ -295,9 +295,10 @@ def main [
     # AI-Supporter (Claude Code / Codex)
     let ai_root = ($repo_root | path join "AI-Supporter")
     let claude_md = ($ai_root | path join "Claude Code" | path join "CLAUDE.md")
-    let claude_skills = ($ai_root | path join "Claude Code" | path join "skills")
-    let codex_agents = ($ai_root | path join "Codex" | path join "AGENTS.md")
-    let codex_skills = ($ai_root | path join "Codex" | path join "skills")
+    let claude_settings = ($ai_root | path join "Claude Code" | path join "settings.json")
+    let claude_hooks = ($ai_root | path join "Claude Code" | path join "hooks")
+    let shared_agents = ($ai_root | path join "AGENTS.md")
+    let shared_skills = ($ai_root | path join "SKILLS")
 
     if ($claude_md | path exists) {
         $targets ++= [{
@@ -308,28 +309,42 @@ def main [
         }]
     }
 
-    if ($claude_skills | path exists) {
+    if ($claude_settings | path exists) {
         $targets ++= [{
-            name: "Claude Code skills"
-            source: $claude_skills
-            dest: ($home | path join ".claude" | path join "skills")
+            name: "Claude Code active settings"
+            source: $claude_settings
+            dest: ($home | path join ".claude" | path join "settings.json")
+            is_file: true
+        }]
+    }
+
+    if ($claude_hooks | path exists) {
+        $targets ++= [{
+            name: "Claude Code hooks"
+            source: $claude_hooks
+            dest: ($home | path join ".claude" | path join "hooks")
             is_file: false
         }]
     }
 
-    if ($codex_skills | path exists) {
-        $targets ++= [{
-            name: "Codex skills"
-            source: $codex_skills
-            dest: ($home | path join ".codex" | path join "skills")
-            is_file: false
-        }]
+    if ($shared_skills | path exists) {
+        for target in [
+            {name: "Claude Code skills", dest: ($home | path join ".claude" | path join "skills")}
+            {name: "Codex skills", dest: ($home | path join ".codex" | path join "skills")}
+        ] {
+            $targets ++= [{
+                name: $target.name
+                source: $shared_skills
+                dest: $target.dest
+                is_file: false
+            }]
+        }
     }
 
-    if ($codex_agents | path exists) {
+    if ($shared_agents | path exists) {
         $targets ++= [{
             name: "Codex AGENTS.md"
-            source: $codex_agents
+            source: $shared_agents
             dest: ($home | path join ".codex" | path join "AGENTS.md")
             is_file: true
         }]

@@ -1,41 +1,23 @@
-# Coding Style Preferences
+# Global Preferences
 
-Applies to all code or script writing. Priority order (aligned with mainstream North American engineering practices):
+Keep code correct, readable, maintainable, and simple. Prefer clear naming and small focused refactors over comments or speculative abstraction.
 
-1. Correctness and safety first.
-2. Readability first: make intent obvious to future maintainers.
-3. Maintainability: low change cost, clear boundaries.
-4. Simple by default: avoid unnecessary complexity and over-engineering.
-5. Low coupling, high cohesion: minimize dependencies and keep modules focused.
-6. Clean Code principles, but non-dogmatic and context-aware.
-7. Clean Architecture when the system warrants it; avoid forcing layers in small scripts.
-8. Reusability when there are 2-3 real use cases; avoid speculative abstraction.
-9. DRY without sacrificing clarity; refactor only when repetition is costly.
-10. Flexibility for likely changes; do not design for hypothetical needs.
+Language and tooling:
+- Python: follow project config; prefer Ruff and Ty; add type hints when they improve clarity.
+- Go: use gofmt/goimports and idiomatic Go; keep APIs small and explicit.
+- Terraform: safety first; format and validate before planning; review a saved plan before apply; avoid auto-approve; verify results after apply.
 
-Additional consensus:
-- Prefer clear naming and small refactors over comments.
-- Add comments or docstrings only when strictly necessary and follow language conventions.
-- Abstractions and layering must reduce coupling and improve maintainability, not just follow patterns.
+Cloud and DevOps:
+- Default to AWS unless specified.
+- Prefer explicit, auditable changes and least privilege.
 
-Language and tooling preferences:
-- Python: prefer Ruff for formatting/linting and Ty for type checking; follow project config; add type hints when they improve clarity.
-- Go: follow gofmt/goimports and idiomatic Go; keep APIs small and explicit.
-- Terraform: prioritize safety and correctness; format and validate before planning; always plan before apply; prefer saved plan files; avoid auto-approve; review destructive changes explicitly; verify results after apply.
+Git and GitHub:
+- Never add AI attribution lines, trailers, signatures, or identity markers to any `git` or `gh` workflow.
+- Remove any auto-injected AI attribution before finalizing.
 
-Cloud and DevOps assumptions:
-- Default to AWS unless specified; keep cloud-specific code localized to ease a future GCP move.
-- Prefer explicit, auditable steps for changes; favor safe defaults and least privilege.
-
-Git and GitHub attribution policy:
-- For any Git or GitHub workflow (`git *`, `gh *`, including commits, tags, merges, rebases, pushes, PRs, issues, reviews, comments, and releases), never add AI attribution lines, trailers, signatures, or identity markers.
-- If commit templates, hooks, bots, or CLI defaults inject AI attribution automatically, remove it before finalizing any Git or GitHub action.
-
-# Language Preference
-
+Language:
 - When Chinese is needed, use only Traditional Chinese (Taiwan / 繁體中文臺灣).
 
-# Skills
-
-- Use `no-comments` as the default skill for all code, script, config, SQL, and Markdown writing or editing tasks.
-- Only allow comments or docstrings when the user explicitly asks for them or when project conventions, tooling, safety, or external contract requirements make them necessary.
+Skills:
+- Use `no-comments` as the default skill for code, script, config, SQL, and Markdown edits.
+- Only add comments or docstrings when the user explicitly asks or when tooling, safety, conventions, or external contracts require them.

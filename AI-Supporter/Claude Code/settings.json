@@ -3,15 +3,16 @@
   "permissions": {
     "allow": [
       "Fish",
+      "Fish(pnpm *)",
       "Fish(rg *)",
       "Fish(bun *)",
+      "Fish(bunx *)",
       "Fish(uv *)"
     ]
   },
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
-    "glm-plan-usage@zai-coding-plugins": true,
     "code-review@claude-plugins-official": true,
     "github@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
@@ -25,5 +26,29 @@
     "gopls-lsp@claude-plugins-official": true,
     "csharp-lsp@claude-plugins-official": true
   },
-  "model": "opus"
+  "model": "opus",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Reminder: when showing commands to the user, provide Fish syntax instead of Bash or Zsh. Use eza instead of ls. Use pnpm or bun instead of npm. Use rg instead of grep. Run /simplify before any git commit.'"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Fish",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.claude/hooks/enforce-shell-policy.sh\""
+          }
+        ]
+      }
+    ]
+  }
 }

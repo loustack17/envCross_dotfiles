@@ -51,7 +51,7 @@ AI-Supporter/
 │       └── SKILL.md
 ├── Claude Code/
 │   ├── CLAUDE.md
-│   ├── settings.claude.json
+│   ├── hooks/
 │   └── settings.json
 ├── Codex/
 │   └── config.toml
@@ -65,6 +65,8 @@ During installation, these files are linked to the appropriate locations for eac
 | AI Tool | Source | Target Path |
 |---------|--------|-------------|
 | **Claude Code** | `Claude Code/CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| **Claude Code** | `Claude Code/settings.json` | `~/.claude/settings.json` |
+| **Claude Code** | `Claude Code/hooks/` | `~/.claude/hooks` |
 | **Claude Code** | `SKILLS/` | `~/.claude/skills` |
 | **Gemini CLI** | `Gemini CLI/GEMINI.md` | `~/.gemini/GEMINI.md` |
 | **Codex** | `AGENTS.md` | `~/.codex/AGENTS.md` |

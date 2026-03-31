@@ -359,9 +359,13 @@ link_ai_shared_files() {
     local name="$1"
     local shared_agents="$REPO_ROOT/AI-Supporter/AGENTS.md"
     local shared_skills="$REPO_ROOT/AI-Supporter/SKILLS"
+    local claude_root="$REPO_ROOT/AI-Supporter/Claude Code"
 
     case "$name" in
         claude-code)
+            create_file_link "$claude_root/CLAUDE.md" "$HOME/.claude/CLAUDE.md" "claude-rules"
+            create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings"
+            create_path_link "$claude_root/hooks" "$HOME/.claude/hooks" "claude-hooks"
             create_path_link "$shared_skills" "$HOME/.claude/skills" "claude-skills"
             ;;
         codex)
@@ -448,7 +452,7 @@ step_symlink_configs() {
             fi
         fi
 
-        link_ai_shared_files "$name"
+        case "$name" in claude-code|codex|opencode) link_ai_shared_files "$name" ;; esac
     done
 }
 
