@@ -108,6 +108,7 @@
 
 #wireplumber,
 #bluetooth,
+#custom-notification,
 #tray,
 #battery,
 #custom-power,
@@ -126,6 +127,7 @@
 
 #wireplumber:hover,
 #bluetooth:hover,
+#custom-notification:hover,
 #tray:hover,
 #battery:hover,
 #custom-power:hover,
@@ -151,6 +153,15 @@
   color: #c6d0f5;
   border-radius: 6px;
   margin: 1px 2px;
+}
+
+#custom-notification {
+  color: #c6d0f5;
+  border-radius: 6px;
+  margin: 1px 2px;
+  font-family: "NotoSans Nerd Font", "Symbols Nerd Font", "Font Awesome 6 Free", sans-serif;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
 }
 
 #bluetooth {

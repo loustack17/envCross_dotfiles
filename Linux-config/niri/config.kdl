@@ -13,9 +13,10 @@ environment {
     CHROME_FLAGS "--password-store=gnome --ozone-platform=wayland --use-gl=egl"
 }
 
-spawn-sh-at-startup "/usr/lib/polkit-kde-authentication-agent-1 &"
+spawn-sh-at-startup "/usr/bin/lxqt-policykit-agent &"
+spawn-at-startup "fcitx5"
 spawn-at-startup "blueman-applet"
-spawn-at-startup "mako"
+spawn-at-startup "swaync"
 spawn-at-startup "vicinae" "server"
 spawn-at-startup "swayosd-server"
 spawn-sh-at-startup "awww-daemon"

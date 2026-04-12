@@ -106,6 +106,7 @@ fi
 
 five_hour_used=$(printf '%s' "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 five_hour_reset=$(printf '%s' "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+context_remaining=$(printf '%s' "$input" | jq -r '.context_window.remaining_percentage // empty')
 
 rate_line="${DIM}5h usage unavailable${RESET}"
 if [ -n "$five_hour_used" ]; then
@@ -154,5 +155,11 @@ if [ -n "$five_hour_used" ]; then
   rate_line="${bar_color}${bar}${RESET} ${remaining}% left${reset_suffix}"
 fi
 
-printf '%b\n' "${CYAN}[${model_info}]${RESET} ${DIM}${dir_display}${RESET}${branch_info}"
+context_info=""
+if [ -n "$context_remaining" ]; then
+  context_remaining_fmt=$(printf '%.0f' "$context_remaining")
+  context_info=" | ctx ${context_remaining_fmt}% left"
+fi
+
+printf '%b\n' "${CYAN}[${model_info}]${RESET} ${DIM}${dir_display}${RESET}${branch_info}${context_info}"
 printf '%b\n' "${DIM}5h${RESET} ${rate_line}"

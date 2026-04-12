@@ -6,10 +6,15 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=/home/lou
-ExecStart=/usr/bin/rclone mount gdrive: /home/lou/GoogleDrive --vfs-cache-mode full --allow-non-empty
-ExecStop=/bin/fusermount -u /home/lou/GoogleDrive
+ExecStartPre=-/bin/fusermount -uz /home/lou/GoogleDrive
+ExecStartPre=/usr/bin/mkdir -p /home/lou/GoogleDrive /home/lou/.cache/rclone
+ExecStart=/usr/bin/rclone mount gdrive: /home/lou/GoogleDrive --allow-non-empty --cache-dir /home/lou/.cache/rclone --dir-cache-time 72h --poll-interval 30s --attr-timeout 1m --buffer-size 16M --vfs-read-ahead 128M --vfs-cache-mode full --vfs-cache-max-age 24h --vfs-cache-max-size 8G
+ExecStop=-/bin/fusermount -uz /home/lou/GoogleDrive
 Restart=on-failure
 RestartSec=10
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
 
 [Install]
 WantedBy=default.target

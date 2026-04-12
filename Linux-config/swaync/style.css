@@ -1,0 +1,149 @@
+* {
+  font-family: "Noto Sans TC", "Noto Sans CJK TC", "Noto Sans", "Inter", sans-serif;
+  font-size: 12px;
+}
+
+.control-center {
+  background: rgba(26, 27, 38, 0.96);
+  border: 1px solid rgba(153, 209, 219, 0.18);
+  border-radius: 18px;
+  padding: 10px 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.control-center .notification-row:focus,
+.control-center .notification-row:hover,
+.control-center .notification-row:active {
+  background: transparent;
+}
+
+.notification-row {
+  outline: none;
+  margin: 6px 0;
+}
+
+.notification {
+  background: #1a1b26;
+  border: 1px solid rgba(186, 187, 241, 0.08);
+  border-radius: 16px;
+  padding: 8px 10px;
+}
+
+.notification-content {
+  padding: 0;
+}
+
+.summary {
+  color: #c6d0f5;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.time {
+  color: #8caaee;
+  font-size: 11px;
+}
+
+.body {
+  color: #babbf1;
+  font-size: 12px;
+}
+
+.close-button {
+  background: rgba(231, 130, 132, 0.12);
+  color: #e78284;
+  border-radius: 999px;
+  min-width: 20px;
+  min-height: 20px;
+  margin: 2px;
+}
+
+.close-button:hover {
+  background: rgba(231, 130, 132, 0.2);
+}
+
+.widget-title {
+  color: #c6d0f5;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.widget-title > button {
+  background: rgba(153, 209, 219, 0.12);
+  color: #99d1db;
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+
+.widget-title > button:hover {
+  background: rgba(153, 209, 219, 0.18);
+}
+
+.widget-dnd {
+  background: #1a1b26;
+  border-radius: 16px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+
+.widget-dnd > switch {
+  background: rgba(186, 187, 241, 0.16);
+  border-radius: 999px;
+}
+
+.widget-dnd > switch:checked {
+  background: rgba(153, 209, 219, 0.45);
+}
+
+.widget-dnd > switch slider {
+  background: #c6d0f5;
+  border-radius: 999px;
+}
+
+.floating-notifications .notification {
+  background: rgba(26, 27, 38, 0.96);
+  border: 1px solid rgba(153, 209, 219, 0.14);
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.floating-notifications .notification-content {
+  min-height: 0;
+}
+
+.control-center scrolledwindow viewport {
+  background: transparent;
+}
+
+.control-center scrollbar {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.control-center scrollbar trough {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.control-center scrollbar slider {
+  background: rgba(186, 187, 241, 0.32);
+  border-radius: 999px;
+  min-width: 3px;
+  min-height: 18px;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}

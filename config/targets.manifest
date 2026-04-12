@@ -33,7 +33,7 @@ ai|ai|opencode|||false||$HOME/.config/opencode
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig
 niri|linux|waybar|waybar|waybar|false|Linux-config/waybar|waybar
-niri|linux|mako|mako|mako|false|Linux-config/mako|mako
+niri|linux|swaync|swaync|swaync|false|Linux-config/swaync|swaync
 niri|linux|zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura
 niri|linux|easyeffects|easyeffects|easyeffects,calf,lsp-plugins-lv2|false|Linux-config/easyeffects|easyeffects
 niri|linux|mpv|mpv|mpv|false|mpv|mpv
@@ -43,6 +43,7 @@ config|linux|profile|||false|.profile|$HOME/.profile
 config|linux|autostart|||false|Linux-config/autostart|autostart
 config|linux|fcitx5|||false|Linux-config/fcitx5|fcitx5
 config|linux|fontconfig|||false|Linux-config/fontconfig|fontconfig
+config|linux|brave-flags|||false|Linux-config/brave-flags.conf|$HOME/.config/brave-flags.conf
 config|linux|gtk-3|||false|Linux-config/gtk-3.0|gtk-3.0
 config|linux|gtk-4|||false|Linux-config/gtk-4.0|gtk-4.0
 config|linux|pipewire|||false|Linux-config/pipewire|pipewire

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Simplifier"
+  short_description: "Run strict isolated simplify with three reviewers"
+  default_prompt: "Run the strict simplify workflow on the recently changed code. Spawn exactly three isolated reviewers for reuse, quality, and efficiency, then merge findings, apply only safe behavior-preserving fixes, validate the touched scope, and report findings, fixes, validation, and deferred items separately. If isolated reviewers cannot be launched in this run, stop and say so rather than substituting a sequential self-review."

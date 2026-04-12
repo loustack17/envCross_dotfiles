@@ -10,6 +10,37 @@
       "Fish(uv *)"
     ]
   },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "code-review-graph update --skip-flows",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "code-review-graph status",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline-command.sh",
+    "padding": 1
+  },
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
@@ -24,36 +55,20 @@
     "pr-review-toolkit@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true,
-    "csharp-lsp@claude-plugins-official": true
+    "csharp-lsp@claude-plugins-official": true,
+    "apify-actor-development@apify-agent-skills": false,
+    "apify-generate-output-schema@apify-agent-skills": false,
+    "linear@claude-plugins-official": true,
+    "apify-ultimate-scraper@apify-agent-skills": false
   },
-  "model": "opus",
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'Reminder: when showing commands to the user, provide Fish syntax instead of Bash or Zsh. Use eza instead of ls. Use pnpm or bun instead of npm. Use rg instead of grep. Run /simplify before any git commit. If /simplify finds issues, fix them, show the user what changed, and wait for approval before committing.'"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Fish",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.claude/hooks/enforce-shell-policy.sh\""
-          }
-        ]
-      }
-    ]
+  "extraKnownMarketplaces": {
+    "apify-agent-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/apify/agent-skills.git"
+      },
+      "autoUpdate": true
+    }
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline-command.sh",
-    "padding": 1
-  }
+  "effortLevel": "medium"
 }

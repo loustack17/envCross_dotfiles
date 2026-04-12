@@ -360,16 +360,20 @@ link_ai_shared_files() {
     local shared_agents="$REPO_ROOT/AI-Supporter/AGENTS.md"
     local shared_skills="$REPO_ROOT/AI-Supporter/SKILLS"
     local claude_root="$REPO_ROOT/AI-Supporter/Claude Code"
+    local claude_skills="$claude_root/skills"
+
+    [[ -d "$claude_skills" ]] || claude_skills="$shared_skills"
 
     case "$name" in
         claude-code)
             create_file_link "$claude_root/CLAUDE.md" "$HOME/.claude/CLAUDE.md" "claude-rules"
             create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings"
             create_path_link "$claude_root/hooks" "$HOME/.claude/hooks" "claude-hooks"
-            create_path_link "$shared_skills" "$HOME/.claude/skills" "claude-skills"
+            create_path_link "$claude_skills" "$HOME/.claude/skills" "claude-skills"
             ;;
         codex)
             create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules"
+            create_file_link "$REPO_ROOT/AI-Supporter/Codex/config.toml" "$HOME/.codex/config.toml" "codex-config"
             create_path_link "$shared_skills" "$HOME/.codex/skills" "codex-skills"
             ;;
         opencode)
