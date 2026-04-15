@@ -35,6 +35,9 @@ edit = [
   { run = 'nvim -w %*', block = true,  desc = "nvim (block)",   for = "windows" },
   # { run = 'cmd /c "if exist %1\ (cd /d %1 && nvim .) else (nvim %*)"', block = true, desc = "nvim", for = "windows" },
 ]
+glow = [
+  { run = "glow -p %s1", block = true, desc = "Glow", for = "unix" },
+]
 extract = [
   { run = "ya pub extract --list %s", desc = "Extract here" },
 ]
@@ -64,6 +67,8 @@ reveal = [
 rules = [
 	# Folder
 	{ url = "*/", use = [ "edit", "open", "reveal" ] },
+	# Markdown
+	{ url = "*.md", use = [ "edit", "glow", "reveal" ] },
 	# Text
 	{ mime = "text/*", use = [ "edit", "reveal" ] },
 	# Image
@@ -93,6 +98,8 @@ suppress_preload = false
 
 [plugin]
 fetchers = [
+	{ id = "git",  url = "*/",         run = "git" },
+	{ id = "git",  url = "*",          run = "git" },
 	# Mimetype
 	{ id = "mime", url = "*/",         run = "mime.dir", prio = "high" },
 	{ id = "mime", url = "local://*",  run = "mime.local", prio = "high" },
@@ -165,12 +172,14 @@ previewers = [
 	{ url = "*", run = "file" },
 ]
 prepend_previewers = [
-    { url = "*.csv", run = "rich-preview"}, # for csv files
-    { url = "*.md", run = "rich-preview" }, # for markdown (.md) files
-    { url = "*.rst", run = "rich-preview"}, # for restructured text (.rst) files
-    { url = "*.ipynb", run = "rich-preview"}, # for jupyter notebooks (.ipynb)
-    { url = "*.json", run = "rich-preview"}, # for json (.json) files
-#    { url = "*.lang_type", run = "rich-preview"} # for particular language files eg. .py, .go., .lua, etc.
+    { url = "*/", run = "faster-piper --rely-on-preloader" },
+    { url = "*.md", run = "faster-piper --rely-on-preloader" },
+    { url = "*.csv", run = "faster-piper --rely-on-preloader" },
+]
+prepend_preloaders = [
+    { url = "*/", run = 'faster-piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"' },
+    { url = "*.md", run = 'faster-piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark -- "$1"' },
+    { url = "*.csv", run = 'faster-piper -- bat -p --color=always --terminal-width=$w "$1"' },
 ]
 
 

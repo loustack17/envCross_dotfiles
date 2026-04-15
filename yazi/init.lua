@@ -91,3 +91,7 @@ if ok_custom_shell then
     save_history = true,
   })
 end
+
+require("git"):setup({
+  order = 1500,
+})

@@ -9,9 +9,14 @@ rev = "3449686"
 hash = "8009873342496fdb042bba09e239eef3"
 
 [[plugin.deps]]
-use = "AnirudhG07/rich-preview"
-rev = "7d616ad"
-hash = "d64feec9761392cbc250d199ab4b8a3a"
+use = "yazi-rs/plugins:git"
+rev = "babfd0f"
+hash = "26db011a778f261d730d4f5f8bf24b3f"
+
+[[plugin.deps]]
+use = "alberti42/faster-piper"
+rev = "8b794bf"
+hash = "fac71f8ce9447ad509b5aad9e0d8c694"
 
 [flavor]
 deps = []

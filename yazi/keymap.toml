@@ -133,12 +133,12 @@ keymap = [
 
 prepend_keymap = [
   { on = "I", run = "plugin lazygit", desc = "run lazygit" },
+  { on = [ "g", "m" ], run = "shell --block glow -p %h", desc = "Preview hovered Markdown with Glow" },
   { on = "[", run = "plugin whoosh jump_by_key", desc = "Jump bookmark by key" },
   # Direct fuzzy search access
   { on = "}", run = "plugin whoosh jump_by_fzf", desc = "Direct fuzzy search for bookmarks" },
   # Basic bookmark operations
-  { on = [ "]", "a"], run
-  = "plugin whoosh save", desc = "Add bookmark (hovered file/directory)" },
+  { on = [ "]", "a"], run = "plugin whoosh save", desc = "Add bookmark (hovered file/directory)" },
   { on = [ "]", "A"], run = "plugin whoosh save_cwd", desc = "Add bookmark (current directory)" },
   # Temporary bookmarks
   { on = [ "]", "t"], run = "plugin whoosh save_temp", desc = "Add temporary bookmark (hovered file/directory)" },
