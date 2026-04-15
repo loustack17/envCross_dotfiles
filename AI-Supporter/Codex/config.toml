@@ -61,6 +61,9 @@ trust_level = "trusted"
 [projects."/home/lou/Documents/Job/offer-ops"]
 trust_level = "trusted"
 
+[projects."/home/lou/Documents/Cases/2026/sacred-farm-theme"]
+trust_level = "trusted"
+
 [notice]
 hide_rate_limit_model_nudge = true
 

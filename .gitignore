@@ -16,3 +16,6 @@ Linux-local-share/**/*.backup
 nvim/lazy-lock.json
 yazi/plugins/custom-shell.yazi/yazi_cmd_history
 yazi/plugins/whoosh.yazi/bookmarks
+nvim.log
+/.codex
+/.codex/
