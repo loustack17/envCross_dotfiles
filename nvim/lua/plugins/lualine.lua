@@ -2,12 +2,12 @@ return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
-    require("lualine").setup({
-      options = {
-        theme = "catppuccin",
-        icons_enabled = true,
-        globalstatus = true,
-      },
+      require("lualine").setup({
+        options = {
+          theme = require("catppuccin.utils.lualine")("mocha"),
+          icons_enabled = true,
+          globalstatus = true,
+        },
       sections = {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff", "diagnostics" },

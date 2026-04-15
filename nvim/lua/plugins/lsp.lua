@@ -16,6 +16,12 @@ return {
         capabilities = require('cmp_nvim_lsp').default_capabilities()
       })
 
+      vim.lsp.config('terraformls', {
+        init_options = {
+          ignoreSingleFileWarning = true,
+        },
+      })
+
       -- Configure tinymist for Typst
       vim.lsp.config('tinymist', {
         cmd = { 'tinymist' },
