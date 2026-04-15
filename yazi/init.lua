@@ -92,6 +92,8 @@ if ok_custom_shell then
   })
 end
 
+require("starship"):setup()
+
 require("git"):setup({
   order = 1500,
 })

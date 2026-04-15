@@ -18,5 +18,10 @@ use = "alberti42/faster-piper"
 rev = "8b794bf"
 hash = "fac71f8ce9447ad509b5aad9e0d8c694"
 
+[[plugin.deps]]
+use = "Rolv-Apneseth/starship"
+rev = "a837101"
+hash = "635b0feb9215772d22020eb0abf0bb34"
+
 [flavor]
 deps = []
