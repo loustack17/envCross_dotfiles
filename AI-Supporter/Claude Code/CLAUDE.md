@@ -13,8 +13,7 @@
 - Prefer low coupling and high cohesion.
 - Apply DRY only when it does not reduce clarity.
 - Use Clean Code and Clean Architecture only when they reduce change cost and improve maintainability.
-- Prefer clear naming and small focused refactors over comments or speculative abstraction.
-- Default to no comments or docstrings unless tooling, conventions, safety, or external contracts require them.
+- Prefer clear naming and small focused refactors over speculative abstraction.
 - AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
 - Prefer explicit, auditable changes and least privilege.
 

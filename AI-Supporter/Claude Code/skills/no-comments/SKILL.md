@@ -6,7 +6,7 @@ description: Keep code, scripts, config, SQL, and Markdown free of comments by d
 # No Comments
 
 - Use this skill when writing or editing code, scripts, config, SQL, or Markdown.
-- Default: do not add comments or docstrings.
-- Prefer clearer naming, smaller edits, and simpler structure over explanatory comments.
-- Add comments or docstrings only when required by tooling, conventions, public APIs, safety, or external contracts.
-- If a comment is required, keep it brief and make it explain something non-obvious.
+- Treat avoiding comments and docstrings as the default bias for the edit.
+- Let any matching `rules/*.md` files define file-type-specific requirements and exceptions.
+- If no stronger rule applies, prefer clearer naming, smaller edits, and simpler structure over explanatory comments.
+- If a comment is still necessary, keep it brief and limited to non-obvious information.

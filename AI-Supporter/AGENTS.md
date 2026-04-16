@@ -1,6 +1,6 @@
 # Global Preferences
 
-Keep code correct, readable, maintainable, and simple. Prefer clear naming and small focused refactors over comments or speculative abstraction.
+Keep code correct, readable, maintainable, and simple. Prefer clear naming and small focused refactors over speculative abstraction.
 - Prefer low coupling and high cohesion.
 - Apply DRY only when it does not reduce clarity.
 - Use Clean Code and Clean Architecture only when they reduce change cost and improve maintainability; do not force them.
