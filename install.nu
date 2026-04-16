@@ -299,6 +299,9 @@ def main [
     let claude_hooks = ($ai_root | path join "Claude Code" | path join "hooks")
     let shared_agents = ($ai_root | path join "AGENTS.md")
     let shared_skills = ($ai_root | path join "SKILLS")
+    let claude_skills = ($claude_root | path join "skills")
+    let claude_agents = ($claude_root | path join "agents")
+    let active_claude_skills = if ($claude_skills | path exists) { $claude_skills } else { $shared_skills }
 
     if ($claude_md | path exists) {
         $targets ++= [{
@@ -327,18 +330,31 @@ def main [
         }]
     }
 
+    if ($active_claude_skills | path exists) {
+        $targets ++= [{
+            name: "Claude Code skills"
+            source: $active_claude_skills
+            dest: ($home | path join ".claude" | path join "skills")
+            is_file: false
+        }]
+    }
+
+    if ($claude_agents | path exists) {
+        $targets ++= [{
+            name: "Claude Code agents"
+            source: $claude_agents
+            dest: ($home | path join ".claude" | path join "agents")
+            is_file: false
+        }]
+    }
+
     if ($shared_skills | path exists) {
-        for target in [
-            {name: "Claude Code skills", dest: ($home | path join ".claude" | path join "skills")}
-            {name: "Codex skills", dest: ($home | path join ".codex" | path join "skills")}
-        ] {
-            $targets ++= [{
-                name: $target.name
-                source: $shared_skills
-                dest: $target.dest
-                is_file: false
-            }]
-        }
+        $targets ++= [{
+            name: "Codex skills"
+            source: $shared_skills
+            dest: ($home | path join ".codex" | path join "skills")
+            is_file: false
+        }]
     }
 
     if ($shared_agents | path exists) {

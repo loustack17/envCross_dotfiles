@@ -40,7 +40,7 @@ nu install.nu --only [nvim lazygit]
 
 ## 🤖 AI Assistant Configuration
 
-This repository centralizes AI instructions so multiple tools share the same context. `AI-Supporter/AGENTS.md` is the core shared instructions file. Shared skills are located in `AI-Supporter/SKILLS/`.
+This repository centralizes AI instructions while allowing tool-specific memories and skills where needed. `AI-Supporter/AGENTS.md` remains the shared rules file for tools that use it directly. Shared skills live in `AI-Supporter/SKILLS/`, and Claude Code can use its own skill variants under `AI-Supporter/Claude Code/skills/`.
 
 ### Directory Structure
 ```text
@@ -51,8 +51,10 @@ AI-Supporter/
 │       └── SKILL.md
 ├── Claude Code/
 │   ├── CLAUDE.md
+│   ├── agents/
 │   ├── hooks/
-│   └── settings.json
+│   ├── settings.json
+│   └── skills/
 ├── Codex/
 │   └── config.toml
 ├── Gemini CLI/
@@ -66,8 +68,9 @@ During installation, these files are linked to the appropriate locations for eac
 |---------|--------|-------------|
 | **Claude Code** | `Claude Code/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | **Claude Code** | `Claude Code/settings.json` | `~/.claude/settings.json` |
+| **Claude Code** | `Claude Code/agents/` | `~/.claude/agents` |
 | **Claude Code** | `Claude Code/hooks/` | `~/.claude/hooks` |
-| **Claude Code** | `SKILLS/` | `~/.claude/skills` |
+| **Claude Code** | `Claude Code/skills/` | `~/.claude/skills` |
 | **Gemini CLI** | `Gemini CLI/GEMINI.md` | `~/.gemini/GEMINI.md` |
 | **Codex** | `AGENTS.md` | `~/.codex/AGENTS.md` |
 | **Codex** | `SKILLS/` | `~/.codex/skills` |

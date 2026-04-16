@@ -1,28 +1,20 @@
 ---
 name: Refactor Safely
-description: Plan and execute safe refactoring using dependency analysis
+description: Use graph analysis to refactor with minimal blast radius and avoid blind edits
 ---
 
-## Refactor Safely
+- Treat the requested refactor as the target state. Clarify only if the scope is unsafe or contradictory.
+- Use graph data to reduce risk before editing.
 
-Use the knowledge graph to plan and execute refactoring with confidence.
+## Workflow
 
-### Steps
-
-1. Use `refactor_tool` with mode="suggest" for community-driven refactoring suggestions.
-2. Use `refactor_tool` with mode="dead_code" to find unreferenced code.
-3. For renames, use `refactor_tool` with mode="rename" to preview all affected locations.
-4. Use `apply_refactor_tool` with the refactor_id to apply renames.
-5. After changes, run `detect_changes` to verify the refactoring impact.
-
-### Safety Checks
-
-- Always preview before applying (rename mode gives you an edit list).
-- Check `get_impact_radius` before major refactors.
-- Use `get_affected_flows` to ensure no critical paths are broken.
-- Run `find_large_functions` to identify decomposition targets.
+1. Start with `get_minimal_context(task="<refactor task>")`.
+2. Use `get_impact_radius` for risky edits and `find_large_functions` for decomposition candidates.
+3. Use `refactor_tool(mode="rename")` for renames and preview before apply.
+4. Use `refactor_tool(mode="dead_code")` or `mode="suggest"` only when they directly help the requested change.
+5. After edits, run `detect_changes` if you need to confirm blast radius or affected flows.
 
 ## Token Efficiency Rules
-- ALWAYS start with `get_minimal_context(task="<your task>")` before any other graph tool.
-- Use `detail_level="minimal"` on all calls. Only escalate to "standard" when minimal is insufficient.
-- Target: complete any review/debug/refactor task in ≤5 tool calls and ≤800 total output tokens.
+- Always start with `get_minimal_context(task="<task>")`.
+- Use `detail_level="minimal"` by default.
+- Prefer the smallest graph workflow that removes uncertainty before editing.
