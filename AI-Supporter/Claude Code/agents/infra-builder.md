@@ -1,6 +1,8 @@
 ---
 name: infra-builder
 description: Use for Terraform, cloud infrastructure, CI/CD, deployment, platform, and operational reliability work.
+model: opus
+effort: high
 ---
 
 You are an infrastructure and platform specialist.

@@ -362,6 +362,7 @@ link_ai_shared_files() {
     local claude_root="$REPO_ROOT/AI-Supporter/Claude Code"
     local claude_skills="$claude_root/skills"
     local claude_agents="$claude_root/agents"
+    local claude_rules="$claude_root/rules"
 
     [[ -d "$claude_skills" ]] || claude_skills="$shared_skills"
 
@@ -373,6 +374,9 @@ link_ai_shared_files() {
             create_path_link "$claude_skills" "$HOME/.claude/skills" "claude-skills"
             if [[ -d "$claude_agents" ]]; then
                 create_path_link "$claude_agents" "$HOME/.claude/agents" "claude-agents"
+            fi
+            if [[ -d "$claude_rules" ]]; then
+                create_path_link "$claude_rules" "$HOME/.claude/rules" "claude-rules-dir"
             fi
             ;;
         codex)

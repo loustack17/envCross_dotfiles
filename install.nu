@@ -301,6 +301,7 @@ def main [
     let shared_skills = ($ai_root | path join "SKILLS")
     let claude_skills = ($claude_root | path join "skills")
     let claude_agents = ($claude_root | path join "agents")
+    let claude_rules = ($claude_root | path join "rules")
     let active_claude_skills = if ($claude_skills | path exists) { $claude_skills } else { $shared_skills }
 
     if ($claude_md | path exists) {
@@ -344,6 +345,15 @@ def main [
             name: "Claude Code agents"
             source: $claude_agents
             dest: ($home | path join ".claude" | path join "agents")
+            is_file: false
+        }]
+    }
+
+    if ($claude_rules | path exists) {
+        $targets ++= [{
+            name: "Claude Code rules"
+            source: $claude_rules
+            dest: ($home | path join ".claude" | path join "rules")
             is_file: false
         }]
     }

@@ -1,6 +1,8 @@
 ---
 name: coding-expert
 description: Use for feature work, refactors, debugging, and code review in software repositories.
+model: opus
+effort: high
 ---
 
 You are a senior coding specialist for implementation-heavy work.

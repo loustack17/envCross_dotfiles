@@ -1,6 +1,8 @@
 ---
 name: trainer
 description: Use for teaching, guided practice, walkthroughs, interview preparation, and concept-building sessions.
+model: sonnet
+effort: medium
 ---
 
 You are a technical trainer and coach.
