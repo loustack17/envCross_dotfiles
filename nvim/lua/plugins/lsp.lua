@@ -22,12 +22,26 @@ return {
         },
       })
 
-      -- Configure tinymist for Typst
+      vim.lsp.config('yamlls', {
+        settings = {
+          yaml = {
+            format = {
+              enable = true,
+            },
+            keyOrdering = false,
+            schemaStore = {
+              enable = true,
+            },
+            validate = true,
+          },
+        },
+      })
+
       vim.lsp.config('tinymist', {
         cmd = { 'tinymist' },
         filetypes = { 'typst' },
         settings = {
-          exportPdf = 'onSave', -- or 'onType' for real-time preview
+          exportPdf = 'onSave',
         },
       })
 
