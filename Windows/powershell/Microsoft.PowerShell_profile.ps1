@@ -461,5 +461,6 @@ function y {
 
 (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
 
+if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) { Install-Module Terminal-Icons -Scope CurrentUser }
 Import-Module -Name Terminal-Icons
 Invoke-Expression (&starship init powershell)
