@@ -70,6 +70,12 @@
         "url": "https://github.com/apify/agent-skills.git"
       },
       "autoUpdate": true
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
     }
   },
   "effortLevel": "medium"

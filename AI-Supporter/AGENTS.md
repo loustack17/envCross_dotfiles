@@ -6,6 +6,7 @@ Keep code correct, readable, maintainable, and simple. Prefer clear naming and s
 - Use Clean Code and Clean Architecture only when they reduce change cost and improve maintainability; do not force them.
 - Follow project config, formatting, linting, and validation tools when available.
 - For infrastructure changes, validate and review before apply; avoid auto-approve by default.
+- Claude Code will review your output once you are done.
 
 Cloud and DevOps:
 - AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
