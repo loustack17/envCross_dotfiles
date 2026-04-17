@@ -6,6 +6,7 @@
 - Use tools deliberately. Read and search enough to remove uncertainty, but avoid unnecessary tool churn.
 - Use subagents only for real fan-out or specialized work, not tasks you can finish directly.
 - When code-review-graph is available and fits the task, prefer it for exploration, review, debugging, and refactoring.
+- Codex will reveiew your output onnce you are done.
 
 ## Engineering Preferences
 
