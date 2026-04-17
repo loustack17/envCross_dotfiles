@@ -16,6 +16,8 @@ return {
         end
       end,
       go = { "goimports", "gofmt" },
+      terraform = { "terraform_fmt" },
+      ["terraform-vars"] = { "terraform_fmt" },
       -- You can customize some of the format options for the filetype (:help conform.format)
       ["*"] = { "prettierd", "prettier" },
       ["_"] = { "trim_whitespace" },
