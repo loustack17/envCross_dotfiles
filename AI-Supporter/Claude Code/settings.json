@@ -60,7 +60,8 @@
     "apify-actor-development@apify-agent-skills": false,
     "apify-generate-output-schema@apify-agent-skills": false,
     "linear@claude-plugins-official": true,
-    "apify-ultimate-scraper@apify-agent-skills": false
+    "apify-ultimate-scraper@apify-agent-skills": false,
+    "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
     "apify-agent-skills": {
