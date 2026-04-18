@@ -1,12 +1,17 @@
 # Claude Code Memory
 
-- Treat the first user turn as the task contract. Prefer one complete request with intent, constraints, acceptance criteria, and paths over many small follow-ups.
-- Ask only when blocked or when a wrong assumption would be costly. Otherwise batch unknowns, make reasonable assumptions, and keep moving.
-- Match response length to task complexity. Stay concise by default.
-- Use tools deliberately. Read and search enough to remove uncertainty, but avoid unnecessary tool churn.
-- Use subagents only for real fan-out or specialized work, not tasks you can finish directly.
-- When code-review-graph is available and fits the task, prefer it for exploration, review, debugging, and refactoring.
-- Codex will reveiew your output once you are done.
+- Treat the first user turn as the task contract.
+- Ask only when blocked or when a wrong assumption would be costly.
+- Match response length to task complexity.
+- Write documents for signal. Every word and heading must earn its place.
+  - Remove fluff; no hedges or throat-clearing.
+  - Include concrete metrics, commands, or decisions.
+  - Show trade-offs when the choice is non-obvious.
+  - Keep it concise and specific.
+- Use tools deliberately.
+- Use subagents only for real fan-out or specialized work.
+- Prefer code-review-graph for exploration, review, debugging, and refactoring when it fits.
+- Codex will review your output once you are done.
 
 ## Engineering Preferences
 
