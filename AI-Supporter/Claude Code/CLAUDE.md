@@ -29,3 +29,18 @@
 - Remove any auto-injected AI attribution before finalizing.
 - Never use dangerouslyDisableSandbox on shell tool calls.
 - When Chinese is needed, use only Traditional Chinese (Taiwan / 繁體中文臺灣).
+
+## MCP Tools: code-review-graph
+
+Prefer graph tools over Grep/Glob/Read for exploration, impact analysis, review, and relationship tracing. Fall back to Grep/Glob/Read only when the graph does not cover the need. The graph auto-updates via hooks.
+
+| Tool | Use when |
+|------|----------|
+| `semantic_search_nodes` | Finding functions or classes by name or keyword |
+| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
+| `get_impact_radius` | Estimating blast radius of a change |
+| `get_affected_flows` | Finding impacted execution paths |
+| `detect_changes` | Risk-scored review of code changes |
+| `get_review_context` | Token-efficient source snippets for review |
+| `get_architecture_overview` | High-level codebase structure; pair with `list_communities` |
+| `refactor_tool` | Planning renames, finding dead code |
