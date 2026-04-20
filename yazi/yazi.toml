@@ -35,8 +35,8 @@ edit = [
   { run = 'nvim -w %*', block = true,  desc = "nvim (block)",   for = "windows" },
   # { run = 'cmd /c "if exist %1\ (cd /d %1 && nvim .) else (nvim %*)"', block = true, desc = "nvim", for = "windows" },
 ]
-glow = [
-  { run = "glow -p %s1", block = true, desc = "Glow", for = "unix" },
+mdview = [
+  { run = 'nvim -R "$@"', block = true, desc = "Markdown view", for = "unix" },
 ]
 extract = [
   { run = "ya pub extract --list %s", desc = "Extract here" },
@@ -68,7 +68,7 @@ rules = [
 	# Folder
 	{ url = "*/", use = [ "edit", "open", "reveal" ] },
 	# Markdown
-	{ url = "*.md", use = [ "edit", "glow", "reveal" ] },
+	{ url = "*.md", use = [ "edit", "mdview", "reveal" ] },
 	# Text
 	{ mime = "text/*", use = [ "edit", "reveal" ] },
 	# Image
@@ -178,7 +178,7 @@ prepend_previewers = [
 ]
 prepend_preloaders = [
     { url = "*/", run = 'faster-piper -- eza -TL=3 --color=always --icons=always --group-directories-first --no-quotes "$1"' },
-    { url = "*.md", run = 'faster-piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark -- "$1"' },
+    { url = "*.md", run = 'faster-piper -- ~/.config/yazi/scripts/markdown-preview.sh "$1" "$w"' },
     { url = "*.csv", run = 'faster-piper -- bat -p --color=always --terminal-width=$w "$1"' },
 ]
 

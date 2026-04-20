@@ -133,7 +133,7 @@ keymap = [
 
 prepend_keymap = [
   { on = "I", run = "plugin lazygit", desc = "run lazygit" },
-  { on = [ "g", "m" ], run = "shell --block glow -p %h", desc = "Preview hovered Markdown with Glow" },
+  { on = [ "g", "m" ], run = "shell 'nvim -R \"$1\"' --block", desc = "Open hovered Markdown in readonly nvim" },
   { on = "[", run = "plugin whoosh jump_by_key", desc = "Jump bookmark by key" },
   # Direct fuzzy search access
   { on = "}", run = "plugin whoosh jump_by_fzf", desc = "Direct fuzzy search for bookmarks" },
