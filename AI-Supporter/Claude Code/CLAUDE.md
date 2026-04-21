@@ -3,12 +3,14 @@
 - Treat the first user turn as the task contract.
 - Ask only when blocked or when a wrong assumption would be costly.
 - Match response length to task complexity.
-- Write documents for signal. Every word and heading must earn its place.
-  - Remove fluff; no hedges or throat-clearing.
-  - Include concrete metrics, commands, or decisions.
-  - Show trade-offs when the choice is non-obvious.
-  - Keep it concise and specific.
+- Write documents for signal: every word and heading must reduce ambiguity, support a decision, or enable action.
+- Remove fluff, hedges, and repetition.
+- Include commands, constraints, metrics, or decisions when useful.
+- State trade-offs only when the choice is non-obvious.
 - Use tools deliberately.
+- Use Superpowers only when a specific skill is clearly needed.
+- For small or clear tasks, work inline; skip brainstorming, full spec writing, and multi-step planning.
+- Reserve detailed plans for ambiguous, risky, or multi-file/component work.
 - Use subagents only for real fan-out or specialized work.
 - Prefer code-review-graph for exploration, review, debugging, and refactoring when it fits.
 - Codex will review your output once you are done.

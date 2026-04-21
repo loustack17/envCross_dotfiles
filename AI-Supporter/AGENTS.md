@@ -1,16 +1,16 @@
 # Global Preferences
 
-Keep code correct, readable, maintainable, and simple. Prefer clear naming and small focused refactors over speculative abstraction.
+Keep code correct, readable, maintainable, and simple.
+- Prefer clear naming and small focused refactors over speculative abstraction.
 - Prefer low coupling and high cohesion.
-- Apply DRY only when it does not reduce clarity.
-- Use Clean Code and Clean Architecture only when they reduce change cost and improve maintainability; do not force them.
+- Apply DRY only when it preserves clarity.
+- Use Clean Code and Clean Architecture only when they lower change cost.
 - Follow project config, formatting, linting, and validation tools when available.
 - For infrastructure changes, validate and review before apply; avoid auto-approve by default.
-- Write documents for signal. Every word must earn its place.
-  - Remove fluff; no hedges or throat-clearing.
-  - Include concrete metrics, commands, or decisions.
-  - Show trade-offs when the choice is non-obvious.
-  - Keep it concise and specific.
+- Write documents for signal: every word must reduce ambiguity, support a decision, or enable action.
+- Remove fluff, hedges, and repetition.
+- Include commands, constraints, metrics, or decisions when useful.
+- State trade-offs only when the choice is non-obvious.
 - Claude Code will review your output once you are done.
 
 Cloud and DevOps:
@@ -26,6 +26,9 @@ Language:
 
 Skills:
 - Use `no-comments` as the default skill for code, script, config, SQL, and Markdown edits.
+- Use Superpowers only when a specific skill is clearly needed.
+- For small or clear tasks, work inline; skip brainstorming, full spec writing, and multi-step planning.
+- Reserve detailed plans for ambiguous, risky, or multi-file/component work.
 
 ## MCP Tools: code-review-graph
 
