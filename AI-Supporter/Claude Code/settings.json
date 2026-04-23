@@ -44,6 +44,7 @@
   "enabledPlugins": {
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
+    "common-lsp@lou-local-ai": true,
     "code-review@claude-plugins-official": true,
     "github@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
@@ -60,7 +61,8 @@
     "apify-generate-output-schema@apify-agent-skills": false,
     "linear@claude-plugins-official": true,
     "apify-ultimate-scraper@apify-agent-skills": false,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "apify-agent-skills": {
@@ -74,6 +76,18 @@
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "lou-local-ai": {
+      "source": {
+        "source": "directory",
+        "path": "/home/lou/Documents/WorkFlow/envCross_dotfiles/AI-Supporter/Claude Code/marketplace"
       }
     }
   },

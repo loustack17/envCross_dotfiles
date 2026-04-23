@@ -82,6 +82,9 @@ enabled = true
 [plugins."linear@openai-curated"]
 enabled = true
 
+[plugins."superpowers@openai-curated"]
+enabled = true
+
 [[skills.config]]
 path = "/home/lou/Documents/WorkFlow/envCross_dotfiles/AI-Supporter/SKILLS/apify-ultimate-scraper/SKILL.md"
 enabled = false

@@ -386,9 +386,65 @@ link_ai_shared_files() {
             ;;
         opencode)
             create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules"
+            create_file_link "$REPO_ROOT/AI-Supporter/OpenCode/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
+            create_file_link "$REPO_ROOT/AI-Supporter/OpenCode/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
             create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills"
             ;;
     esac
+}
+
+ensure_claude_local_plugin() {
+    local marketplace_dir="$REPO_ROOT/AI-Supporter/Claude Code/marketplace"
+    local marketplace_name="lou-local-ai"
+    local plugin_id="common-lsp@$marketplace_name"
+
+    [[ -d "$marketplace_dir" ]] || return 0
+
+    if ! command -v claude &>/dev/null; then
+        log_warn "claude: not found, skipping local plugin install"
+        return 0
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_dry "Would ensure Claude marketplace: $marketplace_name"
+        log_dry "Would ensure Claude plugin: $plugin_id"
+        return 0
+    fi
+
+    local marketplaces
+    marketplaces="$(claude plugin marketplace list --json 2>/dev/null || printf '[]')"
+    if ! jq -e --arg name "$marketplace_name" '.[] | select(.name == $name)' >/dev/null 2>&1 <<< "$marketplaces"; then
+        if claude plugin marketplace add "$marketplace_dir" --scope user >/dev/null 2>&1; then
+            log_info "claude marketplace: added $marketplace_name"
+        else
+            log_warn "claude marketplace: failed to add $marketplace_name"
+            return 0
+        fi
+    else
+        log_info "claude marketplace: already added ($marketplace_name)"
+    fi
+
+    local plugins
+    plugins="$(claude plugin list --json 2>/dev/null || printf '[]')"
+    if ! jq -e --arg id "$plugin_id" '.[] | select(.id == $id)' >/dev/null 2>&1 <<< "$plugins"; then
+        if claude plugin install "$plugin_id" --scope user >/dev/null 2>&1; then
+            log_info "claude plugin: installed $plugin_id"
+        else
+            log_warn "claude plugin: failed to install $plugin_id"
+            return 0
+        fi
+        plugins="$(claude plugin list --json 2>/dev/null || printf '[]')"
+    fi
+
+    if jq -e --arg id "$plugin_id" '.[] | select(.id == $id and .enabled == false)' >/dev/null 2>&1 <<< "$plugins"; then
+        if claude plugin enable "$plugin_id" --scope user >/dev/null 2>&1; then
+            log_info "claude plugin: enabled $plugin_id"
+        else
+            log_warn "claude plugin: failed to enable $plugin_id"
+        fi
+    else
+        log_info "claude plugin: ready ($plugin_id)"
+    fi
 }
 
 
@@ -465,6 +521,7 @@ step_symlink_configs() {
         fi
 
         case "$name" in claude-code|codex|opencode) link_ai_shared_files "$name" ;; esac
+        case "$name" in claude-code) ensure_claude_local_plugin ;; esac
     done
 }
 

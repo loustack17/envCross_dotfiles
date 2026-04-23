@@ -1,0 +1,8 @@
+{
+  "name": "common-lsp",
+  "description": "Additional Claude Code LSP servers for YAML, JSON, shell, Fish, OpenTofu, and Typst",
+  "version": "1.0.1",
+  "author": {
+    "name": "lou"
+  }
+}

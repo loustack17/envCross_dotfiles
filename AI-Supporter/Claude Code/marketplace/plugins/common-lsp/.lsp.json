@@ -1,0 +1,65 @@
+{
+  "yaml-lsp": {
+    "command": "yaml-language-server",
+    "args": [
+      "--stdio"
+    ],
+    "extensionToLanguage": {
+      ".yaml": "yaml",
+      ".yml": "yaml"
+    }
+  },
+  "json-lsp": {
+    "command": "vscode-json-language-server",
+    "args": [
+      "--stdio"
+    ],
+    "extensionToLanguage": {
+      ".json": "json",
+      ".jsonc": "jsonc",
+      ".code-workspace": "jsonc"
+    }
+  },
+  "bash-lsp": {
+    "command": "bash-language-server",
+    "args": [
+      "start"
+    ],
+    "extensionToLanguage": {
+      ".sh": "shellscript",
+      ".bash": "shellscript",
+      ".ksh": "shellscript",
+      ".zsh": "shellscript"
+    }
+  },
+  "fish-lsp": {
+    "command": "fish-lsp",
+    "args": [
+      "start"
+    ],
+    "extensionToLanguage": {
+      ".fish": "fish"
+    }
+  },
+  "tinymist-lsp": {
+    "command": "tinymist",
+    "args": [
+      "lsp"
+    ],
+    "extensionToLanguage": {
+      ".typ": "typst",
+      ".typc": "typst"
+    }
+  },
+  "tofu-lsp": {
+    "command": "tofu-ls",
+    "args": [
+      "serve"
+    ],
+    "extensionToLanguage": {
+      ".tf": "opentofu",
+      ".tfvars": "opentofu-vars",
+      ".tofu": "opentofu"
+    }
+  }
+}

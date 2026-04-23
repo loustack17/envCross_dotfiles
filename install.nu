@@ -360,6 +360,8 @@ def main [
 
     let opencode_files = [
         {src: $shared_agents, dest: ($home | path join ".config" | path join "opencode" | path join "AGENTS.md"), is_file: true,  name: "opencode AGENTS.md"}
+        {src: ($ai_root | path join "OpenCode" | path join "opencode.json"), dest: ($home | path join ".config" | path join "opencode" | path join "opencode.json"), is_file: true,  name: "opencode config"}
+        {src: ($ai_root | path join "OpenCode" | path join "tui.json"), dest: ($home | path join ".config" | path join "opencode" | path join "tui.json"), is_file: true,  name: "opencode tui"}
         {src: $shared_skills, dest: ($home | path join ".config" | path join "opencode" | path join "skills"),    is_file: false, name: "opencode skills"}
     ]
     for f in $opencode_files {

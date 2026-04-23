@@ -1,0 +1,18 @@
+{
+  "name": "lou-local-ai",
+  "owner": {
+    "name": "lou"
+  },
+  "metadata": {
+    "description": "Local Claude Code plugins managed from envCross_dotfiles",
+    "version": "1.0.1"
+  },
+  "plugins": [
+    {
+      "name": "common-lsp",
+      "source": "./plugins/common-lsp",
+      "description": "Additional Claude Code LSP servers for YAML, JSON, shell, Fish, and OpenTofu",
+      "version": "1.0.1"
+    }
+  ]
+}
