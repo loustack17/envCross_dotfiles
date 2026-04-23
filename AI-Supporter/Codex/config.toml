@@ -64,6 +64,12 @@ trust_level = "trusted"
 [projects."/home/lou/Documents/Cases/2026/sacred-farm-theme"]
 trust_level = "trusted"
 
+[projects.'D:\CA\Cases\2026\NexusDB']
+trust_level = "trusted"
+
+[projects.'d:\notes\workflow\envcross_dotfiles']
+trust_level = "trusted"
+
 [notice]
 hide_rate_limit_model_nudge = true
 
@@ -88,6 +94,9 @@ enabled = true
 [[skills.config]]
 path = "/home/lou/Documents/WorkFlow/envCross_dotfiles/AI-Supporter/SKILLS/apify-ultimate-scraper/SKILL.md"
 enabled = false
+
+[windows]
+sandbox = "elevated"
 
 [mcp_servers.code-review-graph]
 command = "uvx"

@@ -159,6 +159,55 @@ def main [
         }
     }
 
+    def ensure_yazi_config_layout [source: string, dry: bool] {
+        let config_dir = ($source | path join "config")
+        let entries = [
+            {name: "init.lua",        is_file: true}
+            {name: "keymap.toml",     is_file: true}
+            {name: "package.toml",    is_file: true}
+            {name: "theme-dark.toml", is_file: true}
+            {name: "theme.toml",      is_file: true}
+            {name: "yazi.toml",       is_file: true}
+            {name: "plugins",         is_file: false}
+            {name: "scripts",         is_file: false}
+        ]
+
+        if $dry {
+            log_dry $"Would ensure Yazi Windows config links: ($config_dir)"
+            return
+        }
+
+        mkdir $config_dir
+
+        for entry in $entries {
+            let src = ($source | path join $entry.name)
+            let dest = ($config_dir | path join $entry.name)
+
+            if not ($src | path exists) {
+                log_warn $"Source not found: Yazi ($entry.name)"
+                continue
+            }
+            if ($dest | path exists) {
+                continue
+            }
+
+            try {
+                let result = if $entry.is_file {
+                    ^cmd /c mklink $dest $src | complete
+                } else {
+                    ^cmd /c mklink /D $dest $src | complete
+                }
+                if $result.exit_code == 0 {
+                    log_info $"Linked: Yazi config ($entry.name)"
+                } else {
+                    log_warn $"Failed to link: Yazi config ($entry.name)"
+                }
+            } catch {
+                log_warn $"Failed to link: Yazi config ($entry.name)"
+            }
+        }
+    }
+
     print "============================================"
     print "  Windows Dotfiles Installer"
     print "============================================"
@@ -305,9 +354,13 @@ def main [
     }
 
     if (should_install "yazi" $skip_list $only_list) {
+        let yazi_src = ($repo_root | path join "yazi")
+        if not $backup_only {
+            ensure_yazi_config_layout $yazi_src $dry_run
+        }
         $targets ++= [{
             name: "Yazi"
-            source: ($repo_root | path join "yazi")
+            source: $yazi_src
             dest: ($appdata | path join "yazi")
             is_file: false
         }]
