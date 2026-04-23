@@ -86,6 +86,20 @@ local function is_true(v, default)
 end
 
 ----------------------------------------------------------------------
+-- sh_path(p) -> string
+--
+-- Convert a path string to POSIX form for use in sh -c commands on Windows.
+-- On Windows, backslash-separated paths (C:\foo\bar) corrupt shell redirections
+-- because MSYS2's sh interprets backslashes as escape characters.
+-- Converts "C:\foo\bar" -> "/c/foo/bar"; no-op on Linux/macOS.
+local function sh_path(p)
+  if p:match("^%a:\\") then
+    return (p:gsub("^(%a):\\", function(d) return "/" .. d:lower() .. "/" end):gsub("\\", "/"))
+  end
+  return p
+end
+
+----------------------------------------------------------------------
 -- fs_path(url) -> string
 --
 -- Convert Yazi Url into a real filesystem path string for external tools.
@@ -389,9 +403,9 @@ local function generate_cache(job, cache_path)
   -- 2) Expand "$1" safely for external tools
   local final = tpl:gsub('"$1"', ya.quote(source_path))
 
-  local quoted_path = ya.quote(tostring(cache_path))
+  local quoted_path = ya.quote(sh_path(tostring(cache_path)))
   local tmp_url = Url(tostring(cache_path) .. ".tmp")
-  local tmp_path = ya.quote(tostring(tmp_url))
+  local tmp_path = ya.quote(sh_path(tostring(tmp_url)))
 
   -- 3) Generate content into cache_path (temporary), then build header+content into tmp, then mv
   --

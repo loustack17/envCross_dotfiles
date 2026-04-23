@@ -1,0 +1,38 @@
+codex
+y
+claude
+lg
+eza
+nu install.nu
+nu install.nu --dry-run
+nu install.nu
+lg
+y
+ls
+lg
+ls
+y
+nu install.nu
+..
+nu install.nu
+y
+nu install.nu
+codex
+scoop update -a
+choco upgrade all
+winget -h
+scoop list
+choco list
+winget search --id Microsoft.PowerShell
+choco install powershell-core
+refreshenv
+y
+codex
+y
+lg
+y
+lg
+y
+codex
+scoop update -a
+y
