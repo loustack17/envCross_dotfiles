@@ -107,11 +107,21 @@ def main [
         }
     }
 
-    def is_repo_symlink [path: string, repo_root: string]: nothing -> bool {
+    def read_link_target [path: string]: nothing -> string {
+        if not ($path | path exists) {
+            return ""
+        }
+
         try {
-            let target = (^powershell -Command $"(Get-Item -Path '($path)' -ErrorAction SilentlyContinue).Target" | str trim)
-            ($target | str length) > 0 and ($target | str starts-with $repo_root)
-        } catch { false }
+            ^powershell -Command $"(Get-Item -LiteralPath '($path)' -ErrorAction SilentlyContinue).Target" | str trim
+        } catch {
+            ""
+        }
+    }
+
+    def is_repo_symlink [path: string, repo_root: string]: nothing -> bool {
+        let target = (read_link_target $path)
+        ($target | str length) > 0 and ($target | str starts-with $repo_root)
     }
 
     def backup [path: string, name: string, no_bak: bool, dry: bool, bak_root: string, repo_root: string] {
@@ -156,6 +166,197 @@ def main [
         } catch {
             log_error $"Failed to link: ($name)"
             log_warn "Enable Developer Mode: Settings → For developers → Developer Mode"
+        }
+    }
+
+    def existing_targets [items: list<any>]: nothing -> list<any> {
+        $items
+        | where { |it| $it.src | path exists }
+        | each { |it| {
+            name: $it.name
+            source: $it.src
+            dest: $it.dest
+            is_file: $it.is_file
+        } }
+    }
+
+    def is_stub_link_candidate [source: string]: nothing -> bool {
+        let name = ($source | path basename)
+        ($name == ".system") or not ($name | str contains ".")
+    }
+
+    def resolve_link_source [source: string]: nothing -> record<source: string, is_file: bool, is_stub: bool> {
+        if ($source | path type) == "dir" {
+            return {
+                source: $source
+                is_file: false
+                is_stub: false
+            }
+        }
+
+        if not (is_stub_link_candidate $source) {
+            return {
+                source: $source
+                is_file: true
+                is_stub: false
+            }
+        }
+
+        let raw_target = (try { open --raw $source | str trim } catch { "" })
+        if (($raw_target | str starts-with "../") or ($raw_target | str starts-with "./")) {
+            let resolved_target = (($source | path dirname) | path join $raw_target)
+            if ($resolved_target | path exists) {
+                return {
+                    source: $resolved_target
+                    is_file: (($resolved_target | path type) != "dir")
+                    is_stub: true
+                }
+            }
+        }
+
+        {
+            source: $source
+            is_file: true
+            is_stub: false
+        }
+    }
+
+    def collect_link_targets [source_root: string, dest_root: string, name_prefix: string]: nothing -> list<any> {
+        if not ($source_root | path exists) {
+            return []
+        }
+
+        ls -a $source_root | each { |entry|
+            let entry_name = ($entry.name | path basename)
+            let resolved = (resolve_link_source $entry.name)
+            {
+                name: $"($name_prefix) ($entry_name)"
+                source: $resolved.source
+                dest: ($dest_root | path join $entry_name)
+                is_file: $resolved.is_file
+                is_stub: $resolved.is_stub
+            }
+        }
+    }
+
+    def ensure_real_dir [dest: string, name: string, dry: bool] {
+        if $dry {
+            log_dry $"Would ensure directory: ($name) -> ($dest)"
+            return
+        }
+
+        let link_target = (read_link_target $dest)
+
+        if (($link_target | str length) > 0) {
+            try { rm -r $dest } catch { log_warn $"Failed to remove: ($dest)"; return }
+        } else if ($dest | path exists) and (($dest | path type) != "dir") {
+            try { rm -r $dest } catch { log_warn $"Failed to remove: ($dest)"; return }
+        }
+
+        if not ($dest | path exists) {
+            mkdir $dest
+        }
+    }
+
+    def decode_json_result [result: record, name: string] {
+        if $result.exit_code != 0 {
+            log_warn $"($name): command failed"
+            return {
+                ok: false
+                value: null
+            }
+        }
+
+        try {
+            {
+                ok: true
+                value: ($result.stdout | from json)
+            }
+        } catch {
+            log_warn $"($name): invalid JSON output"
+            {
+                ok: false
+                value: null
+            }
+        }
+    }
+
+    def ensure_claude_local_plugin [marketplace_dir: string, dry: bool] {
+        let marketplace_name = "lou-local-ai"
+        let plugin_id = $"common-lsp@($marketplace_name)"
+
+        if not ($marketplace_dir | path exists) {
+            return
+        }
+
+        if $dry {
+            log_dry $"Would ensure Claude marketplace: ($marketplace_name)"
+            log_dry $"Would ensure Claude plugin: ($plugin_id)"
+            return
+        }
+
+        let marketplaces_result = (decode_json_result
+            (try { ^claude plugin marketplace list --json | complete } catch { {stdout: "[]", stderr: "", exit_code: 1} })
+            "claude marketplace list"
+        )
+        if not $marketplaces_result.ok {
+            return
+        }
+        let marketplaces = $marketplaces_result.value
+        let has_marketplace = (($marketplaces | where { |it| (($it | get -o name | default "") == $marketplace_name) } | length) > 0)
+
+        if not $has_marketplace {
+            let add_result = (try { ^claude plugin marketplace add $marketplace_dir --scope user | complete } catch { {stdout: "", stderr: "", exit_code: 1} })
+            if $add_result.exit_code == 0 {
+                log_info $"claude marketplace: added ($marketplace_name)"
+            } else {
+                log_warn $"claude marketplace: failed to add ($marketplace_name)"
+                return
+            }
+        } else {
+            log_info $"claude marketplace: already added ($marketplace_name)"
+        }
+
+        let initial_plugins_result = (decode_json_result
+            (try { ^claude plugin list --json | complete } catch { {stdout: "[]", stderr: "", exit_code: 1} })
+            "claude plugin list"
+        )
+        if not $initial_plugins_result.ok {
+            return
+        }
+        mut plugins = $initial_plugins_result.value
+
+        let has_plugin = (($plugins | where { |it| (($it | get -o id | default "") == $plugin_id) } | length) > 0)
+        if not $has_plugin {
+            let install_result = (try { ^claude plugin install $plugin_id --scope user | complete } catch { {stdout: "", stderr: "", exit_code: 1} })
+            if $install_result.exit_code == 0 {
+                log_info $"claude plugin: installed ($plugin_id)"
+                let refreshed_plugins_result = (decode_json_result
+                    (try { ^claude plugin list --json | complete } catch { {stdout: "[]", stderr: "", exit_code: 1} })
+                    "claude plugin list"
+                )
+                if not $refreshed_plugins_result.ok {
+                    return
+                }
+                $plugins = $refreshed_plugins_result.value
+            } else {
+                log_warn $"claude plugin: failed to install ($plugin_id)"
+                return
+            }
+        }
+
+        let plugin_disabled = (($plugins | where { |it|
+            (($it | get -o id | default "") == $plugin_id) and (($it | get -o enabled | default true) == false)
+        } | length) > 0)
+        if $plugin_disabled {
+            let enable_result = (try { ^claude plugin enable $plugin_id --scope user | complete } catch { {stdout: "", stderr: "", exit_code: 1} })
+            if $enable_result.exit_code == 0 {
+                log_info $"claude plugin: enabled ($plugin_id)"
+            } else {
+                log_warn $"claude plugin: failed to enable ($plugin_id)"
+            }
+        } else {
+            log_info $"claude plugin: ready ($plugin_id)"
         }
     }
 
@@ -380,55 +581,91 @@ def main [
     let claude_root  = ($ai_root   | path join "Claude Code")
     let shared_agents = ($ai_root  | path join "AGENTS.md")
     let shared_skills = ($ai_root  | path join "SKILLS")
+    let claude_home = ($home | path join ".claude")
+    let codex_home = ($home | path join ".codex")
+    let opencode_home = ($home | path join ".config" | path join "opencode")
+    let gemini_home = ($home | path join ".gemini")
+    let has_claude = (check_cmd "claude")
+    let has_codex = (check_cmd "codex")
+    let has_opencode = (check_cmd "opencode")
+    let has_gemini = (check_cmd "gemini")
     let claude_skills = ($claude_root | path join "skills")
     let claude_agents = ($claude_root | path join "agents")
     let claude_rules  = ($claude_root | path join "rules")
-    let active_claude_skills = if ($claude_skills | path exists) { $claude_skills } else { $shared_skills }
+    let claude_statusline = ($claude_root | path join "statusline-command.sh")
+    let claude_marketplace = ($claude_root | path join "marketplace")
+    let claude_skills_dest = ($claude_home | path join "skills")
+    let active_claude_skills = if $has_claude {
+        if ($claude_skills | path exists) { $claude_skills } else { $shared_skills }
+    } else {
+        ""
+    }
+    let resolved_claude_skill_targets = if $has_claude {
+        collect_link_targets $active_claude_skills $claude_skills_dest "Claude Code skill"
+    } else {
+        []
+    }
+    let should_expand_claude_skills = (($resolved_claude_skill_targets | where { |it| $it.is_stub } | length) > 0)
+    let active_claude_skill_targets = if $should_expand_claude_skills {
+        $resolved_claude_skill_targets | each { |it| {
+            name: $it.name
+            source: $it.source
+            dest: $it.dest
+            is_file: $it.is_file
+        } }
+    } else {
+        []
+    }
 
-    let claude_files = [
-        {src: ($claude_root | path join "CLAUDE.md"),      dest: ($home | path join ".claude" | path join "CLAUDE.md"),      is_file: true,  name: "Claude Code CLAUDE.md"}
-        {src: ($claude_root | path join "settings.json"),  dest: ($home | path join ".claude" | path join "settings.json"),  is_file: true,  name: "Claude Code settings"}
-        {src: ($claude_root | path join "hooks"),          dest: ($home | path join ".claude" | path join "hooks"),          is_file: false, name: "Claude Code hooks"}
-        {src: $active_claude_skills,                       dest: ($home | path join ".claude" | path join "skills"),         is_file: false, name: "Claude Code skills"}
-        {src: $claude_agents,                              dest: ($home | path join ".claude" | path join "agents"),         is_file: false, name: "Claude Code agents"}
-        {src: $claude_rules,                               dest: ($home | path join ".claude" | path join "rules"),          is_file: false, name: "Claude Code rules"}
-    ]
-    for f in $claude_files {
-        if ($f.src | path exists) {
-            $targets ++= [{name: $f.name, source: $f.src, dest: $f.dest, is_file: $f.is_file}]
+    if $has_claude {
+        let claude_files = [
+            {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: "Claude Code CLAUDE.md"}
+            {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: "Claude Code settings"}
+            {src: ($claude_root | path join "hooks"),          dest: ($claude_home | path join "hooks"),                   is_file: false, name: "Claude Code hooks"}
+            {src: $claude_agents,                              dest: ($claude_home | path join "agents"),                  is_file: false, name: "Claude Code agents"}
+            {src: $claude_rules,                               dest: ($claude_home | path join "rules"),                   is_file: false, name: "Claude Code rules"}
+            {src: $claude_statusline,                          dest: ($claude_home | path join "statusline-command.sh"),   is_file: true,  name: "Claude Code statusline"}
+            {src: $claude_marketplace,                         dest: ($claude_home | path join "marketplace"),             is_file: false, name: "Claude Code marketplace"}
+        ]
+        $targets ++= (existing_targets $claude_files)
+        if $should_expand_claude_skills {
+            $targets ++= $active_claude_skill_targets
+        } else {
+            $targets ++= [{
+                name: "Claude Code skills"
+                source: $active_claude_skills
+                dest: $claude_skills_dest
+                is_file: false
+            }]
         }
     }
 
     let codex_config = ($ai_root | path join "Codex" | path join "config.toml")
-    let codex_files = [
-        {src: $shared_agents,  dest: ($home | path join ".codex" | path join "AGENTS.md"),   is_file: true,  name: "Codex AGENTS.md"}
-        {src: $codex_config,   dest: ($home | path join ".codex" | path join "config.toml"), is_file: true,  name: "Codex config.toml"}
-        {src: $shared_skills,  dest: ($home | path join ".codex" | path join "skills"),      is_file: false, name: "Codex skills"}
-    ]
-    for f in $codex_files {
-        if ($f.src | path exists) {
-            $targets ++= [{name: $f.name, source: $f.src, dest: $f.dest, is_file: $f.is_file}]
-        }
+    if $has_codex {
+        let codex_files = [
+            {src: $shared_agents,  dest: ($codex_home | path join "AGENTS.md"),   is_file: true,  name: "Codex AGENTS.md"}
+            {src: $codex_config,   dest: ($codex_home | path join "config.toml"), is_file: true,  name: "Codex config.toml"}
+            {src: $shared_skills,  dest: ($codex_home | path join "skills"),      is_file: false, name: "Codex skills"}
+        ]
+        $targets ++= (existing_targets $codex_files)
     }
 
-    let opencode_files = [
-        {src: $shared_agents, dest: ($home | path join ".config" | path join "opencode" | path join "AGENTS.md"), is_file: true,  name: "opencode AGENTS.md"}
-        {src: ($ai_root | path join "OpenCode" | path join "opencode.json"), dest: ($home | path join ".config" | path join "opencode" | path join "opencode.json"), is_file: true,  name: "opencode config"}
-        {src: ($ai_root | path join "OpenCode" | path join "tui.json"), dest: ($home | path join ".config" | path join "opencode" | path join "tui.json"), is_file: true,  name: "opencode tui"}
-        {src: $shared_skills, dest: ($home | path join ".config" | path join "opencode" | path join "skills"),    is_file: false, name: "opencode skills"}
-    ]
-    for f in $opencode_files {
-        if ($f.src | path exists) {
-            $targets ++= [{name: $f.name, source: $f.src, dest: $f.dest, is_file: $f.is_file}]
-        }
+    if $has_opencode {
+        let opencode_files = [
+            {src: $shared_agents, dest: ($opencode_home | path join "AGENTS.md"),    is_file: true,  name: "opencode AGENTS.md"}
+            {src: ($ai_root | path join "OpenCode" | path join "opencode.json"),     dest: ($opencode_home | path join "opencode.json"), is_file: true,  name: "opencode config"}
+            {src: ($ai_root | path join "OpenCode" | path join "tui.json"),          dest: ($opencode_home | path join "tui.json"),      is_file: true,  name: "opencode tui"}
+            {src: $shared_skills, dest: ($opencode_home | path join "skills"),        is_file: false, name: "opencode skills"}
+        ]
+        $targets ++= (existing_targets $opencode_files)
     }
 
     let gemini_md = ($ai_root | path join "Gemini CLI" | path join "GEMINI.md")
-    if ($gemini_md | path exists) {
+    if $has_gemini and ($gemini_md | path exists) {
         $targets ++= [{
             name: "Gemini CLI GEMINI.md"
             source: $gemini_md
-            dest: ($home | path join ".gemini" | path join "GEMINI.md")
+            dest: ($gemini_home | path join "GEMINI.md")
             is_file: true
         }]
     }
@@ -459,8 +696,16 @@ def main [
     log_step "=== Step 3: Creating Links ==="
     print ""
 
+    if ($active_claude_skill_targets | is-not-empty) {
+        ensure_real_dir $claude_skills_dest "Claude Code skills" $dry_run
+    }
+
     for t in $targets {
         link_config $t.source $t.dest $t.is_file $t.name $dry_run
+    }
+
+    if $has_claude {
+        ensure_claude_local_plugin $claude_marketplace $dry_run
     }
 
     # === Done ===
