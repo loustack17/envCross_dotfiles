@@ -1,21 +1,28 @@
 # Global Preferences
 
+## Core Preferences
+
 Keep code correct, readable, maintainable, and simple.
 - Prefer clear naming and small focused refactors over speculative abstraction.
 - Prefer low coupling and high cohesion.
 - Apply DRY only when it preserves clarity.
 - Use Clean Code and Clean Architecture only when they lower change cost.
 - Follow project config, formatting, linting, and validation tools when available.
+- Claude Code will review your output once you are done.
+
+## Infrastructure
+
 - For infrastructure changes, validate and review before apply; avoid auto-approve by default.
-- Write documents for signal: every word must reduce ambiguity, support a decision, or enable action.
+- AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
+- Prefer explicit, auditable changes and least privilege.
+
+## Writing
+
+Write for signal.
+- Every word must reduce ambiguity, support a decision, or enable action.
 - Remove fluff, hedges, and repetition.
 - Include commands, constraints, metrics, or decisions when useful.
 - State trade-offs only when the choice is non-obvious.
-- Claude Code will review your output once you are done.
-
-Cloud and DevOps:
-- AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
-- Prefer explicit, auditable changes and least privilege.
 
 Git and GitHub:
 - Never add AI attribution lines, trailers, signatures, or identity markers to any `git` or `gh` workflow.

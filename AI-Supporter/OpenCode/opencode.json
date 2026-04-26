@@ -3,8 +3,42 @@
   "permission": {
     "*": "ask",
     "edit": "ask",
-    "write": "ask"
+    "write": "ask",
+	"read": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "lsp": "allow",
+	"bash": {
+      "*": "ask",
+
+      "rg *": "allow",
+      "eza *": "allow",
+      "bat *": "allow",
+      "pnpm *": "ask",
+      "bun *": "ask",
+      "uv *": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+
+      "npm *": "deny",
+      "npx *": "deny",
+      "grep *": "deny",
+      "ls *": "deny",
+      "cat *": "deny",
+      "pip *": "deny",
+      "pip3 *": "deny",
+      "python -m pip*": "deny",
+      "python3 -m pip*": "deny"
+    }
   },
+    "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+  "instructions": [
+    "../Claude Code/rules/*.md"
+  ],
   "plugin": [
     "superpowers@git+https://github.com/obra/superpowers.git",
     "opencode-antigravity-auth@latest",
