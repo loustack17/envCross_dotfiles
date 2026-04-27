@@ -3,78 +3,46 @@ name: code-simplifier
 description: Use after implementation, before commit, after AI-generated code, or when the user asks to simplify, clean up, run /simplify, reduce complexity, or preserve behavior while improving maintainability.
 ---
 
-# Code Simplifier
+# Simplify
 
-Post-change cleanup workflow for behavior-preserving simplification.
+Review changed files for reuse, quality, and efficiency. Fix issues found.
 
-## Goals
+## Phase 1: Scope
 
-- Preserve behavior unless the user explicitly requested a functional change.
-- Improve clarity, reuse, quality, and meaningful efficiency within the touched scope.
-- Follow repository rules, `AGENTS.md`, and nearby code patterns.
-- Prefer small local improvements over broad rewrites.
+Run `git diff` (or `git diff HEAD` if staged). If no changes, review recently modified files from this session.
 
-## Scope
+## Phase 2: Spawn Three Reviewers in Parallel
 
-Default scope:
-1. Current git diff.
-2. If no git diff exists, recently touched files in this session.
-3. If neither is available, ask for target files.
+Use the Agent tool to launch all three in a single message. Pass the full diff to each. If unavailable, stop with: "Cannot run: subagent spawning unavailable in this runtime."
 
-Do not scan the whole repository unless needed to verify reuse or impact.
+Each agent reports ONLY findings in its own dimension. Cross-dimension findings must be ignored.
 
-## Workflow
+### Agent 1 — Reuse
+- Existing utilities/helpers that could replace new code (utility dirs, shared modules, adjacent files)
+- New functions duplicating existing functionality — suggest the existing one
+- Inline logic where utilities exist: string manipulation, path handling, env checks, type guards
 
-1. Identify the changed files or target scope.
-2. Inspect the diff and nearby code enough to understand local conventions.
-3. Run three isolated review passes:
-   - `reuse`
-   - `quality`
-   - `efficiency`
-4. Use subagents when available:
-   - `@reuse-reviewer`
-   - `@quality-reviewer`
-   - `@efficiency-reviewer`
-5. Prefer parallel execution. If parallel execution is unavailable, run the three passes sequentially while keeping each pass isolated.
-6. Use the briefs in `references/reviewer-briefs.md`.
-7. Merge findings. Drop style churn, speculation, duplicates, weak advice, and broad rewrites.
-8. If the user asked for review only, report findings and stop.
-9. Otherwise apply only local, behavior-preserving fixes.
-10. Run the smallest meaningful validation for the touched scope.
-11. Format the final report with `references/output-format.md`.
+### Agent 2 — Quality
+- **Redundant state**: duplicates existing state, derivable values, observers/effects that could be direct calls
+- **Parameter sprawl**: new params instead of restructuring
+- **Copy-paste with slight variation**: near-duplicates that should share an abstraction
+- **Leaky abstractions**: exposing internals that should be encapsulated
+- **Stringly-typed**: raw strings where constants/enums/branded types exist
+- **Unnecessary JSX nesting**: wrapper elements adding no layout value (when JSX is present)
+- **Nested conditionals**: ternary chains (`a ? x : b ? y : ...`), nested if/else, switch 3+ deep — flatten with early returns, guards, or lookup
+- **Unnecessary comments**: explaining WHAT, narration, task references — keep only non-obvious WHY (constraints, invariants, workarounds)
 
-## Rules
+### Agent 3 — Efficiency
+- **Unnecessary work**: redundant computation, repeated reads, duplicate API calls, N+1
+- **Missed concurrency**: independent ops run sequentially
+- **Hot-path bloat**: blocking work added to startup or per-request/render paths
+- **Recurring no-op updates**: state updates in polling/intervals/handlers firing unconditionally — add change-detection guard. Wrappers with updater/reducer callbacks must honor same-reference returns or callers' early-return no-ops are silently defeated
+- **Unnecessary existence checks** (TOCTOU): operate directly, handle errors
+- **Memory**: unbounded structures, missing cleanup, listener leaks
+- **Overly broad operations**: full files when partial needed
 
-- Reviewers inspect only. They do not edit files.
-- Keep each reviewer limited to its own objective.
-- The main agent owns edits, conflict resolution, validation, and the final report.
-- Reuse existing helpers before adding new abstractions.
-- Do not broaden scope for stylistic consistency alone.
-- Do not claim efficiency wins without a real code-path reason.
-- Do not introduce behavior changes unless explicitly requested.
-- If a pass finds nothing meaningful, say so and move on.
+## Phase 3: Fix and Report
 
-## Good Fixes
+Aggregate findings, fix each directly. Skip false positives without arguing.
 
-- Remove duplicated or dead code.
-- Improve local naming and structure.
-- Reduce needless branching or nesting.
-- Replace brittle compact code with clearer flow.
-- Extract small helpers when cohesion improves.
-- Remove stale comments and obvious comments.
-- Keep necessary comments that explain non-obvious constraints.
-
-## Avoid
-
-- Broad rewrites
-- Hidden behavior changes
-- New abstractions without payoff
-- Dense one-liners that reduce readability
-- Reformat-only churn.
-- Changes outside touched scope unless required for correctness.
-
-## Output
-
-- Separate `reuse`, `quality`, and `efficiency` findings.
-- Separate applied fixes from deferred findings.
-- State validation results or why validation could not run.
+Report in four sections: **Findings** (per-dimension), **Applied Fixes**, **Validation** (what ran, or why not), **Deferred** (skipped + reason).

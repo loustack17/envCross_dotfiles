@@ -1,4 +1,16 @@
 interface:
   display_name: "Code Simplifier"
-  short_description: "Run strict isolated simplify with three reviewers"
-  default_prompt: "Run the strict simplify workflow on the recently changed code. Spawn exactly three isolated reviewers for reuse, quality, and efficiency, then merge findings, apply only safe behavior-preserving fixes, validate the touched scope, and report findings, fixes, validation, and deferred items separately. If isolated reviewers cannot be launched in this run, stop and say so rather than substituting a sequential self-review."
+  short_description: "Simplify with three isolated parallel reviewers"
+  default_prompt: |
+    Run code-simplifier on the recent diff (`git diff` or `git diff HEAD`). If no diff, use recently touched files.
+
+    Spawn three isolated reviewers in a single parallel dispatch — all at once, never sequentially:
+    - reuse: duplicated logic, missed existing utilities, copy-paste variants
+    - quality: redundant state, parameter sprawl, copy-paste with slight variation, leaky abstractions, stringly-typed code, unnecessary JSX nesting (when present), nested conditionals, unnecessary comments
+    - efficiency: redundant work, missed concurrency, hot-path bloat, no-op updates, TOCTOU checks, memory leaks, overly broad operations
+
+    Each reviewer reports ONLY its own dimension. Reviewers do not edit files.
+
+    If parallel spawning is unavailable, stop with: "Cannot run: subagent spawning unavailable in this runtime."
+
+    Aggregate, fix directly, skip false positives. Report in four sections: Findings, Applied Fixes, Validation, Deferred.
