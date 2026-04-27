@@ -363,6 +363,9 @@ link_ai_shared_files() {
     local claude_skills="$claude_root/skills"
     local claude_agents="$claude_root/agents"
     local claude_rules="$claude_root/rules"
+    local claude_marketplace="$claude_root/marketplace"
+    local claude_statusline="$claude_root/statusline-command.sh"
+    local opencode_root="$REPO_ROOT/AI-Supporter/OpenCode"
 
     [[ -d "$claude_skills" ]] || claude_skills="$shared_skills"
 
@@ -372,11 +375,15 @@ link_ai_shared_files() {
             create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings"
             create_path_link "$claude_root/hooks" "$HOME/.claude/hooks" "claude-hooks"
             create_path_link "$claude_skills" "$HOME/.claude/skills" "claude-skills"
+            create_file_link "$claude_statusline" "$HOME/.claude/statusline-command.sh" "claude-statusline"
             if [[ -d "$claude_agents" ]]; then
                 create_path_link "$claude_agents" "$HOME/.claude/agents" "claude-agents"
             fi
             if [[ -d "$claude_rules" ]]; then
                 create_path_link "$claude_rules" "$HOME/.claude/rules" "claude-rules-dir"
+            fi
+            if [[ -d "$claude_marketplace" ]]; then
+                create_path_link "$claude_marketplace" "$HOME/.claude/marketplace" "claude-marketplace"
             fi
             ;;
         codex)
@@ -389,6 +396,10 @@ link_ai_shared_files() {
             create_file_link "$REPO_ROOT/AI-Supporter/OpenCode/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
             create_file_link "$REPO_ROOT/AI-Supporter/OpenCode/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
             create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills"
+            create_path_link "$opencode_root/agents" "$HOME/.config/opencode/agents" "opencode-agents"
+            create_path_link "$opencode_root/commands" "$HOME/.config/opencode/commands" "opencode-commands"
+            create_path_link "$opencode_root/plugins" "$HOME/.config/opencode/plugins" "opencode-plugins"
+            create_file_link "$opencode_root/enforce-shell-policy.sh" "$HOME/.config/opencode/enforce-shell-policy.sh" "opencode-shell-policy"
             ;;
     esac
 }

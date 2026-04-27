@@ -60,6 +60,12 @@ AI-Supporter/
 │   └── config.toml
 ├── Gemini CLI/
 │   └── GEMINI.md
+├── OpenCode/
+│   ├── agents/
+│   ├── commands/
+│   ├── plugins/
+│   ├── opencode.json
+│   └── tui.json
 ```
 
 ### Installation Targets
@@ -73,10 +79,19 @@ During installation, these files are linked to the appropriate locations for eac
 | **Claude Code** | `Claude Code/hooks/` | `~/.claude/hooks` |
 | **Claude Code** | `Claude Code/rules/` | `~/.claude/rules` |
 | **Claude Code** | `Claude Code/skills/` | `~/.claude/skills` |
+| **Claude Code** | `Claude Code/statusline-command.sh` | `~/.claude/statusline-command.sh` |
+| **Claude Code** | `Claude Code/marketplace/` | `~/.claude/marketplace` |
 | **Gemini CLI** | `Gemini CLI/GEMINI.md` | `~/.gemini/GEMINI.md` |
 | **Codex** | `AGENTS.md` | `~/.codex/AGENTS.md` |
+| **Codex** | `Codex/config.toml` | `~/.codex/config.toml` |
 | **Codex** | `SKILLS/` | `~/.codex/skills` |
 | **OpenCode** | `AGENTS.md` | `~/.config/opencode/AGENTS.md` |
+| **OpenCode** | `OpenCode/opencode.json` | `~/.config/opencode/opencode.json` |
+| **OpenCode** | `OpenCode/tui.json` | `~/.config/opencode/tui.json` |
+| **OpenCode** | `OpenCode/agents/` | `~/.config/opencode/agents` |
+| **OpenCode** | `OpenCode/commands/` | `~/.config/opencode/commands` |
+| **OpenCode** | `OpenCode/plugins/` | `~/.config/opencode/plugins` |
+| **OpenCode** | `OpenCode/enforce-shell-policy.sh` | `~/.config/opencode/enforce-shell-policy.sh` |
 | **OpenCode** | `SKILLS/` | `~/.config/opencode/skills` |
 
 ## 📁 Paths & Configuration
