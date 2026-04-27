@@ -1,0 +1,10 @@
+{
+  "id": "kimi",
+  "name": "Kimi",
+  "version": "1.0.0",
+  "license": "MIT",
+  "config": {
+    "serviceURL": "https://www.kimi.com/"
+  },
+  "defaultIcon": "https://www.kimi.com/favicon.ico"
+}

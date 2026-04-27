@@ -42,6 +42,7 @@ niri|linux|hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr
 niri|linux|waypaper|waypaper|waypaper|false||
 config|linux|profile|||false|.profile|$HOME/.profile
 config|linux|autostart|||false|Linux-config/autostart|autostart
+config|linux|ferdium|||false|Linux-config/Ferdium|Ferdium
 config|linux|fcitx5|||false|Linux-config/fcitx5|fcitx5
 config|linux|fontconfig|||false|Linux-config/fontconfig|fontconfig
 config|linux|brave-flags|||false|Linux-config/brave-flags.conf|$HOME/.config/brave-flags.conf
