@@ -30,6 +30,7 @@ core|linux|qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct
 ai|ai|claude-code|claude||false|AI-Supporter/Claude Code|$HOME/.claude
 ai|ai|codex|codex||false|AI-Supporter/Codex|$HOME/.codex
 ai|ai|gemini-cli|||false|AI-Supporter/Gemini CLI|$HOME/.gemini
+ai|ai|hermes-agent|hermes||false|AI-Supporter/Hermes Agent|$HOME/.hermes
 ai|ai|opencode|||false||$HOME/.config/opencode
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig

@@ -21,3 +21,9 @@ C:Users*
 nvim.log
 /.codex
 /.codex/
+AI-Supporter/Hermes Agent/.env
+AI-Supporter/Hermes Agent/auth.json
+AI-Supporter/Hermes Agent/*.db
+AI-Supporter/Hermes Agent/*.db-*
+AI-Supporter/Hermes Agent/logs/
+AI-Supporter/Hermes Agent/sessions/
