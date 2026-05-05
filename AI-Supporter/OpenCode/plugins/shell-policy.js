@@ -36,7 +36,7 @@ function runPolicy(command) {
     tool_input: { command }
   })
 
-  const result = spawnSync(policyScript, {
+  const result = spawnSync("bash", [policyScript], {
     input: payload,
     encoding: "utf8",
     shell: false

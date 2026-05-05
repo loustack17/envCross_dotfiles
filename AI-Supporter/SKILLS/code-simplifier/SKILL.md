@@ -13,7 +13,7 @@ Run `git diff` (or `git diff HEAD` if staged). If no changes, review recently mo
 
 ## Phase 2: Spawn Three Reviewers in Parallel
 
-Use the Agent tool to launch all three in a single message. Pass the full diff to each. If unavailable, stop with: "Cannot run: subagent spawning unavailable in this runtime."
+Spawn all three as subagents in a single parallel dispatch — use whatever delegation tool your runtime provides (Agent, delegate_task, etc.). Pass the full diff to each. If subagent spawning is unavailable, stop with: "Cannot run: subagent spawning unavailable in this runtime."
 
 Each agent reports ONLY findings in its own dimension. Cross-dimension findings must be ignored.
 

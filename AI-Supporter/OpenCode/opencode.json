@@ -4,13 +4,14 @@
     "*": "ask",
     "edit": "ask",
     "write": "ask",
-	"read": "allow",
+    "read": "allow",
     "grep": "allow",
     "glob": "allow",
     "lsp": "allow",
-	"bash": {
+    "websearch": "allow",
+    "webfetch": "allow",
+    "bash": {
       "*": "ask",
-
       "rg *": "allow",
       "eza *": "allow",
       "bat *": "allow",
@@ -18,17 +19,7 @@
       "bun *": "ask",
       "uv *": "ask",
       "git status*": "allow",
-      "git diff*": "allow",
-
-      "npm *": "deny",
-      "npx *": "deny",
-      "grep *": "deny",
-      "ls *": "deny",
-      "cat *": "deny",
-      "pip *": "deny",
-      "pip3 *": "deny",
-      "python -m pip*": "deny",
-      "python3 -m pip*": "deny"
+      "git diff*": "allow"
     }
   },
     "compaction": {

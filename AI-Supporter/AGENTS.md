@@ -16,6 +16,12 @@ Keep code correct, readable, maintainable, and simple.
 - AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
 - Prefer explicit, auditable changes and least privilege.
 
+## Shell
+
+- Prefer `rg` over `grep`, `eza` over `ls`, and `bat` over `cat` for inspection.
+- Use the read tool for exact file contents.
+- Prefer `uv` over `pip`; prefer `pnpm` or `bun` over `npm` and `npx`.
+
 ## Writing
 
 Write for signal.

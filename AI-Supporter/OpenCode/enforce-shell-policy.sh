@@ -6,6 +6,9 @@ command="$(printf '%s' "$input" | jq -r '.tool_input.command // empty')"
 trimmed="${command#"${command%%[![:space:]]*}"}"
 ls_pattern='(^|[[:space:];|&()])(/bin/ls|ls)([[:space:]]|$)'
 grep_pattern='(^|[[:space:];|&()])grep([[:space:]]|$)'
+cat_pattern='(^|[[:space:];|&()])(/bin/cat|cat)([[:space:]]|$)'
+pip_pattern='(^|[[:space:];|&()])(pip|pip3)([[:space:]]|$)'
+python_pip_pattern='(^|[[:space:];|&()])(python|python3)[[:space:]]+-m[[:space:]]+pip([[:space:]]|$)'
 git_commit_pattern='^git[[:space:]]+commit([[:space:]]|$)'
 
 deny() {

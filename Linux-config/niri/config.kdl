@@ -238,7 +238,7 @@ binds {
     MOD+B hotkey-overlay-title="Open Browser: zen browser" { spawn-sh "zen-browser"; }
     MOD+ALT+L hotkey-overlay-title="Lock Screen: hyprlock" { spawn-sh "hyprlock"; }
     MOD+E hotkey-overlay-title="File Manager: Pcmanfm-qt" { spawn-sh "pcmanfm-qt"; }
-    MOD+V hotkey-overlay-title="Clipboard Manager: Vicinae" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/clipboard/history"; }
+    MOD+V hotkey-overlay-title="Clipboard Manager: Vicinae" repeat=false { spawn "vicinae" "vicinae://launch/clipboard/history"; }
     MOD+semicolon hotkey-overlay-title="Search Emoji" repeat=false { spawn-sh "vicinae vicinae://extensions/vicinae/core/search-emojis"; }
 
 
