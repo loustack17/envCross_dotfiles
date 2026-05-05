@@ -2,7 +2,10 @@
 set -euo pipefail
 
 input="$(cat)"
-command="$(printf '%s' "$input" | jq -r '.tool_input.command // empty')"
+read -r command is_hermes < <(printf '%s' "$input" | jq -r '[
+  (.tool_input.command // ""),
+  (if has("hook_event_name") then "true" else "false" end)
+] | @tsv')
 trimmed="${command#"${command%%[![:space:]]*}"}"
 
 ls_pattern='(^|[[:space:];|&()])(/bin/ls|ls)([[:space:]]|$)'
@@ -12,19 +15,11 @@ pip_pattern='(^|[[:space:];|&()])(pip|pip3)([[:space:]]|$)'
 python_pip_pattern='(^|[[:space:];|&()])(python|python3)[[:space:]]+-m[[:space:]]+pip([[:space:]]|$)'
 git_commit_pattern='^git[[:space:]]+commit([[:space:]]|$)'
 
-is_hermes="$(printf '%s' "$input" | jq -r 'if has("hook_event_name") then "1" else "0" end')"
-
 deny() {
-  if [[ "$is_hermes" == "1" ]]; then
-    jq -n --arg reason "$1" '{"decision": "block", "reason": $reason}'
+  if [[ "$is_hermes" == "true" ]]; then
+    jq -n --arg r "$1" '{"decision":"block","reason":$r}'
   else
-    jq -n --arg reason "$1" '{
-      hookSpecificOutput: {
-        hookEventName: "PreToolUse",
-        permissionDecision: "deny",
-        permissionDecisionReason: $reason
-      }
-    }'
+    jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
   fi
   exit 0
 }
