@@ -359,7 +359,10 @@ approvals:
 command_allowlist:
 - script execution via -e/-c flag
 quick_commands: {}
-hooks: {}
+hooks:
+  pre_tool_call:
+  - matcher: terminal
+    command: ~/.hermes/hooks/enforce-shell-policy.sh
 hooks_auto_accept: false
 personalities: {}
 security:
