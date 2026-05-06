@@ -87,7 +87,7 @@
     "lou-local-ai": {
       "source": {
         "source": "directory",
-        "path": "/home/lou/Documents/WorkFlow/envCross_dotfiles/AI-Supporter/Claude Code/marketplace"
+        "path": "~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/.claude/marketplace"
       }
     }
   },

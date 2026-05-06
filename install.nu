@@ -577,8 +577,8 @@ def main [
     }
 
     # AI tools
-    let ai_root      = ($repo_root | path join "AI-Supporter")
-    let claude_root  = ($ai_root   | path join "Claude Code")
+    let ai_root      = ($repo_root | path join "ai-assistants")
+    let claude_root  = ($ai_root   | path join ".claude")
     let shared_agents = ($ai_root  | path join "AGENTS.md")
     let shared_skills = ($ai_root  | path join "SKILLS")
     let claude_home = ($home | path join ".claude")
@@ -589,6 +589,7 @@ def main [
     let has_codex = (check_cmd "codex")
     let has_opencode = (check_cmd "opencode")
     let has_gemini = (check_cmd "gemini")
+    let has_hermes = (check_cmd "hermes")
     let claude_skills = ($claude_root | path join "skills")
     let claude_agents = ($claude_root | path join "agents")
     let claude_rules  = ($claude_root | path join "rules")
@@ -601,7 +602,7 @@ def main [
         ""
     }
     let resolved_claude_skill_targets = if $has_claude {
-        collect_link_targets $active_claude_skills $claude_skills_dest "Claude Code skill"
+        collect_link_targets $active_claude_skills $claude_skills_dest ".claude skill"
     } else {
         []
     }
@@ -619,20 +620,20 @@ def main [
 
     if $has_claude {
         let claude_files = [
-            {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: "Claude Code CLAUDE.md"}
-            {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: "Claude Code settings"}
-            {src: ($claude_root | path join "hooks"),          dest: ($claude_home | path join "hooks"),                   is_file: false, name: "Claude Code hooks"}
-            {src: $claude_agents,                              dest: ($claude_home | path join "agents"),                  is_file: false, name: "Claude Code agents"}
-            {src: $claude_rules,                               dest: ($claude_home | path join "rules"),                   is_file: false, name: "Claude Code rules"}
-            {src: $claude_statusline,                          dest: ($claude_home | path join "statusline-command.sh"),   is_file: true,  name: "Claude Code statusline"}
-            {src: $claude_marketplace,                         dest: ($claude_home | path join "marketplace"),             is_file: false, name: "Claude Code marketplace"}
+            {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: ".claude CLAUDE.md"}
+            {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: ".claude settings"}
+            {src: ($claude_root | path join "hooks"),          dest: ($claude_home | path join "hooks"),                   is_file: false, name: ".claude hooks"}
+            {src: $claude_agents,                              dest: ($claude_home | path join "agents"),                  is_file: false, name: ".claude agents"}
+            {src: $claude_rules,                               dest: ($claude_home | path join "rules"),                   is_file: false, name: ".claude rules"}
+            {src: $claude_statusline,                          dest: ($claude_home | path join "statusline-command.sh"),   is_file: true,  name: ".claude statusline"}
+            {src: $claude_marketplace,                         dest: ($claude_home | path join "marketplace"),             is_file: false, name: ".claude marketplace"}
         ]
         $targets ++= (existing_targets $claude_files)
         if $should_expand_claude_skills {
             $targets ++= $active_claude_skill_targets
         } else {
             $targets ++= [{
-                name: "Claude Code skills"
+                name: ".claude skills"
                 source: $active_claude_skills
                 dest: $claude_skills_dest
                 is_file: false
@@ -640,7 +641,7 @@ def main [
         }
     }
 
-    let codex_config = ($ai_root | path join "Codex" | path join "config.toml")
+    let codex_config = ($ai_root | path join ".codex" | path join "config.toml")
     if $has_codex {
         let codex_files = [
             {src: $shared_agents,  dest: ($codex_home | path join "AGENTS.md"),   is_file: true,  name: "Codex AGENTS.md"}
@@ -653,19 +654,30 @@ def main [
     if $has_opencode {
         let opencode_files = [
             {src: $shared_agents, dest: ($opencode_home | path join "AGENTS.md"),    is_file: true,  name: "opencode AGENTS.md"}
-            {src: ($ai_root | path join "OpenCode" | path join "opencode.json"),     dest: ($opencode_home | path join "opencode.json"), is_file: true,  name: "opencode config"}
-            {src: ($ai_root | path join "OpenCode" | path join "tui.json"),          dest: ($opencode_home | path join "tui.json"),      is_file: true,  name: "opencode tui"}
+            {src: ($ai_root | path join ".opencode" | path join "opencode.json"),     dest: ($opencode_home | path join "opencode.json"), is_file: true,  name: "opencode config"}
+            {src: ($ai_root | path join ".opencode" | path join "tui.json"),          dest: ($opencode_home | path join "tui.json"),      is_file: true,  name: "opencode tui"}
             {src: $shared_skills, dest: ($opencode_home | path join "skills"),        is_file: false, name: "opencode skills"}
         ]
         $targets ++= (existing_targets $opencode_files)
     }
 
-    let gemini_md = ($ai_root | path join "Gemini CLI" | path join "GEMINI.md")
+    let gemini_md = ($ai_root | path join ".gemini" | path join "GEMINI.md")
     if $has_gemini and ($gemini_md | path exists) {
         $targets ++= [{
-            name: "Gemini CLI GEMINI.md"
+            name: ".gemini GEMINI.md"
             source: $gemini_md
             dest: ($gemini_home | path join "GEMINI.md")
+            is_file: true
+        }]
+    }
+
+    let hermes_home = ($home | path join ".hermes")
+    let hermes_soul = ($ai_root | path join ".hermes" | path join "SOUL.md")
+    if $has_hermes and ($hermes_soul | path exists) {
+        $targets ++= [{
+            name: "Hermes SOUL.md"
+            source: $hermes_soul
+            dest: ($hermes_home | path join "SOUL.md")
             is_file: true
         }]
     }
@@ -697,7 +709,7 @@ def main [
     print ""
 
     if ($active_claude_skill_targets | is-not-empty) {
-        ensure_real_dir $claude_skills_dest "Claude Code skills" $dry_run
+        ensure_real_dir $claude_skills_dest ".claude skills" $dry_run
     }
 
     for t in $targets {

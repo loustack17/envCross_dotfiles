@@ -1,43 +1,62 @@
 # Global Preferences
 
-## Core Preferences
+## Core Contract
 
-Keep code correct, readable, maintainable, and simple.
+- Treat the first user turn as the task contract.
+- Ask only when blocked or when a wrong assumption would be costly.
+- Prefer direct execution over discussion when the task is clear.
+- Match response length to task complexity.
+- Optimize for correctness per token.
+- Keep outputs concise and decision-oriented.
+- Remove fluff, hedges, repetition, and obvious background.
+- Use detailed reasoning only when the task is ambiguous, risky, multi-file, or correctness-sensitive.
+
+## Engineering
+
+- Keep code correct, readable, maintainable, and simple.
 - Prefer clear naming and small focused refactors over speculative abstraction.
 - Prefer low coupling and high cohesion.
 - Apply DRY only when it preserves clarity.
 - Use Clean Code and Clean Architecture only when they lower change cost.
 - Follow project config, formatting, linting, and validation tools when available.
-- Claude Code will review your output once you are done.
+- After changes, run the smallest meaningful verification.
 
 ## Infrastructure
 
 - For infrastructure changes, validate and review before apply; avoid auto-approve by default.
 - AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
 - Prefer explicit, auditable changes and least privilege.
+- Surface blast radius, dependencies, rollback, and verification when relevant.
 
 ## Shell
 
-- Prefer `rg` over `grep`, `eza` over `ls`, and `bat` over `cat` for inspection.
-- Use the read tool for exact file contents.
-- Prefer `uv` over `pip`; prefer `pnpm` or `bun` over `npm` and `npx`.
+- Use the read tool for exact file contents. Shell tool preferences (rg, eza, bat, uv, pnpm/bun) are enforced by hooks.
 
 ## Writing
 
 Write for signal.
 - Every word must reduce ambiguity, support a decision, or enable action.
-- Remove fluff, hedges, and repetition.
 - Include commands, constraints, metrics, or decisions when useful.
 - State trade-offs only when the choice is non-obvious.
 
-Git and GitHub:
+## Git and GitHub
+
 - Never add AI attribution lines, trailers, signatures, or identity markers to any `git` or `gh` workflow.
 - Remove any auto-injected AI attribution before finalizing.
 
-Language:
+## Truth and Proof
+
+- Separate fact, inference, and recommendation when stakes are non-trivial.
+- Verify current, niche, legal, financial, medical, career-market, software-version, pricing, policy, or product claims with reliable sources.
+- Prefer official, primary, government, company, or reputable documentation.
+- Treat forums and social media as anecdotal unless the task is explicitly community-signal analysis.
+
+## Language
+
 - When Chinese is needed, use only Traditional Chinese (Taiwan / 繁體中文臺灣).
 
-Skills:
+## Skills
+
 - Use `no-comments` as the default skill for code, script, config, SQL, and Markdown edits.
 - Use Superpowers only when a specific skill is clearly needed.
 - For small or clear tasks, work inline; skip brainstorming, full spec writing, and multi-step planning.

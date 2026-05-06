@@ -357,15 +357,16 @@ create_path_link() {
 
 link_ai_shared_files() {
     local name="$1"
-    local shared_agents="$REPO_ROOT/AI-Supporter/AGENTS.md"
-    local shared_skills="$REPO_ROOT/AI-Supporter/SKILLS"
-    local claude_root="$REPO_ROOT/AI-Supporter/Claude Code"
+    local shared_agents="$REPO_ROOT/ai-assistants/AGENTS.md"
+    local shared_skills="$REPO_ROOT/ai-assistants/SKILLS"
+    local claude_root="$REPO_ROOT/ai-assistants/.claude"
     local claude_skills="$claude_root/skills"
     local claude_agents="$claude_root/agents"
     local claude_rules="$claude_root/rules"
     local claude_marketplace="$claude_root/marketplace"
     local claude_statusline="$claude_root/statusline-command.sh"
-    local opencode_root="$REPO_ROOT/AI-Supporter/OpenCode"
+    local opencode_root="$REPO_ROOT/ai-assistants/.opencode"
+    local hermes_root="$REPO_ROOT/ai-assistants/.hermes"
 
     [[ -d "$claude_skills" ]] || claude_skills="$shared_skills"
 
@@ -388,24 +389,27 @@ link_ai_shared_files() {
             ;;
         codex)
             create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules"
-            create_file_link "$REPO_ROOT/AI-Supporter/Codex/config.toml" "$HOME/.codex/config.toml" "codex-config"
+            create_file_link "$REPO_ROOT/ai-assistants/.codex/config.toml" "$HOME/.codex/config.toml" "codex-config"
             create_path_link "$shared_skills" "$HOME/.codex/skills" "codex-skills"
             ;;
         opencode)
             create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules"
-            create_file_link "$REPO_ROOT/AI-Supporter/OpenCode/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
-            create_file_link "$REPO_ROOT/AI-Supporter/OpenCode/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
+            create_file_link "$REPO_ROOT/ai-assistants/.opencode/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
+            create_file_link "$REPO_ROOT/ai-assistants/.opencode/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
             create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills"
             create_path_link "$opencode_root/agents" "$HOME/.config/opencode/agents" "opencode-agents"
             create_path_link "$opencode_root/commands" "$HOME/.config/opencode/commands" "opencode-commands"
             create_path_link "$opencode_root/plugins" "$HOME/.config/opencode/plugins" "opencode-plugins"
             create_file_link "$opencode_root/enforce-shell-policy.sh" "$HOME/.config/opencode/enforce-shell-policy.sh" "opencode-shell-policy"
             ;;
+        hermes)
+            create_file_link "$hermes_root/SOUL.md" "$HOME/.hermes/SOUL.md" "hermes-soul"
+            ;;
     esac
 }
 
 ensure_claude_local_plugin() {
-    local marketplace_dir="$REPO_ROOT/AI-Supporter/Claude Code/marketplace"
+    local marketplace_dir="$REPO_ROOT/ai-assistants/.claude/marketplace"
     local marketplace_name="lou-local-ai"
     local plugin_id="common-lsp@$marketplace_name"
 
@@ -531,7 +535,7 @@ step_symlink_configs() {
             fi
         fi
 
-        case "$name" in claude-code|codex|opencode) link_ai_shared_files "$name" ;; esac
+        case "$name" in claude-code|codex|opencode|hermes) link_ai_shared_files "$name" ;; esac
         case "$name" in claude-code) ensure_claude_local_plugin ;; esac
     done
 }

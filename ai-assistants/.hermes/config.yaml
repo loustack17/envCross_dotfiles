@@ -317,8 +317,8 @@ goals:
   max_turns: 20
 skills:
   external_dirs:
-  - /home/lou/Documents/WorkFlow/envCross_dotfiles/AI-Supporter/SKILLS
-  - /home/lou/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills
+  - ~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/SKILLS
+  - ~/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills
   template_vars: true
   inline_shell: false
   inline_shell_timeout: 10

@@ -27,10 +27,10 @@ core|linux|yazi|yazi|yazi|false|yazi|yazi
 core|linux|lazygit|lazygit|lazygit|false|lazygit|lazygit
 core|linux|zellij|zellij|zellij|false|Linux-config/zellij|zellij
 core|linux|qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct
-ai|ai|claude-code|claude||false|AI-Supporter/Claude Code|$HOME/.claude
-ai|ai|codex|codex||false|AI-Supporter/Codex|$HOME/.codex
-ai|ai|gemini-cli|||false|AI-Supporter/Gemini CLI|$HOME/.gemini
-ai|ai|hermes-agent|hermes||false|AI-Supporter/Hermes Agent|$HOME/.hermes
+ai|ai|claude-code|claude||false|ai-assistants/.claude|$HOME/.claude
+ai|ai|codex|codex||false|ai-assistants/.codex|$HOME/.codex
+ai|ai|gemini-cli|||false|ai-assistants/.gemini|$HOME/.gemini
+ai|ai|hermes-agent|hermes||false|ai-assistants/.hermes|$HOME/.hermes
 ai|ai|opencode|||false||$HOME/.config/opencode
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig

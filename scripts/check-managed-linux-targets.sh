@@ -34,7 +34,7 @@ for path in "${!referenced_paths[@]}"; do
     fi
 done
 
-for path in AI-Supporter/AGENTS.md AI-Supporter/SKILLS; do
+for path in ai-assistants/AGENTS.md ai-assistants/SKILLS; do
     if [[ ! -e "$path" ]]; then
         printf 'missing shared ai path: %s\n' "$path" >&2
         status=1
