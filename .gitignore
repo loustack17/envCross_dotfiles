@@ -5,8 +5,10 @@ zed/settings.json
 zed/settings_backup.json
 
 # Codex system-managed skills (auto-updated by codex)
-AI-Supporter/Codex/skills/.system/
+ai-assistants/SKILLS/.system/
+ai-assistants/Codex/skills/.system/
 AI-Supporter/SKILLS/.system/
+AI-Supporter/Codex/skills/.system/
 Linux-config/**/*.bak
 Linux-config/**/*.bak.*
 Linux-config/**/*.backup
@@ -21,9 +23,9 @@ C:Users*
 nvim.log
 /.codex
 /.codex/
-AI-Supporter/Hermes Agent/.env
-AI-Supporter/Hermes Agent/auth.json
-AI-Supporter/Hermes Agent/*.db
-AI-Supporter/Hermes Agent/*.db-*
-AI-Supporter/Hermes Agent/logs/
-AI-Supporter/Hermes Agent/sessions/
+ai-assistants/.hermes/.env
+ai-assistants/.hermes/auth.json
+ai-assistants/.hermes/*.db
+ai-assistants/.hermes/*.db-*
+ai-assistants/.hermes/logs/
+ai-assistants/.hermes/sessions/
