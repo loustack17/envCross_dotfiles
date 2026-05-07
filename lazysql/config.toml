@@ -1,0 +1,51 @@
+ConfigFile = '/home/lou/.config/lazysql/config.toml'
+
+[application]
+DefaultPageSize = 300
+DisableSidebar = false
+SidebarOverlay = false
+MaxQueryHistoryPerConnection = 100
+TreeWidth = 30
+JSONViewerWordWrap = false
+
+[[database]]
+Name = 'Personal_Info'
+URL = '/home/lou/Documents/ai-memory/user.db'
+Provider = 'sqlite3'
+Username = ''
+Password = ''
+Hostname = ''
+Port = ''
+DBName = ''
+URLParams = ''
+ReadOnly = false
+Schemas = []
+Commands = []
+
+[[database]]
+Name = 'Training'
+URL = '/home/lou/Documents/ai-memory/trainer.db'
+Provider = 'sqlite3'
+Username = ''
+Password = ''
+Hostname = ''
+Port = ''
+DBName = ''
+URLParams = ''
+ReadOnly = false
+Schemas = []
+Commands = []
+
+[[database]]
+Name = 'learning_events'
+URL = '/home/lou/Documents/ai-memory/events.db'
+Provider = 'sqlite3'
+Username = ''
+Password = ''
+Hostname = ''
+Port = ''
+DBName = ''
+URLParams = ''
+ReadOnly = false
+Schemas = []
+Commands = []

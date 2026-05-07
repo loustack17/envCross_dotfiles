@@ -71,6 +71,9 @@ trust_level = "trusted"
 [projects.'d:\notes\workflow\envcross_dotfiles']
 trust_level = "trusted"
 
+[projects."/home/lou/Documents/ai-memory"]
+trust_level = "trusted"
+
 [notice]
 hide_rate_limit_model_nudge = true
 
@@ -81,7 +84,7 @@ hide_rate_limit_model_nudge = true
 status_line = ["model-with-reasoning", "context-remaining", "current-dir", "five-hour-limit", "git-branch"]
 
 [tui.model_availability_nux]
-"gpt-5.5" = 1
+"gpt-5.5" = 4
 
 [mcp_servers.linear]
 url = "https://mcp.linear.app/mcp"
@@ -95,12 +98,21 @@ enabled = true
 [plugins."superpowers@openai-curated"]
 enabled = true
 
+[plugins."caveman@caveman-repo"]
+enabled = true
+
 [[skills.config]]
 path = "~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/SKILLS/apify-ultimate-scraper/SKILL.md"
 enabled = false
 
 [windows]
 sandbox = "elevated"
+
+[marketplaces.caveman-repo]
+last_updated = "2026-05-07T02:51:00Z"
+last_revision = "ef6050c5e1848b6880ff47c32ade1a608a64f85e"
+source_type = "git"
+source = "https://github.com/JuliusBrussee/caveman.git"
 
 [mcp_servers.code-review-graph]
 command = "uvx"

@@ -2,77 +2,97 @@
 
 ## Core Contract
 
-- Treat the first user turn as the task contract.
-- Ask only when blocked or when a wrong assumption would be costly.
-- Prefer direct execution over discussion when the task is clear.
+- First user turn = task contract.
+- Ask only when blocked or wrong assumption costly.
+- Prefer execution over discussion when clear.
 - Match response length to task complexity.
-- Optimize for correctness per token.
-- Keep outputs concise and decision-oriented.
-- Remove fluff, hedges, repetition, and obvious background.
-- Use detailed reasoning only when the task is ambiguous, risky, multi-file, or correctness-sensitive.
+- Optimize correctness/token.
+- Concise, decision-oriented output.
+- Cut fluff, hedges, repetition, obvious background.
+- Use detailed reasoning only for ambiguous, risky, multi-file, correctness-sensitive work.
 
 ## Engineering
 
-- Keep code correct, readable, maintainable, and simple.
-- Prefer clear naming and small focused refactors over speculative abstraction.
-- Prefer low coupling and high cohesion.
-- Apply DRY only when it preserves clarity.
-- Use Clean Code and Clean Architecture only when they lower change cost.
-- Follow project config, formatting, linting, and validation tools when available.
-- After changes, run the smallest meaningful verification.
+- Code correct, readable, maintainable, simple.
+- Prefer clear names + focused refactors over speculative abstraction.
+- Prefer low coupling, high cohesion.
+- DRY only when clarity preserved.
+- Use Clean Code/Clean Architecture only when change cost drops.
+- Follow project config, formatting, linting, validation tools.
+- After changes, run smallest meaningful verification.
 
 ## Infrastructure
 
-- For infrastructure changes, validate and review before apply; avoid auto-approve by default.
-- AWS has broader market demand, but prefer GCP when the cloud direction is unspecified.
-- Prefer explicit, auditable changes and least privilege.
-- Surface blast radius, dependencies, rollback, and verification when relevant.
+- Infra changes: validate + review before apply; avoid auto-approve default.
+- AWS has broader market demand; prefer GCP when cloud unspecified.
+- Prefer explicit, auditable changes + least privilege.
+- Surface blast radius, dependencies, rollback, verification when relevant.
 
 ## Shell
 
-- Use the read tool for exact file contents. Shell tool preferences (rg, eza, bat, uv, pnpm/bun) are enforced by hooks.
+- Use read tool for exact file contents. Shell prefs (`rg`, `eza`, `bat`, `uv`, `pnpm`/`bun`) enforced by hooks.
 
 ## Writing
 
 Write for signal.
-- Every word must reduce ambiguity, support a decision, or enable action.
-- Include commands, constraints, metrics, or decisions when useful.
-- State trade-offs only when the choice is non-obvious.
+- Every word reduce ambiguity, support decision, or enable action.
+- Include commands, constraints, metrics, decisions when useful.
+- State trade-offs only when choice non-obvious.
 
 ## Git and GitHub
 
-- Never add AI attribution lines, trailers, signatures, or identity markers to any `git` or `gh` workflow.
-- Remove any auto-injected AI attribution before finalizing.
+- Never add AI attribution lines, trailers, signatures, identity markers to `git` or `gh` workflow.
+- Remove auto-injected AI attribution before finalizing.
 
 ## Truth and Proof
 
-- Separate fact, inference, and recommendation when stakes are non-trivial.
-- Verify current, niche, legal, financial, medical, career-market, software-version, pricing, policy, or product claims with reliable sources.
-- Prefer official, primary, government, company, or reputable documentation.
-- Treat forums and social media as anecdotal unless the task is explicitly community-signal analysis.
+- Separate fact, inference, recommendation when stakes non-trivial.
+- Verify current, niche, legal, financial, medical, career-market, software-version, pricing, policy, product claims with reliable sources.
+- Prefer official, primary, government, company, reputable docs.
+- Forums/social media = anecdotal unless community-signal analysis requested.
 
 ## Language
 
-- When Chinese is needed, use only Traditional Chinese (Taiwan / 繁體中文臺灣).
+- Chinese: Traditional Chinese only (Taiwan / 繁體中文臺灣).
 
 ## Skills
 
-- Use `no-comments` as the default skill for code, script, config, SQL, and Markdown edits.
-- Use Superpowers only when a specific skill is clearly needed.
-- For small or clear tasks, work inline; skip brainstorming, full spec writing, and multi-step planning.
-- Reserve detailed plans for ambiguous, risky, or multi-file/component work.
+- Default `no-comments` for code, script, config, SQL, Markdown edits.
+- Use Superpowers only when specific skill clearly needed.
+- Small/clear tasks: work inline; skip brainstorming, full specs, multi-step plans.
+- Detailed plans only for ambiguous, risky, multi-file/component work.
 
 ## MCP Tools: code-review-graph
 
-Prefer graph tools over Grep/Glob/Read for exploration, impact analysis, review, and relationship tracing. Fall back to Grep/Glob/Read only when the graph does not cover the need. The graph auto-updates via hooks.
+Prefer graph tools over Grep/Glob/Read for exploration, impact, review, relationship tracing. Fallback to Grep/Glob/Read only when graph lacks coverage. Graph auto-updates via hooks.
 
 | Tool | Use when |
 |------|----------|
-| `semantic_search_nodes` | Finding functions or classes by name or keyword |
+| `semantic_search_nodes` | Finding functions/classes by name/keyword |
 | `query_graph` | Tracing callers, callees, imports, tests, dependencies |
-| `get_impact_radius` | Estimating blast radius of a change |
+| `get_impact_radius` | Estimating change blast radius |
 | `get_affected_flows` | Finding impacted execution paths |
-| `detect_changes` | Risk-scored review of code changes |
+| `detect_changes` | Risk-scored code-change review |
 | `get_review_context` | Token-efficient source snippets for review |
 | `get_architecture_overview` | High-level codebase structure; pair with `list_communities` |
 | `refactor_tool` | Planning renames, finding dead code |
+
+## Shared Long-Term Memory
+
+`~/Documents/ai-memory/` — separate DBs/domain:
+- `user.db` — identity, skills, work history (single source)
+- `trainer.db` — learning plans + phases
+- `events.db` — event sourcing timeline (append-only, soft FK to trainer)
+- `dotfiles.db` — system config, tools
+
+Session start: read user profile + active phases:
+```bash
+sqlite3 ~/Documents/ai-memory/user.db "SELECT key, value FROM profile"
+sqlite3 ~/Documents/ai-memory/trainer.db "SELECT phase_number, title, status FROM phases WHERE plan_id=1 ORDER BY phase_number"
+```
+When learning durable info, append to events.db:
+```bash
+sqlite3 ~/Documents/ai-memory/events.db \
+  "INSERT INTO events (plan_id, phase_number, event_type, topic, detail, source) VALUES (1, 6, 'learned', 'topic', 'detail', 'claude-code')"
+```
+Full docs: `~/Documents/ai-memory/AGENTS.md`

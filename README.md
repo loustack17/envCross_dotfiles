@@ -19,6 +19,7 @@ Linux installation targets are defined in `config/targets.manifest`. The install
 ./install.sh --no-install
 ./install.sh --skip-kitty
 ./install.sh --only-neovim
+./install.sh --only-lazysql
 ```
 
 System-level Linux fixes that write to `/etc` are tracked separately under `Linux-system/` and are not part of the regular `install.sh` symlink flow.
@@ -118,6 +119,7 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **zed** | `~/.config/zed` |
 | **yazi** | `~/.config/yazi` |
 | **lazygit** | `~/.config/lazygit` |
+| **lazysql** | `~/.config/lazysql` |
 | **tock** | `~/.config/tock` |
 | **zellij** | `~/.config/zellij` |
 | **systemd-user** | `~/.config/systemd/user` |

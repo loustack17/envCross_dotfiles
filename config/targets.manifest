@@ -25,6 +25,7 @@ core|linux|neovim|nvim|neovim|false|nvim|nvim
 core|linux|zed|zed|zed-git|true|zed|zed
 core|linux|yazi|yazi|yazi|false|yazi|yazi
 core|linux|lazygit|lazygit|lazygit|false|lazygit|lazygit
+core|linux|lazysql|lazysql|lazysql-bin|true|lazysql|lazysql
 core|linux|zellij|zellij|zellij|false|Linux-config/zellij|zellij
 core|linux|qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct
 ai|ai|claude-code|claude||false|ai-assistants/.claude|$HOME/.claude
