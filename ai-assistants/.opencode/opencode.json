@@ -22,7 +22,7 @@
       "git diff*": "allow"
     }
   },
-    "compaction": {
+  "compaction": {
     "auto": true,
     "prune": true,
     "reserved": 10000
@@ -40,41 +40,99 @@
   "mcp": {
     "code-review-graph": {
       "type": "local",
-      "command": ["uvx", "code-review-graph", "serve"],
+      "command": [
+        "uvx",
+        "code-review-graph",
+        "serve"
+      ],
+      "enabled": true
+    },
+    "firecrawl": {
+      "type": "local",
+      "command": [
+        "direnv",
+        "exec",
+        "/home/lou/Documents/WorkFlow/envCross_dotfiles/ai-assistants",
+        "npx",
+        "-y",
+        "firecrawl-mcp"
+      ],
       "enabled": true
     }
   },
   "lsp": {
     "bash": {
-      "command": ["bash-language-server", "start"],
-      "extensions": [".sh", ".bash", ".zsh", ".ksh", ".bashrc", ".zshrc"]
+      "command": [
+        "bash-language-server",
+        "start"
+      ],
+      "extensions": [
+        ".sh",
+        ".bash",
+        ".zsh",
+        ".ksh",
+        ".bashrc",
+        ".zshrc"
+      ]
     },
     "gopls": {
-      "command": ["gopls"]
+      "command": [
+        "gopls"
+      ]
     },
     "pyright": {
-      "command": ["pyright-langserver", "--stdio"]
+      "command": [
+        "pyright-langserver",
+        "--stdio"
+      ]
     },
     "terraform": {
       "disabled": true
     },
     "typescript": {
-      "command": ["typescript-language-server", "--stdio"]
+      "command": [
+        "typescript-language-server",
+        "--stdio"
+      ]
     },
     "yaml-ls": {
-      "command": ["yaml-language-server", "--stdio"]
+      "command": [
+        "yaml-language-server",
+        "--stdio"
+      ]
     },
     "json-ls": {
-      "command": ["vscode-json-language-server", "--stdio"],
-      "extensions": [".json", ".jsonc", ".code-workspace"]
+      "command": [
+        "vscode-json-language-server",
+        "--stdio"
+      ],
+      "extensions": [
+        ".json",
+        ".jsonc",
+        ".code-workspace"
+      ]
     },
     "fish-lsp": {
-      "command": ["fish-lsp", "start"],
-      "extensions": [".fish"]
+      "command": [
+        "fish-lsp",
+        "start"
+      ],
+      "extensions": [
+        ".fish"
+      ]
     },
     "tofu-ls": {
-      "command": ["tofu-ls", "serve"],
-      "extensions": [".tf", ".tfvars", ".tf.json", ".tofu", ".tofu.json"]
+      "command": [
+        "tofu-ls",
+        "serve"
+      ],
+      "extensions": [
+        ".tf",
+        ".tfvars",
+        ".tf.json",
+        ".tofu",
+        ".tofu.json"
+      ]
     }
   }
 }

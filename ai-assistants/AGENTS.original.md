@@ -85,7 +85,9 @@ Prefer graph tools over Grep/Glob/Read for exploration, impact analysis, review,
 - `events.db` — event sourcing timeline (append-only, soft FK to trainer)
 - `dotfiles.db` — system config, tools
 
-On session start, read user profile + active phases:
+Do not read shared memory automatically at session start. Read it only when the user explicitly asks to use/read shared memory, memory profile, learning plan, or durable context.
+
+When explicitly prompted, read user profile + active phases:
 ```bash
 sqlite3 ~/Documents/ai-memory/user.db "SELECT key, value FROM profile"
 sqlite3 ~/Documents/ai-memory/trainer.db "SELECT phase_number, title, status FROM phases WHERE plan_id=1 ORDER BY phase_number"

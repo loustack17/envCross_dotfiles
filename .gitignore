@@ -29,3 +29,6 @@ ai-assistants/.hermes/*.db
 ai-assistants/.hermes/*.db-*
 ai-assistants/.hermes/logs/
 ai-assistants/.hermes/sessions/
+.envrc
+.env
+*.secret.toml

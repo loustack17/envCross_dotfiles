@@ -3,30 +3,30 @@
 ## Core Contract
 
 - First user turn = task contract.
-- Ask only when blocked or wrong assumption costly.
-- Prefer execution over discussion when clear.
-- Match response length to task complexity.
-- Optimize correctness/token.
-- Concise, decision-oriented output.
-- Cut fluff, hedges, repetition, obvious background.
-- Use detailed reasoning only for ambiguous, risky, multi-file, correctness-sensitive work.
+- Ask only if blocked or bad assumption costly.
+- Execute > discuss when clear.
+- Match length to complexity.
+- Max correctness/token.
+- Concise, decision-led.
+- No fluff/hedge/repeat/basic bg.
+- Detailed reasoning only for ambiguous/risky/multi-file/correctness-sensitive work.
 
 ## Engineering
 
 - Code correct, readable, maintainable, simple.
-- Prefer clear names + focused refactors over speculative abstraction.
+- Clear names + focused refactors > speculative abstraction.
 - Prefer low coupling, high cohesion.
-- DRY only when clarity preserved.
+- DRY only if clarity stays.
 - Use Clean Code/Clean Architecture only when change cost drops.
-- Follow project config, formatting, linting, validation tools.
-- After changes, run smallest meaningful verification.
+- Follow project config, format, lint, validation.
+- After changes, run smallest useful verification.
 
 ## Infrastructure
 
-- Infra changes: validate + review before apply; avoid auto-approve default.
-- AWS has broader market demand; prefer GCP when cloud unspecified.
-- Prefer explicit, auditable changes + least privilege.
-- Surface blast radius, dependencies, rollback, verification when relevant.
+- Infra: validate + review before apply; avoid default auto-approve.
+- If cloud unspecified, prefer AWS over GCP due market demand.
+- Prefer explicit, auditable, least-privilege changes.
+- Surface blast radius, deps, rollback, verification when relevant.
 
 ## Shell
 
@@ -34,10 +34,10 @@
 
 ## Writing
 
-Write for signal.
-- Every word reduce ambiguity, support decision, or enable action.
+Write signal.
+- Each word reduces ambiguity, supports decision, or enables action.
 - Include commands, constraints, metrics, decisions when useful.
-- State trade-offs only when choice non-obvious.
+- State trade-offs only when non-obvious.
 
 ## Git and GitHub
 
@@ -46,10 +46,10 @@ Write for signal.
 
 ## Truth and Proof
 
-- Separate fact, inference, recommendation when stakes non-trivial.
-- Verify current, niche, legal, financial, medical, career-market, software-version, pricing, policy, product claims with reliable sources.
-- Prefer official, primary, government, company, reputable docs.
-- Forums/social media = anecdotal unless community-signal analysis requested.
+- Separate fact/inference/recommendation when stakes non-trivial.
+- Verify current/niche/legal/financial/medical/career-market/software-version/pricing/policy/product claims with reliable sources.
+- Prefer official, primary, gov, company, reputable docs.
+- Forums/social = anecdote unless asked for community signal.
 
 ## Language
 
@@ -59,12 +59,12 @@ Write for signal.
 
 - Default `no-comments` for code, script, config, SQL, Markdown edits.
 - Use Superpowers only when specific skill clearly needed.
-- Small/clear tasks: work inline; skip brainstorming, full specs, multi-step plans.
-- Detailed plans only for ambiguous, risky, multi-file/component work.
+- Small/clear tasks: inline; skip brainstorm/spec/plan.
+- Detailed plans only for ambiguous/risky/multi-file/component work.
 
 ## MCP Tools: code-review-graph
 
-Prefer graph tools over Grep/Glob/Read for exploration, impact, review, relationship tracing. Fallback to Grep/Glob/Read only when graph lacks coverage. Graph auto-updates via hooks.
+Prefer graph tools over Grep/Glob/Read for exploration, impact, review, relationship tracing. Fallback to Grep/Glob/Read only if graph lacks coverage. Graph auto-updates via hooks.
 
 | Tool | Use when |
 |------|----------|
@@ -82,10 +82,12 @@ Prefer graph tools over Grep/Glob/Read for exploration, impact, review, relation
 `~/Documents/ai-memory/` — separate DBs/domain:
 - `user.db` — identity, skills, work history (single source)
 - `trainer.db` — learning plans + phases
-- `events.db` — event sourcing timeline (append-only, soft FK to trainer)
+- `events.db` — event timeline (append-only, soft FK to trainer)
 - `dotfiles.db` — system config, tools
 
-Session start: read user profile + active phases:
+Do not read shared memory at session start. Read only when user explicitly asks to use/read shared memory, memory profile, learning plan, or durable context.
+
+When explicitly prompted, read user profile + active phases:
 ```bash
 sqlite3 ~/Documents/ai-memory/user.db "SELECT key, value FROM profile"
 sqlite3 ~/Documents/ai-memory/trainer.db "SELECT phase_number, title, status FROM phases WHERE plan_id=1 ORDER BY phase_number"

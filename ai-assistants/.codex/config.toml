@@ -118,3 +118,8 @@ source = "https://github.com/JuliusBrussee/caveman.git"
 command = "uvx"
 args = ["code-review-graph", "serve"]
 type = "stdio"
+
+[mcp_servers.firecrawl]
+command = "direnv"
+args = ["exec", ".", "npx", "-y", "firecrawl-mcp"]
+cwd = "/home/lou/Documents/WorkFlow/envCross_dotfiles/ai-assistants"

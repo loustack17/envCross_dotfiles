@@ -33,6 +33,9 @@ end
 starship init fish | source
 zoxide init fish | source
 /home/linuxbrew/.linuxbrew/bin/brew shellenv | source
+if type -q direnv
+    direnv hook fish | source
+end
 
 # google cloud sdk
 if [ -f '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc' ]; . '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc'; end
