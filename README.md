@@ -115,6 +115,7 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **autostart** | `~/.config/autostart` |
 | **fcitx5** | `~/.config/fcitx5` |
 | **fish** | `~/.config/fish` |
+| **direnv** | `~/.config/direnv` |
 | **neovim** | `~/.config/nvim` |
 | **zed** | `~/.config/zed` |
 | **yazi** | `~/.config/yazi` |

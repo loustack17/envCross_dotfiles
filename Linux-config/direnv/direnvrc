@@ -1,0 +1,37 @@
+nix_direnv_version() {
+  return 0
+}
+
+dotenv() {
+  local path=${1:-}
+  if [[ -z $path ]]; then
+    path=$PWD/.env
+  elif [[ -d $path ]]; then
+    path=$path/.env
+  fi
+  if [[ -f $path ]]; then
+    eval "$("$direnv" dotenv bash "$@")"
+  fi
+}
+
+use_flake() {
+  if ! has nix; then
+    return 0
+  fi
+  watch_file flake.nix
+  watch_file flake.lock
+  mkdir -p "$(direnv_layout_dir)"
+  eval "$(nix --extra-experimental-features "nix-command flakes" print-dev-env --profile "$(direnv_layout_dir)/flake-profile" "$@")"
+  nix --extra-experimental-features "nix-command flakes" profile wipe-history --profile "$(direnv_layout_dir)/flake-profile"
+}
+
+use() {
+  local cmd=$1
+  shift
+  if [[ $cmd == flake ]] && ! has nix; then
+    use_flake "$@"
+    return $?
+  fi
+  log_status "using $cmd $*"
+  "use_$cmd" "$@"
+}

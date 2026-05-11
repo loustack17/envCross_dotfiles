@@ -109,8 +109,8 @@ enabled = false
 sandbox = "elevated"
 
 [marketplaces.caveman-repo]
-last_updated = "2026-05-07T02:51:00Z"
-last_revision = "ef6050c5e1848b6880ff47c32ade1a608a64f85e"
+last_updated = "2026-05-11T18:33:42Z"
+last_revision = "754795ada42dea54adf061d42a61e560caa4f9ce"
 source_type = "git"
 source = "https://github.com/JuliusBrussee/caveman.git"
 
