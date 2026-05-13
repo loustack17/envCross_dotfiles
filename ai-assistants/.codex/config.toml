@@ -82,6 +82,8 @@ hide_rate_limit_model_nudge = true
 
 [tui]
 status_line = ["model-with-reasoning", "context-remaining", "current-dir", "five-hour-limit", "git-branch"]
+theme = "dracula"
+session_picker_view = "dense"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -109,8 +111,8 @@ enabled = false
 sandbox = "elevated"
 
 [marketplaces.caveman-repo]
-last_updated = "2026-05-11T18:33:42Z"
-last_revision = "754795ada42dea54adf061d42a61e560caa4f9ce"
+last_updated = "2026-05-12T19:47:35Z"
+last_revision = "63a91ecadbf4c4719a4602a5abb00883f9966034"
 source_type = "git"
 source = "https://github.com/JuliusBrussee/caveman.git"
 
