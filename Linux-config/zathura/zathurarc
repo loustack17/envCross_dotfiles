@@ -29,12 +29,12 @@ set highlight-active-color      "rgba(255, 105, 180, 0.5)"
 #set highlight-fg                "rgba(255, 255, 255, 1)"
 
 
-set default-bg                  "#1A1A3A"
-set default-fg                  "#CDD6F4"
-set render-loading              true
-set render-loading-bg           "#1E1E2E"
-set render-loading-fg           "#CDD6F4"
+#set default-bg                  "#1A1A3A"
+#set default-fg                  "#CDD6F4"
+#set render-loading              true
+#set render-loading-bg           "#1E1E2E"
+#set render-loading-fg           "#CDD6F4"
 
-set recolor                     true
-set recolor-lightcolor          "#1E1E2E"
-set recolor-darkcolor           "#CDD6F4"
+#set recolor                     true
+#set recolor-lightcolor          "#1E1E2E"
+#set recolor-darkcolor           "#CDD6F4"
