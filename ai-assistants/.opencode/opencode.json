@@ -35,8 +35,17 @@
     "opencode-antigravity-auth@latest",
     "@tarquinen/opencode-dcp@latest",
     "cc-safety-net",
-    "@slkiser/opencode-quota"
+    "@slkiser/opencode-quota",
+    "oh-my-opencode-slim"
   ],
+  "agent": {
+    "explore": {
+      "disable": true
+    },
+    "general": {
+      "disable": true
+    }
+  },
   "mcp": {
     "code-review-graph": {
       "type": "local",
