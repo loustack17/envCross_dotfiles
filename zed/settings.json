@@ -1,0 +1,117 @@
+{
+  "vim_mode": true,
+  "icon_theme": "Material Icon Theme",
+  "theme": "Dracula Solid",
+  "proxy": "",
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry"
+    },
+    "opencode": {
+      "favorite_config_option_values": {
+        "model": [
+          "opencode-go/kimi-k2.6",
+          "openai/gpt-5.5",
+          "openai/gpt-5.4",
+          "openai/gpt-5.5-pro",
+          "opencode-go/qwen3.6-plus",
+          "opencode-go/qwen3.7-max"
+        ]
+      },
+      "type": "registry"
+    },
+    "gemini": {
+      "type": "registry"
+    },
+    "codex-acp": {
+      "type": "registry"
+    }
+  },
+  "language_models": {
+    "opencode": {
+      "show_free_models": true,
+      "show_go_models": true,
+      "show_zen_models": false
+    }
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "default_model": {
+      "provider": "opencode",
+      "model": "go/kimi-k2.6",
+      "enable_thinking": false
+    },
+    "dock": "left",
+    "favorite_models": [
+      {
+        "provider": "opencode",
+        "model": "go/qwen3.6-plus",
+        "enable_thinking": false
+      },
+      {
+        "provider": "opencode",
+        "model": "go/kimi-k2.6",
+        "enable_thinking": false
+      },
+      {
+        "provider": "opencode",
+        "model": "go/glm-5.1",
+        "enable_thinking": false
+      },
+      {
+        "provider": "opencode",
+        "model": "go/deepseek-v4-flash",
+        "enable_thinking": true,
+        "effort": "max"
+      }
+    ],
+    "model_parameters": [],
+    "tool_permissions": {
+      "default": "confirm"
+    }
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "project_panel": {
+    "dock": "right"
+  },
+  "context_servers": {
+    "code-review-graph": {
+      "command": "uvx",
+      "args": [
+        "code-review-graph",
+        "serve"
+      ],
+      "env": {}
+    },
+    "content-i18n": {
+      "command": "/home/lou/.local/bin/content-i18n",
+      "args": [
+        "mcp",
+        "--config",
+        "/home/lou/Documents/LouStackBase/content-i18n.yaml"
+      ],
+      "env": {}
+    },
+    "firecrawl": {
+      "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh",
+      "args": [],
+      "env": {}
+    },
+    "markitdown": {
+      "command": "markitdown-mcp",
+      "args": [],
+      "env": {}
+    },
+    "mem0": {
+      "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh",
+      "args": []
+    }
+  }
+}

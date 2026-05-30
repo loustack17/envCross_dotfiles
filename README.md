@@ -95,6 +95,18 @@ During installation, these files are linked to the appropriate locations for eac
 | **OpenCode** | `OpenCode/enforce-shell-policy.sh` | `~/.config/opencode/enforce-shell-policy.sh` |
 | **OpenCode** | `SKILLS/` | `~/.config/opencode/skills` |
 
+
+### MCP Configuration
+
+Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed uses its own `context_servers` section inside `zed/settings.json`. cc-switch MCP servers are synced into its SQLite DB from a secret-free catalog.
+
+```bash
+bash ./install.sh --no-install --only-cursor-mcp --only-cursor-user-mcp --only-vscode-mcp --only-cc-switch
+scripts/mcp/sync-cc-switch-mcp.py
+```
+
+Secrets stay outside git in `~/.config/mcp/secrets.env`; see `ai-assistants/mcp/README.md`.
+
 ## 📁 Paths & Configuration
 
 ### Linux

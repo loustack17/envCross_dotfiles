@@ -33,6 +33,7 @@ ai|ai|codex|codex||false|ai-assistants/.codex|$HOME/.codex
 ai|ai|gemini-cli|||false|ai-assistants/.gemini|$HOME/.gemini
 ai|ai|hermes-agent|hermes||false|ai-assistants/.hermes|$HOME/.hermes
 ai|ai|opencode|||false||$HOME/.config/opencode
+ai|ai|cc-switch|||false|ai-assistants/.cc-switch/settings.json|$HOME/.cc-switch/settings.json
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig
 niri|linux|waybar|waybar|waybar|false|Linux-config/waybar|waybar
@@ -43,6 +44,9 @@ niri|linux|mpv|mpv|mpv|false|mpv|mpv
 niri|linux|hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr
 niri|linux|waypaper|waypaper|waypaper|false||
 config|linux|profile|||false|.profile|$HOME/.profile
+config|linux|cursor-mcp|||false|ai-assistants/mcp/cursor.mcp.json|$HOME/.cursor/mcp.json
+config|linux|cursor-user-mcp|||false|ai-assistants/mcp/cursor.mcp.json|$HOME/.config/Cursor/User/mcp.json
+config|linux|vscode-mcp|||false|ai-assistants/mcp/ide.mcp.json|$HOME/.config/Code/User/mcp.json
 config|linux|autostart|||false|Linux-config/autostart|autostart
 config|linux|ferdium|||false|Linux-config/Ferdium|Ferdium
 config|linux|fcitx5|||false|Linux-config/fcitx5|fcitx5

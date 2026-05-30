@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "code-review-graph": {
+      "command": "uvx",
+      "args": [
+        "code-review-graph",
+        "serve"
+      ]
+    },
+    "content-i18n": {
+      "command": "/home/lou/.local/bin/content-i18n",
+      "args": [
+        "mcp",
+        "--config",
+        "/home/lou/Documents/LouStackBase/content-i18n.yaml"
+      ]
+    },
+    "firecrawl": {
+      "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh",
+      "args": []
+    },
+    "github": {
+      "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-github.sh",
+      "args": []
+    },
+    "markitdown": {
+      "command": "markitdown-mcp",
+      "args": []
+    },
+    "exa": {
+      "type": "http",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
+    },
+    "mem0": {
+      "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh",
+      "args": []
+    },
+    "tavily": {
+      "type": "http",
+      "url": "https://mcp.tavily.com/mcp/"
+    }
+  }
+}

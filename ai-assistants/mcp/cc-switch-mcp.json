@@ -1,0 +1,109 @@
+{
+  "servers": {
+    "code-review-graph": {
+      "name": "code-review-graph",
+      "enabled": [
+        "claude",
+        "codex",
+        "opencode",
+        "hermes"
+      ],
+      "config": {
+        "type": "stdio",
+        "command": "uvx",
+        "args": [
+          "code-review-graph",
+          "serve"
+        ]
+      }
+    },
+    "content-i18n": {
+      "name": "content-i18n",
+      "enabled": [
+        "claude",
+        "codex",
+        "opencode",
+        "hermes"
+      ],
+      "config": {
+        "command": "/home/lou/.local/bin/content-i18n",
+        "args": [
+          "mcp",
+          "--config",
+          "/home/lou/Documents/LouStackBase/content-i18n.yaml"
+        ]
+      }
+    },
+    "exa": {
+      "name": "exa",
+      "enabled": [
+        "claude",
+        "codex",
+        "hermes"
+      ],
+      "config": {
+        "type": "http",
+        "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
+      }
+    },
+    "firecrawl": {
+      "name": "firecrawl",
+      "enabled": [
+        "claude",
+        "codex",
+        "opencode",
+        "hermes"
+      ],
+      "config": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "firecrawl-mcp"
+        ],
+        "env": {
+          "FIRECRAWL_API_KEY": "${env:FIRECRAWL_API_KEY}"
+        }
+      }
+    },
+    "markitdown": {
+      "name": "markitdown",
+      "enabled": [
+        "claude",
+        "codex",
+        "opencode",
+        "hermes"
+      ],
+      "config": {
+        "type": "stdio",
+        "command": "markitdown-mcp"
+      }
+    },
+    "mem0": {
+      "name": "@mem0ai/mem0",
+      "enabled": [
+        "claude",
+        "codex",
+        "opencode"
+      ],
+      "config": {
+        "type": "stdio",
+        "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh",
+        "args": []
+      }
+    },
+    "tavily": {
+      "name": "tavily",
+      "enabled": [
+        "claude",
+        "codex",
+        "opencode",
+        "hermes"
+      ],
+      "config": {
+        "type": "http",
+        "url": "https://mcp.tavily.com/mcp/"
+      }
+    }
+  }
+}

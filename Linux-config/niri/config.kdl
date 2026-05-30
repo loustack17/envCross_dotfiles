@@ -203,14 +203,6 @@ window-rule {
 }
 
 window-rule {
-    match app-id=r#"zen-browser"#
-    match app-id=r#"zed"#
-    match app-id=r#"code"#
-    match app-id=r#"obsidian$"#
-    open-maximized true
-}
-
-window-rule {
     geometry-corner-radius 20
     clip-to-geometry true
 }

@@ -33,8 +33,7 @@
   "group/audio": {
     "orientation": "inherit",
     "modules": [
-      "wireplumber",
-      "bluetooth"
+      "wireplumber"
     ]
   },
   "network": {

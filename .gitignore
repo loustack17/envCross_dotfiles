@@ -1,7 +1,6 @@
 backup/
 
-# Zed settings contains secrets (GitHub PAT, API keys)
-zed/settings.json
+# Zed backup settings may contain secrets
 zed/settings_backup.json
 
 # Codex system-managed skills (auto-updated by codex)
@@ -32,3 +31,6 @@ ai-assistants/.hermes/sessions/
 .envrc
 .env
 *.secret.toml
+
+__pycache__/
+*.py[cod]

@@ -1,0 +1,44 @@
+{
+  "showInTray": true,
+  "minimizeToTrayOnClose": true,
+  "useAppWindowControls": true,
+  "enableClaudePluginIntegration": true,
+  "skipClaudeOnboarding": true,
+  "launchOnStartup": true,
+  "silentStartup": true,
+  "enableLocalProxy": true,
+  "proxyConfirmed": true,
+  "usageConfirmed": true,
+  "streamCheckConfirmed": true,
+  "enableFailoverToggle": false,
+  "failoverConfirmed": true,
+  "firstRunNoticeConfirmed": true,
+  "commonConfigConfirmed": true,
+  "language": "en",
+  "visibleApps": {
+    "claude": true,
+    "claude-desktop": false,
+    "codex": true,
+    "gemini": false,
+    "opencode": true,
+    "openclaw": false,
+    "hermes": true
+  },
+  "currentProviderClaude": "f4911d7c-7bed-4914-8500-8dfda1fc5fb6",
+  "currentProviderGemini": "gemini-official",
+  "skillSyncMethod": "auto",
+  "skillStorageLocation": "cc_switch",
+  "preferredTerminal": "ghostty",
+  "localMigrations": {
+    "codexThirdPartyHistoryProviderBucketV1": {
+      "completedAt": "2026-05-30T04:06:42.078159814+00:00",
+      "targetProviderId": "custom",
+      "migratedJsonlFiles": 0,
+      "migratedStateRows": 0,
+      "scannedHistoryFiles": true
+    },
+    "codexProviderTemplateV1": {
+      "completedAt": "2026-05-30T04:06:42.078521908+00:00"
+    }
+  }
+}
