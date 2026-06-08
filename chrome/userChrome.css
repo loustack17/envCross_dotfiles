@@ -182,3 +182,25 @@
 
 /* --- Bubble Clean --- */
 @import "bubble-clean/bubble-clean.css";
+
+:root {
+  --zen-element-separation: 0px !important;
+  --zen-native-inner-radius: 0px !important;
+}
+
+#browser,
+#tabbrowser-tabbox,
+#tabbrowser-tabpanels,
+#tabbrowser-tabpanels > hbox,
+.browserSidebarContainer,
+.browserContainer,
+.browserStack,
+.browserStack browser {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}

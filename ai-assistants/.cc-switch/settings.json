@@ -11,6 +11,7 @@
   "usageConfirmed": true,
   "streamCheckConfirmed": true,
   "enableFailoverToggle": false,
+  "preserveCodexOfficialAuthOnSwitch": false,
   "failoverConfirmed": true,
   "firstRunNoticeConfirmed": true,
   "commonConfigConfirmed": true,

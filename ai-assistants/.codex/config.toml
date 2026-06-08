@@ -81,9 +81,10 @@ hide_rate_limit_model_nudge = true
 "gpt-5.2-codex" = "gpt-5.3-codex"
 
 [tui]
-status_line = ["model-with-reasoning", "context-remaining", "current-dir", "five-hour-limit", "git-branch"]
+status_line = ["model-with-reasoning", "five-hour-limit", "git-branch", "project-name", "pull-request-number", "run-state", "context-used", "used-tokens"]
 theme = "dracula"
 session_picker_view = "dense"
+status_line_use_colors = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -111,8 +112,8 @@ enabled = false
 sandbox = "elevated"
 
 [marketplaces.caveman-repo]
-last_updated = "2026-05-12T19:47:35Z"
-last_revision = "63a91ecadbf4c4719a4602a5abb00883f9966034"
+last_updated = "2026-06-02T05:19:42Z"
+last_revision = "655b7d9c5431f822264b7732e9901c5578ac84cf"
 source_type = "git"
 source = "https://github.com/JuliusBrussee/caveman.git"
 

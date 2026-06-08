@@ -44,6 +44,46 @@
     },
     "general": {
       "disable": true
+    },
+    "orchestrator": {
+      "tools": {
+        "*": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "bash": true,
+        "write": true,
+        "edit": true,
+        "apply_patch": true
+      },
+      "permission": {
+        "*": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "bash": "ask",
+        "edit": "ask"
+      }
+    },
+    "build": {
+      "tools": {
+        "*": false,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "bash": true,
+        "write": true,
+        "edit": true,
+        "apply_patch": true
+      },
+      "permission": {
+        "*": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "bash": "ask",
+        "edit": "ask"
+      }
     }
   },
   "mcp": {
@@ -54,7 +94,7 @@
         "code-review-graph",
         "serve"
       ],
-      "enabled": true
+      "enabled": false
     },
     "firecrawl": {
       "type": "local",
@@ -66,7 +106,7 @@
         "-y",
         "firecrawl-mcp"
       ],
-      "enabled": true
+      "enabled": false
     }
   },
   "lsp": {

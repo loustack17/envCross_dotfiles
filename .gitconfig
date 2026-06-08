@@ -1,3 +1,11 @@
 [user]
 	email = louchang.tw@gmail.com
 	name = Lou Chang
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/
+
+[core]
+	sshCommand = ssh -F /dev/null -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes
