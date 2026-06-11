@@ -41,32 +41,38 @@ nu install.nu --only [nvim lazygit]
 
 ## 🤖 AI Assistant Configuration
 
-This repository centralizes AI instructions while allowing tool-specific memories and skills where needed. `AI-Supporter/AGENTS.md` remains the shared rules file for tools that use it directly. Shared skills live in `AI-Supporter/SKILLS/`, and Claude Code can use its own skill variants under `AI-Supporter/Claude Code/skills/`.
+This repository centralizes assistant context and tool-specific settings under `ai-assistants/`. Shared rules live in `ai-assistants/AGENTS.md`; shared skills live in `ai-assistants/SKILLS/`; tool-specific files live in hidden subdirectories such as `ai-assistants/.claude` and `ai-assistants/.opencode`.
 
 ### Directory Structure
 ```text
-AI-Supporter/
+ai-assistants/
 ├── AGENTS.md
 ├── SKILLS/
-│   └── no-comments/
-│       └── SKILL.md
-├── Claude Code/
+├── .claude/
 │   ├── CLAUDE.md
 │   ├── agents/
 │   ├── hooks/
+│   ├── marketplace/
 │   ├── rules/
 │   ├── settings.json
-│   └── skills/
-├── Codex/
+│   ├── skills/
+│   └── statusline-command.sh
+├── .codex/
 │   └── config.toml
-├── Gemini CLI/
+├── .gemini/
 │   └── GEMINI.md
-├── OpenCode/
+├── .hermes/
+│   ├── SOUL.md
+│   ├── config.yaml
+│   └── hooks/
+├── .opencode/
 │   ├── agents/
 │   ├── commands/
 │   ├── plugins/
+│   ├── enforce-shell-policy.sh
 │   ├── opencode.json
 │   └── tui.json
+└── mcp/
 ```
 
 ### Installation Targets
@@ -74,27 +80,29 @@ During installation, these files are linked to the appropriate locations for eac
 
 | AI Tool | Source | Target Path |
 |---------|--------|-------------|
-| **Claude Code** | `Claude Code/CLAUDE.md` | `~/.claude/CLAUDE.md` |
-| **Claude Code** | `Claude Code/settings.json` | `~/.claude/settings.json` |
-| **Claude Code** | `Claude Code/agents/` | `~/.claude/agents` |
-| **Claude Code** | `Claude Code/hooks/` | `~/.claude/hooks` |
-| **Claude Code** | `Claude Code/rules/` | `~/.claude/rules` |
-| **Claude Code** | `Claude Code/skills/` | `~/.claude/skills` |
-| **Claude Code** | `Claude Code/statusline-command.sh` | `~/.claude/statusline-command.sh` |
-| **Claude Code** | `Claude Code/marketplace/` | `~/.claude/marketplace` |
-| **Gemini CLI** | `Gemini CLI/GEMINI.md` | `~/.gemini/GEMINI.md` |
-| **Codex** | `AGENTS.md` | `~/.codex/AGENTS.md` |
-| **Codex** | `Codex/config.toml` | `~/.codex/config.toml` |
-| **Codex** | `SKILLS/` | `~/.codex/skills` |
-| **OpenCode** | `AGENTS.md` | `~/.config/opencode/AGENTS.md` |
-| **OpenCode** | `OpenCode/opencode.json` | `~/.config/opencode/opencode.json` |
-| **OpenCode** | `OpenCode/tui.json` | `~/.config/opencode/tui.json` |
-| **OpenCode** | `OpenCode/agents/` | `~/.config/opencode/agents` |
-| **OpenCode** | `OpenCode/commands/` | `~/.config/opencode/commands` |
-| **OpenCode** | `OpenCode/plugins/` | `~/.config/opencode/plugins` |
-| **OpenCode** | `OpenCode/enforce-shell-policy.sh` | `~/.config/opencode/enforce-shell-policy.sh` |
-| **OpenCode** | `SKILLS/` | `~/.config/opencode/skills` |
-
+| **Claude Code** | `ai-assistants/.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| **Claude Code** | `ai-assistants/.claude/settings.json` | `~/.claude/settings.json` |
+| **Claude Code** | `ai-assistants/.claude/agents/` | `~/.claude/agents` |
+| **Claude Code** | `ai-assistants/.claude/hooks/` | `~/.claude/hooks` |
+| **Claude Code** | `ai-assistants/.claude/rules/` | `~/.claude/rules` |
+| **Claude Code** | `ai-assistants/.claude/skills/` | `~/.claude/skills` |
+| **Claude Code** | `ai-assistants/.claude/statusline-command.sh` | `~/.claude/statusline-command.sh` |
+| **Claude Code** | `ai-assistants/.claude/marketplace/` | `~/.claude/marketplace` |
+| **Codex** | `ai-assistants/AGENTS.md` | `~/.codex/AGENTS.md` |
+| **Codex** | `ai-assistants/.codex/config.toml` | `~/.codex/config.toml` |
+| **Codex** | `ai-assistants/SKILLS/` | `~/.codex/skills` |
+| **OpenCode** | `ai-assistants/AGENTS.md` | `~/.config/opencode/AGENTS.md` |
+| **OpenCode** | `ai-assistants/.opencode/opencode.json` | `~/.config/opencode/opencode.json` |
+| **OpenCode** | `ai-assistants/.opencode/tui.json` | `~/.config/opencode/tui.json` |
+| **OpenCode** | `ai-assistants/.opencode/agents/` | `~/.config/opencode/agents` |
+| **OpenCode** | `ai-assistants/.opencode/commands/` | `~/.config/opencode/commands` |
+| **OpenCode** | `ai-assistants/.opencode/plugins/` | `~/.config/opencode/plugins` |
+| **OpenCode** | `ai-assistants/.opencode/enforce-shell-policy.sh` | `~/.config/opencode/enforce-shell-policy.sh` |
+| **OpenCode** | `ai-assistants/SKILLS/` | `~/.config/opencode/skills` |
+| **Gemini CLI** | `ai-assistants/.gemini/GEMINI.md` | `~/.gemini/GEMINI.md` |
+| **Hermes** | `ai-assistants/.hermes/SOUL.md` | `~/.hermes/SOUL.md` |
+| **Hermes** | `ai-assistants/.hermes/config.yaml` | `~/.hermes/config.yaml` |
+| **Hermes** | `ai-assistants/.hermes/hooks/` | `~/.hermes/hooks` |
 
 ### MCP Configuration
 

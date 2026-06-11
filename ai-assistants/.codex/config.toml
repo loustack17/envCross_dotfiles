@@ -122,7 +122,27 @@ command = "uvx"
 args = ["code-review-graph", "serve"]
 type = "stdio"
 
+[mcp_servers.mem0]
+type = "stdio"
+command = "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh"
+
+[mcp_servers.markitdown]
+type = "stdio"
+command = "markitdown-mcp"
+
+[mcp_servers.tavily]
+type = "http"
+url = "https://mcp.tavily.com/mcp/"
+
 [mcp_servers.firecrawl]
-command = "direnv"
-args = ["exec", ".", "npx", "-y", "firecrawl-mcp"]
-cwd = "/home/lou/Documents/WorkFlow/envCross_dotfiles/ai-assistants"
+type = "stdio"
+command = "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh"
+
+[mcp_servers.exa]
+type = "http"
+url = "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
+
+[mcp_servers.content-i18n]
+type = "stdio"
+command = "/home/lou/.local/bin/content-i18n"
+args = ["mcp", "--config", "/home/lou/Documents/LouStackBase/content-i18n.yaml"]

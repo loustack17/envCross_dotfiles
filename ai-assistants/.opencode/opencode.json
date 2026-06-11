@@ -1,25 +1,52 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "permission": {
-    "*": "ask",
-    "edit": "ask",
-    "write": "ask",
-    "read": "allow",
-    "grep": "allow",
-    "glob": "allow",
-    "lsp": "allow",
-    "websearch": "allow",
-    "webfetch": "allow",
-    "bash": {
-      "*": "ask",
-      "rg *": "allow",
-      "eza *": "allow",
-      "bat *": "allow",
-      "pnpm *": "ask",
-      "bun *": "ask",
-      "uv *": "ask",
-      "git status*": "allow",
-      "git diff*": "allow"
+  "agent": {
+    "build": {
+      "permission": {
+        "*": "deny",
+        "bash": "ask",
+        "edit": "ask",
+        "glob": "allow",
+        "grep": "allow",
+        "read": "allow",
+        "external_directory": "ask"
+      },
+      "tools": {
+        "*": false,
+        "apply_patch": true,
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
+    },
+    "explore": {
+      "disable": true
+    },
+    "general": {
+      "disable": true
+    },
+    "orchestrator": {
+      "permission": {
+        "*": "deny",
+        "bash": "ask",
+        "edit": "ask",
+        "glob": "allow",
+        "grep": "allow",
+        "read": "allow"
+      },
+      "tools": {
+        "*": false,
+        "apply_patch": true,
+        "bash": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "write": true
+      }
     }
   },
   "compaction": {
@@ -28,87 +55,8 @@
     "reserved": 10000
   },
   "instructions": [
-    "../AGENTS.md"
+    "AGENTS.md"
   ],
-  "plugin": [
-    "superpowers@git+https://github.com/obra/superpowers.git",
-    "opencode-antigravity-auth@latest",
-    "@tarquinen/opencode-dcp@latest",
-    "cc-safety-net",
-    "@slkiser/opencode-quota",
-    "oh-my-opencode-slim"
-  ],
-  "agent": {
-    "explore": {
-      "disable": true
-    },
-    "general": {
-      "disable": true
-    },
-    "orchestrator": {
-      "tools": {
-        "*": false,
-        "read": true,
-        "grep": true,
-        "glob": true,
-        "bash": true,
-        "write": true,
-        "edit": true,
-        "apply_patch": true
-      },
-      "permission": {
-        "*": "deny",
-        "read": "allow",
-        "grep": "allow",
-        "glob": "allow",
-        "bash": "ask",
-        "edit": "ask"
-      }
-    },
-    "build": {
-      "tools": {
-        "*": false,
-        "read": true,
-        "grep": true,
-        "glob": true,
-        "bash": true,
-        "write": true,
-        "edit": true,
-        "apply_patch": true
-      },
-      "permission": {
-        "*": "deny",
-        "read": "allow",
-        "grep": "allow",
-        "glob": "allow",
-        "bash": "ask",
-        "edit": "ask"
-      }
-    }
-  },
-  "mcp": {
-    "code-review-graph": {
-      "type": "local",
-      "command": [
-        "uvx",
-        "code-review-graph",
-        "serve"
-      ],
-      "enabled": false
-    },
-    "firecrawl": {
-      "type": "local",
-      "command": [
-        "direnv",
-        "exec",
-        "/home/lou/Documents/WorkFlow/envCross_dotfiles/ai-assistants",
-        "npx",
-        "-y",
-        "firecrawl-mcp"
-      ],
-      "enabled": false
-    }
-  },
   "lsp": {
     "bash": {
       "command": [
@@ -124,30 +72,18 @@
         ".zshrc"
       ]
     },
+    "fish-lsp": {
+      "command": [
+        "fish-lsp",
+        "start"
+      ],
+      "extensions": [
+        ".fish"
+      ]
+    },
     "gopls": {
       "command": [
         "gopls"
-      ]
-    },
-    "pyright": {
-      "command": [
-        "pyright-langserver",
-        "--stdio"
-      ]
-    },
-    "terraform": {
-      "disabled": true
-    },
-    "typescript": {
-      "command": [
-        "typescript-language-server",
-        "--stdio"
-      ]
-    },
-    "yaml-ls": {
-      "command": [
-        "yaml-language-server",
-        "--stdio"
       ]
     },
     "json-ls": {
@@ -161,14 +97,14 @@
         ".code-workspace"
       ]
     },
-    "fish-lsp": {
+    "pyright": {
       "command": [
-        "fish-lsp",
-        "start"
-      ],
-      "extensions": [
-        ".fish"
+        "pyright-langserver",
+        "--stdio"
       ]
+    },
+    "terraform": {
+      "disabled": true
     },
     "tofu-ls": {
       "command": [
@@ -182,6 +118,95 @@
         ".tofu",
         ".tofu.json"
       ]
+    },
+    "typescript": {
+      "command": [
+        "typescript-language-server",
+        "--stdio"
+      ]
+    },
+    "yaml-ls": {
+      "command": [
+        "yaml-language-server",
+        "--stdio"
+      ]
     }
-  }
+  },
+  "mcp": {
+    "code-review-graph": {
+      "command": [
+        "uvx",
+        "code-review-graph",
+        "serve"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "content-i18n": {
+      "command": [
+        "/home/lou/.local/bin/content-i18n",
+        "mcp",
+        "--config",
+        "/home/lou/Documents/LouStackBase/content-i18n.yaml"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "firecrawl": {
+      "command": [
+        "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "markitdown": {
+      "command": [
+        "markitdown-mcp"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "mem0": {
+      "command": [
+        "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "tavily": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.tavily.com/mcp/"
+    }
+  },
+  "permission": {
+    "*": "ask",
+    "bash": {
+      "*": "ask",
+      "bat *": "allow",
+      "bun *": "ask",
+      "eza *": "allow",
+      "git diff*": "allow",
+      "git status*": "allow",
+      "pnpm *": "ask",
+      "rg *": "allow",
+      "uv *": "ask"
+    },
+    "edit": "ask",
+    "glob": "allow",
+    "grep": "allow",
+    "lsp": "allow",
+    "read": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "write": "ask"
+  },
+  "plugin": [
+    "superpowers@git+https://github.com/obra/superpowers.git",
+    "opencode-antigravity-auth@latest",
+    "@tarquinen/opencode-dcp@latest",
+    "cc-safety-net",
+    "@slkiser/opencode-quota",
+    "oh-my-opencode-slim"
+  ]
 }
