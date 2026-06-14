@@ -37,6 +37,7 @@
     ]
   },
   "network": {
+    "interface": "wlan0",
     "interval": 5,
     "format-wifi": "{icon}  {essid}",
     "format-icons": [
@@ -46,11 +47,13 @@
       "󰤤",
       "󰤨"
     ],
-    "format-disconnected": "󰌙 Disconnected",
-    "format-disabled": "󰌙 Off",
-    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
-    "tooltip-format-disconnected": "Disconnected",
-    "on-click": "ghostty -e impala"
+    "format-disconnected": "󰤮 Disconnected",
+    "format-disabled": "󰤭 Off",
+    "format-linked": "󰈁 {ifname}",
+    "tooltip-format-wifi": "{ifname}: {essid} ({signalStrength}%)\nIP: {ipaddr}\nGateway: {gwaddr}",
+    "tooltip-format-disconnected": "{ifname}: disconnected",
+    "on-click": "nm-connection-editor",
+    "on-click-right": "ghostty -e impala"
   },
   "mpris": {
     "format": "󰝚  {dynamic}",
