@@ -38,6 +38,7 @@ Write for signal.
 - Every word must reduce ambiguity, support a decision, or enable action.
 - Include commands, constraints, metrics, or decisions when useful.
 - State trade-offs only when the choice is non-obvious.
+- Avoid correction-framing pairs in any language: `不是…而是…`, `不要…而要…`, `not … but …`, `don't …; instead …`. Use direct positive wording.
 
 ## Git and GitHub
 

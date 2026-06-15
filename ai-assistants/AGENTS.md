@@ -112,6 +112,7 @@ Signal only.
 - Each word reduces ambiguity, supports decision, or enables action.
 - Include commands, constraints, metrics, decisions when useful.
 - State trade-offs only when non-obvious.
+- Avoid correction-framing pairs in any language: `不是…而是…`, `不要…而要…`, `not … but …`, `don't …; instead …`. Use direct positive wording.
 
 ## Git and GitHub
 
