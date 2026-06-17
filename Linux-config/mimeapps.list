@@ -10,7 +10,7 @@ application/x-extension-shtml=zen.desktop
 application/xhtml+xml=zen.desktop
 application/x-extension-xhtml=zen.desktop
 application/x-extension-xht=zen.desktop
-x-scheme-handler/mailto=brave-browser.desktop
+x-scheme-handler/mailto=userapp-Thunderbird-AMNBQ3.desktop
 application/x-trash=org.gnome.TextEditor.desktop
 application/wps-office.pptx=wps-office-wpp.desktop
 application/wps-office.ppt=wps-office-wpp.desktop
@@ -38,6 +38,9 @@ application/wps-office.wpso=wps-office-wps.desktop
 application/wps-office.wpt=wps-office-wps.desktop
 application/pdf=org.pwmt.zathura.desktop
 image/svg+xml=org.gnome.Loupe.desktop
+x-scheme-handler/slack=slack.desktop
+message/rfc822=userapp-Thunderbird-AMNBQ3.desktop
+x-scheme-handler/mid=userapp-Thunderbird-AMNBQ3.desktop
 
 [Added Associations]
 inode/directory=pcmanfm-qt.desktop;kitty-open.desktop;org.gnome.Nautilus.desktop;org.kde.kate.desktop;yazi.desktop;
@@ -81,3 +84,5 @@ application/zip=7zFM.desktop;org.gnome.FileRoller.desktop;peazip.desktop;
 application/x-7z-compressed=org.gnome.FileRoller.desktop;
 image/svg+xml=org.gnome.Loupe.desktop;
 text/vnd.trolltech.linguist=org.gnome.gedit.desktop;
+x-scheme-handler/mailto=userapp-Thunderbird-AMNBQ3.desktop;
+x-scheme-handler/mid=userapp-Thunderbird-AMNBQ3.desktop;

@@ -97,7 +97,7 @@ layer-rule {
 
 
 layout {
-    gaps 5
+    gaps 3
     center-focused-column "never"
     default-column-display "normal"
     background-color "transparent"
@@ -140,7 +140,7 @@ layout {
 
     border {
         on
-        width 2
+        width 1
         active-color "#ffc87f"
         inactive-color "#505050"
         urgent-color "#9b0000"
@@ -207,11 +207,6 @@ window-rule {
     clip-to-geometry true
 }
 
-window-rule {
-    geometry-corner-radius 0
-    clip-to-geometry true
-}
-
 hotkey-overlay {
     skip-at-startup
 }
@@ -220,6 +215,11 @@ debug {
 	honor-xdg-activation-with-invalid-serial
 }
 
+
+window-rule {
+    match app-id=r#"(?i)^(microsoft-edge|com\.microsoft\.edge)$"#
+    default-column-width { proportion 0.9; }
+}
 
 binds {
     MOD+SHIFT+ESCAPE { show-hotkey-overlay; }

@@ -84,7 +84,8 @@
       "enabled": [
         "claude",
         "codex",
-        "opencode"
+        "opencode",
+        "hermes"
       ],
       "config": {
         "type": "stdio",

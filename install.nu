@@ -657,6 +657,10 @@ def main [
             {src: ($ai_root | path join ".opencode" | path join "opencode.json"),     dest: ($opencode_home | path join "opencode.json"), is_file: true,  name: "opencode config"}
             {src: ($ai_root | path join ".opencode" | path join "tui.json"),          dest: ($opencode_home | path join "tui.json"),      is_file: true,  name: "opencode tui"}
             {src: $shared_skills, dest: ($opencode_home | path join "skills"),        is_file: false, name: "opencode skills"}
+            {src: ($ai_root | path join ".opencode" | path join "agents"),            dest: ($opencode_home | path join "agents"),        is_file: false, name: "opencode agents"}
+            {src: ($ai_root | path join ".opencode" | path join "commands"),          dest: ($opencode_home | path join "commands"),      is_file: false, name: "opencode commands"}
+            {src: ($ai_root | path join ".opencode" | path join "plugins"),           dest: ($opencode_home | path join "plugins"),       is_file: false, name: "opencode plugins"}
+            {src: ($ai_root | path join ".opencode" | path join "enforce-shell-policy.sh"), dest: ($opencode_home | path join "enforce-shell-policy.sh"), is_file: true, name: "opencode shell policy"}
         ]
         $targets ++= (existing_targets $opencode_files)
     }
@@ -672,14 +676,13 @@ def main [
     }
 
     let hermes_home = ($home | path join ".hermes")
-    let hermes_soul = ($ai_root | path join ".hermes" | path join "SOUL.md")
-    if $has_hermes and ($hermes_soul | path exists) {
-        $targets ++= [{
-            name: "Hermes SOUL.md"
-            source: $hermes_soul
-            dest: ($hermes_home | path join "SOUL.md")
-            is_file: true
-        }]
+    let hermes_files = [
+        {src: ($ai_root | path join ".hermes" | path join "SOUL.md"),      dest: ($hermes_home | path join "SOUL.md"),      is_file: true,  name: "Hermes SOUL.md"}
+        {src: ($ai_root | path join ".hermes" | path join "config.yaml"),  dest: ($hermes_home | path join "config.yaml"),  is_file: true,  name: "Hermes config.yaml"}
+        {src: ($ai_root | path join ".hermes" | path join "hooks"),        dest: ($hermes_home | path join "hooks"),        is_file: false, name: "Hermes hooks"}
+    ]
+    if $has_hermes {
+        $targets ++= (existing_targets $hermes_files)
     }
 
     # === Step 2: Backup ===

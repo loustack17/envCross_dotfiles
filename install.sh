@@ -404,6 +404,8 @@ link_ai_shared_files() {
             ;;
         hermes)
             create_file_link "$hermes_root/SOUL.md" "$HOME/.hermes/SOUL.md" "hermes-soul"
+            create_file_link "$hermes_root/config.yaml" "$HOME/.hermes/config.yaml" "hermes-config"
+            create_path_link "$hermes_root/hooks" "$HOME/.hermes/hooks" "hermes-hooks"
             ;;
     esac
 }

@@ -34,3 +34,5 @@ ai-assistants/.hermes/sessions/
 
 __pycache__/
 *.py[cod]
+/.claude/
+/nvim/.claude/

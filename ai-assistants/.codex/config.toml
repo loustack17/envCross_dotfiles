@@ -74,6 +74,9 @@ trust_level = "trusted"
 [projects."/home/lou/Documents/ai-memory"]
 trust_level = "trusted"
 
+[projects."/home/lou/Documents/WorkFlow/openwhispr"]
+trust_level = "trusted"
+
 [notice]
 hide_rate_limit_model_nudge = true
 
@@ -81,9 +84,10 @@ hide_rate_limit_model_nudge = true
 "gpt-5.2-codex" = "gpt-5.3-codex"
 
 [tui]
-status_line = ["model-with-reasoning", "context-remaining", "current-dir", "five-hour-limit", "git-branch"]
+status_line = ["model-with-reasoning", "five-hour-limit", "git-branch", "project-name", "pull-request-number", "run-state", "context-used", "used-tokens"]
 theme = "dracula"
 session_picker_view = "dense"
+status_line_use_colors = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -111,8 +115,8 @@ enabled = false
 sandbox = "elevated"
 
 [marketplaces.caveman-repo]
-last_updated = "2026-05-12T19:47:35Z"
-last_revision = "63a91ecadbf4c4719a4602a5abb00883f9966034"
+last_updated = "2026-06-02T05:19:42Z"
+last_revision = "655b7d9c5431f822264b7732e9901c5578ac84cf"
 source_type = "git"
 source = "https://github.com/JuliusBrussee/caveman.git"
 
@@ -121,7 +125,27 @@ command = "uvx"
 args = ["code-review-graph", "serve"]
 type = "stdio"
 
+[mcp_servers.mem0]
+type = "stdio"
+command = "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh"
+
+[mcp_servers.markitdown]
+type = "stdio"
+command = "markitdown-mcp"
+
+[mcp_servers.tavily]
+type = "http"
+url = "https://mcp.tavily.com/mcp/"
+
 [mcp_servers.firecrawl]
-command = "direnv"
-args = ["exec", ".", "npx", "-y", "firecrawl-mcp"]
-cwd = "/home/lou/Documents/WorkFlow/envCross_dotfiles/ai-assistants"
+type = "stdio"
+command = "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh"
+
+[mcp_servers.exa]
+type = "http"
+url = "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
+
+[mcp_servers.content-i18n]
+type = "stdio"
+command = "/home/lou/.local/bin/content-i18n"
+args = ["mcp", "--config", "/home/lou/Documents/LouStackBase/content-i18n.yaml"]
