@@ -1,5 +1,4 @@
 return {
-  -- LSP Management (Mason and Lspconfig)
   {
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -10,10 +9,48 @@ return {
       { 'hrsh7th/cmp-nvim-lsp' }
     },
     config = function()
-      -- Set default capabilities for ALL LSP servers
-      -- (replaces the old lspconfig.util.default_config.capabilities pattern)
       vim.lsp.config('*', {
         capabilities = require('cmp_nvim_lsp').default_capabilities()
+      })
+
+      local function python_root(bufnr, on_dir)
+        local markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile', 'uv.lock', '.git' }
+        local path = vim.api.nvim_buf_get_name(bufnr)
+        local root = vim.fs.root(path, markers)
+        if root and vim.fs.normalize(root) ~= vim.fs.normalize(vim.fn.expand('~')) then
+          on_dir(root)
+        end
+      end
+
+      for _, server in ipairs({ 'pyright', 'ruff', 'ty' }) do
+        vim.lsp.config(server, {
+          root_dir = python_root,
+        })
+      end
+
+      vim.lsp.config('gopls', {
+        filetypes = { 'go', 'gomod', 'gowork' },
+      })
+
+      vim.lsp.config('tailwindcss', {
+        filetypes = {
+          'html',
+          'css',
+          'scss',
+          'less',
+          'javascript',
+          'javascriptreact',
+          'typescript',
+          'typescriptreact',
+          'vue',
+          'svelte',
+          'templ',
+          'heex',
+          'htmldjango',
+          'eruby',
+          'markdown',
+          'razor',
+        },
       })
 
       vim.lsp.config('terraformls', {
@@ -23,6 +60,7 @@ return {
       })
 
       vim.lsp.config('yamlls', {
+        filetypes = { 'yaml' },
         settings = {
           yaml = {
             format = {
@@ -47,9 +85,7 @@ return {
 
       vim.lsp.enable('tinymist')
     end
-    -----------
   },
-  -- Razor Language Server (ASP.NET Razor/Blazor)
   {
     "tris203/rzls.nvim",
     dependencies = { "neovim/nvim-lspconfig" },

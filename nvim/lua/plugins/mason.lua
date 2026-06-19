@@ -1,7 +1,7 @@
 local LSPS = {
   "lua_ls",
   "rust_analyzer",
-  "vtsls", -- JavaScript/TypeScript
+  "vtsls",
   "tailwindcss",
   "gopls",
   "ruff",
@@ -19,7 +19,7 @@ local LSPS = {
 
 
 return {
-  { -- 1. Mason: LSP/Linter/Formatter Manager
+  {
     "mason-org/mason.nvim",
     opts = {
       ui = {
@@ -31,11 +31,11 @@ return {
       }
     }
   },
-  -- 2. Mason Lspconfig & Nvim-Lspconfig Integration
   {
     "mason-org/mason-lspconfig.nvim",
     opts = {
-      ensure_installed = LSPS
+      ensure_installed = LSPS,
+      automatic_enable = false,
     },
     dependencies = {
       { "mason-org/mason.nvim", opts = {} },

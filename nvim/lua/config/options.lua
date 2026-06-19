@@ -23,3 +23,5 @@ vim.opt.fillchars = vim.opt.fillchars + {
   foldsep = " ",
   fold = " ",
 }
+
+vim.lsp.log.set_level(vim.log.levels.OFF)

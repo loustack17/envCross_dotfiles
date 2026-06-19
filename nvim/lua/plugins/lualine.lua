@@ -1,10 +1,10 @@
 return {
   "nvim-lualine/lualine.nvim",
-  dependencies = { "nvim-tree/nvim-web-devicons" },
+  dependencies = { "nvim-tree/nvim-web-devicons", "catppuccin/nvim" },
   config = function()
       require("lualine").setup({
         options = {
-          theme = require("catppuccin.utils.lualine")("mocha"),
+          theme = "catppuccin-mocha",
           icons_enabled = true,
           globalstatus = true,
         },

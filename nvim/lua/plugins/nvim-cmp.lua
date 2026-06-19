@@ -28,10 +28,10 @@ return {
     end
 
     return {
-      preselect = "item",
+      preselect = cmp.PreselectMode.None,
       completion = {
         autocomplete = { cmp.TriggerEvent.TextChanged },
-        completeopt = "menu,menuone,noinsert",
+        completeopt = "menu,menuone,noinsert,noselect",
         keyword_length = 3,
       },
 
@@ -66,13 +66,11 @@ return {
       },
 
       mapping = cmp.mapping.preset.insert({
-        -- Tab: confirm selection, jump snippets, or trigger completion_preview
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
-            cmp.confirm({ select = true })
+            cmp.select_next_item()
             return
           end
-
 
           if luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
@@ -106,16 +104,6 @@ return {
             fallback()
           end
         end, { "i", "s" }),
-
-        -- '.': insert dot and confirm suggestion
-        ["."] = cmp.mapping(function(fallback)
-          if cmp.visible() and cmp.get_active_entry() then
-            cmp.confirm({ select = false })
-            feedkeys(".")
-          else
-            fallback()
-          end
-        end, { "i" }),
 
         -- Ctrl-j: trigger completion or select next items
         ["<C-j>"] = cmp.mapping(function()
