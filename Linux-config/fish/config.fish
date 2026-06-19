@@ -12,7 +12,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 fish_add_path (go env GOPATH)/bin
 # uv (astral)
 fish_add_path "/home/lou/.local/bin"
-fish_add_path "$HOME/.dotnet/tools"
+fish_add_path --path "$HOME/.dotnet/tools"
 fish_add_path /opt/cuda/bin
 
 # pnpm

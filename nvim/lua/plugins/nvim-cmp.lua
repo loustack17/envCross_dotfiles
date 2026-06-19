@@ -1,4 +1,3 @@
--- lua/plugins/nvim-cmp.lua
 return {
   "hrsh7th/nvim-cmp",
   dependencies = {
@@ -10,15 +9,12 @@ return {
     "hrsh7th/cmp-cmdline",
     "saadparwaiz1/cmp_luasnip",
   },
-
   opts = function()
     local cmp = require("cmp")
     local luasnip = require("luasnip")
-    local lspkind = require('lspkind')
+    local lspkind = require("lspkind")
 
-
-    local has_words_before = function()
-      unpack = unpack or table.unpack
+    local function has_words_before()
       local line, col = unpack(vim.api.nvim_win_get_cursor(0))
       if col == 0 then
         return false
@@ -27,102 +23,103 @@ return {
       return current_line:sub(col, col):match("%s") == nil
     end
 
+    local function loaded_buffers()
+      return vim.tbl_filter(function(buf)
+        return vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_line_count(buf) < 5000
+      end, vim.api.nvim_list_bufs())
+    end
+
     return {
       preselect = cmp.PreselectMode.None,
       completion = {
         autocomplete = { cmp.TriggerEvent.TextChanged },
         completeopt = "menu,menuone,noinsert,noselect",
-        keyword_length = 3,
+        keyword_length = 2,
       },
-
+      performance = {
+        debounce = 80,
+        throttle = 40,
+        fetching_timeout = 120,
+        max_view_entries = 40,
+      },
+      window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+      },
       sources = cmp.config.sources({
-        { name = "codeium" },
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
-        { name = "path" },
+        { name = "codeium", keyword_length = 3, priority = 700 },
+        { name = "nvim_lsp", priority = 1000 },
+        { name = "luasnip", priority = 750 },
+        { name = "path", priority = 500 },
         {
           name = "buffer",
+          keyword_length = 4,
+          priority = 250,
           option = {
-            get_bufnrs = function()
-              return vim.api.nvim_list_bufs()
-            end,
+            get_bufnrs = loaded_buffers,
           },
         },
       }),
-
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
         end,
       },
-
-      -- Windsurf format settings
       formatting = {
         format = lspkind.cmp_format({
-          mode = "symbol",
+          mode = "symbol_text",
           maxwidth = 50,
           ellipsis_char = "...",
         }),
       },
-
       mapping = cmp.mapping.preset.insert({
+        ["<C-l>"] = cmp.mapping.complete(),
+        ["<C-e>"] = cmp.mapping.abort(),
+        ["<CR>"] = cmp.mapping.confirm({ select = false }),
+        ["<C-j>"] = cmp.mapping(function()
+          if cmp.visible() then
+            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+            return
+          end
+          cmp.complete()
+        end, { "i", "s" }),
+        ["<C-k>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+            return
+          end
+          fallback()
+        end, { "i", "s" }),
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
             return
           end
-
           if luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
             return
           end
-
           if has_words_before() then
             cmp.complete()
             return
           end
-
           fallback()
         end, { "i", "s" }),
-
-        -- Shift-Tab: select previous item or jump backwards in snippets
-        -- ["<S-Tab>"] = cmp.mapping(function(fallback)
-        --   if cmp.visible() then
-        --     cmp.select_prev_item()
-        --   elseif luasnip.jumpable(-1) then
-        --     luasnip.jump(-1)
-        --   else
-        --     fallback()
-        --   end
-        -- end, { "i", "s" }),
-
-        -- Enter<CR>: confirm selection
-        ["<CR>"] = cmp.mapping(function(fallback)
-          if cmp.visible() and cmp.get_active_entry() then
-            cmp.confirm({ select = false })
-          else
-            fallback()
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item()
+            return
           end
-        end, { "i", "s" }),
-
-        -- Ctrl-j: trigger completion or select next items
-        ["<C-j>"] = cmp.mapping(function()
-          if not cmp.visible() then
-            cmp.complete()
-          else
-            cmp.select_next_item()
+          if luasnip.jumpable(-1) then
+            luasnip.jump(-1)
+            return
           end
+          fallback()
         end, { "i", "s" }),
-
-        -- Ctrl-e: abort completion_preview or close completion menu
-        ["<C-e>"] = cmp.mapping.abort(),
       }),
     }
   end,
-
-  -- lazy.nvim standard：use opts to called cmp.setup
   config = function(_, opts)
-    local cmp = require("cmp")
-    cmp.setup(opts)
+    require("cmp").setup(opts)
   end,
 }
