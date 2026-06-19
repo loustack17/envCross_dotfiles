@@ -4,13 +4,11 @@ return {
     dependencies = {
       { 'mason-org/mason.nvim' },
       { 'mason-org/mason-lspconfig.nvim' },
-      { 'hrsh7th/nvim-cmp' },
-      { 'hrsh7th/cmp-buffer' },
-      { 'hrsh7th/cmp-nvim-lsp' }
+      { 'saghen/blink.cmp' }
     },
     config = function()
       vim.lsp.config('*', {
-        capabilities = require('cmp_nvim_lsp').default_capabilities()
+        capabilities = require('blink.cmp').get_lsp_capabilities()
       })
 
       local function python_root(bufnr, on_dir)
