@@ -10,16 +10,21 @@ return {
       preset = "none",
       ["<C-j>"] = { "select_next", "show" },
       ["<C-k>"] = { "select_prev", "fallback" },
+      ["<Down>"] = { "select_next", "fallback" },
+      ["<Up>"] = { "select_prev", "fallback" },
       ["<C-l>"] = { "show", "show_documentation", "hide_documentation" },
       ["<C-e>"] = { "hide", "fallback" },
       ["<CR>"] = { "accept", "fallback" },
-      ["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
+      ["<Tab>"] = { "select_and_accept", "snippet_forward", "fallback" },
       ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
     },
     appearance = {
       nerd_font_variant = "mono",
     },
     completion = {
+      trigger = {
+        show_in_snippet = false,
+      },
       list = {
         selection = {
           preselect = false,
