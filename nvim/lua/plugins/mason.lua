@@ -11,7 +11,6 @@ local LSPS = {
   "cssls",
   "terraformls",
   "tflint",
-  "csharp_ls",
   "jsonls",
   "yamlls",
   "tinymist"

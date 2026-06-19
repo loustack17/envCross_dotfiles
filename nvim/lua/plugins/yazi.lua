@@ -1,11 +1,23 @@
 return {
   "mikavilpas/yazi.nvim",
-  version = "*", -- use the latest stable version
-  event = "VeryLazy",
+  version = "*",
+  lazy = false,
   dependencies = {
     { "nvim-lua/plenary.nvim", lazy = true },
   },
   keys = {
+    {
+      "<leader>e",
+      mode = { "n", "v" },
+      "<cmd>Yazi<cr>",
+      desc = "Open yazi at the current file",
+    },
+    {
+      "<leader>o",
+      mode = { "n", "v" },
+      "<cmd>Yazi<cr>",
+      desc = "Open yazi at the current file",
+    },
     {
       "<leader>-",
       mode = { "n", "v" },
@@ -23,13 +35,10 @@ return {
       desc = "Resume the last yazi session",
     },
   },
-  ---@type YaziConfig | {}
   opts = {
-    -- if you want to open yazi instead of netrw, see below for more info
-    open_for_directories = false,
+    open_for_directories = true,
     keymaps = {
       show_help = "<f1>",
     },
   },
-  -- netrw is disabled in init.lua (vim.g.loaded_netrwPlugin = 1)
 }

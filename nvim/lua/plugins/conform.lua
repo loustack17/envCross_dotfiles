@@ -22,7 +22,6 @@ return {
       typescript = { "eslint_d", "prettierd", "prettier", stop_after_first = true },
       sass = { "stylelint" },
       sql = { "sqlfmt", "sql_formatter" },
-      csharp = { "csharpier" },
       latex = { "latexindent" },
     },
     default_format_opts = {

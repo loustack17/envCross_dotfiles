@@ -10,14 +10,6 @@ return {
         options = {
             close_command = "bdelete! %d",
             diagnostics = "nvim_lsp",
-            offsets = {
-                {
-                    filetype = "neo-tree",
-                    text = "File Explorer",
-                    highlight = "Directory",
-                    separator = true,
-                },
-            },
             separator_style = "slant",
         },
     },
