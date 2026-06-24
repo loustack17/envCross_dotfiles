@@ -125,6 +125,9 @@ command = "uvx"
 args = ["code-review-graph", "serve"]
 type = "stdio"
 
+[mcp_servers.code-review-graph.tools.detect_changes_tool]
+approval_mode = "approve"
+
 [mcp_servers.mem0]
 type = "stdio"
 command = "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh"

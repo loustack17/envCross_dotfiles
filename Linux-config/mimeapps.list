@@ -41,6 +41,7 @@ image/svg+xml=org.gnome.Loupe.desktop
 x-scheme-handler/slack=slack.desktop
 message/rfc822=userapp-Thunderbird-AMNBQ3.desktop
 x-scheme-handler/mid=userapp-Thunderbird-AMNBQ3.desktop
+x-scheme-handler/net.thunderbird=userapp-Thunderbird-IF84Q3.desktop
 
 [Added Associations]
 inode/directory=pcmanfm-qt.desktop;kitty-open.desktop;org.gnome.Nautilus.desktop;org.kde.kate.desktop;yazi.desktop;
@@ -86,3 +87,4 @@ image/svg+xml=org.gnome.Loupe.desktop;
 text/vnd.trolltech.linguist=org.gnome.gedit.desktop;
 x-scheme-handler/mailto=userapp-Thunderbird-AMNBQ3.desktop;
 x-scheme-handler/mid=userapp-Thunderbird-AMNBQ3.desktop;
+x-scheme-handler/net.thunderbird=userapp-Thunderbird-IF84Q3.desktop;

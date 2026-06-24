@@ -263,7 +263,11 @@ remove_stow_conflicts() {
         base="$(basename "$item")"
         target="$dst_dir/$base"
         if [[ -d "$item" && ! -L "$item" ]]; then
-            [[ -d "$target" ]] && remove_stow_conflicts "$item" "$target"
+            if [[ -L "$target" ]]; then
+                rm -f "$target"
+            elif [[ -d "$target" ]]; then
+                remove_stow_conflicts "$item" "$target"
+            fi
         else
             [[ -e "$target" || -L "$target" ]] && rm -f "$target"
         fi
@@ -395,6 +399,7 @@ link_ai_shared_files() {
         opencode)
             create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules"
             create_file_link "$REPO_ROOT/ai-assistants/.opencode/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
+            create_file_link "$REPO_ROOT/ai-assistants/.opencode/oh-my-opencode-slim.json" "$HOME/.config/opencode/oh-my-opencode-slim.json" "opencode-omc-slim"
             create_file_link "$REPO_ROOT/ai-assistants/.opencode/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
             create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills"
             create_path_link "$opencode_root/agents" "$HOME/.config/opencode/agents" "opencode-agents"

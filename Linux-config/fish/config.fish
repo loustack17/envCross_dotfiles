@@ -15,11 +15,9 @@ fish_add_path "/home/lou/.local/bin"
 fish_add_path --path "$HOME/.dotnet/tools"
 fish_add_path /opt/cuda/bin
 
-# pnpm
 set -gx PNPM_HOME "/home/lou/.local/share/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-    set -gx PATH "$PNPM_HOME" $PATH
-end
+fish_add_path --path "$PNPM_HOME"
+fish_add_path --path "$PNPM_HOME/bin"
 
 # functions
 function y

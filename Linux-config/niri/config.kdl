@@ -78,7 +78,7 @@ output "eDP-1" {
     position x=2560 y=180
 }
 
-output "DP-4" {
+output "DP-1" {
     mode "1920x1080@74.973"
     scale 1
     position x=-1920 y=180
