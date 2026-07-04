@@ -35,7 +35,7 @@ nu install.nu
 
 # Advanced usage examples
 nu install.nu --dry-run
-nu install.nu --skip [wezterm]
+nu install.nu --skip [yasb]
 nu install.nu --only [nvim lazygit]
 ```
 
@@ -171,7 +171,7 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 </details>
 
 ### Windows
-Windows terminal, wezterm, nushell, neovim, yazi, and lazygit configurations are supported.
+Windows terminal, nushell, neovim, yazi, lazygit, yasb, komorebi, and whkd configurations are supported.
 
 <details>
 <summary><b>View Windows Configuration Paths</b></summary>
@@ -180,10 +180,15 @@ Windows terminal, wezterm, nushell, neovim, yazi, and lazygit configurations are
 |------|-------------|
 | **windows terminal** | `%SCOOP%\apps\windows-terminal\current\settings\settings.json` |
 | **powershell** | `%USERPROFILE%\Documents\PowerShell\Microsoft.PowerShell_profile.ps1` |
-| **wezterm** | `%USERPROFILE%\.config\wezterm` |
 | **nushell** | `%APPDATA%\nushell` |
 | **neovim** | `%LOCALAPPDATA%\nvim` |
-| **yazi** | `%APPDATA%\yazi\config` |
+| **yazi** | `%APPDATA%\yazi` |
 | **lazygit** | `%LOCALAPPDATA%\lazygit` |
+| **yasb** | `%USERPROFILE%\.config\yasb\config.yaml` |
+| **yasb** | `%USERPROFILE%\.config\yasb\styles.css` |
+| **komorebi** | `%USERPROFILE%\komorebi.json` |
+| **komorebi** | `%USERPROFILE%\komorebi.bar.json` |
+| **komorebi** | `%USERPROFILE%\applications.json` |
+| **whkd** | `%USERPROFILE%\.config\whkdrc` |
 
 </details>

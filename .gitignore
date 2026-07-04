@@ -18,6 +18,7 @@ nvim/lazy-lock.json
 yazi/plugins/custom-shell.yazi/yazi_cmd_history
 yazi/plugins/whoosh.yazi/bookmarks
 yazi/config/
+Windows/yasb/**/*.log
 C:Users*
 nvim.log
 /.codex

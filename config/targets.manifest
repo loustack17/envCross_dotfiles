@@ -36,6 +36,18 @@ ai|ai|opencode|||false||$HOME/.config/opencode
 ai|ai|cc-switch|||false|ai-assistants/.cc-switch/settings.json|$HOME/.cc-switch/settings.json
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig
+core|windows|windows-terminal|wt|windows-terminal|false|Windows/windows terminal/settings.json|%SCOOP%\apps\windows-terminal\current\settings\settings.json
+core|windows|powershell|||false|Windows/powershell/Microsoft.PowerShell_profile.ps1|%USERPROFILE%\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+core|windows|nushell|nu|nu|false|Windows/nushell|%APPDATA%\nushell
+core|windows|neovim|nvim|neovim|false|nvim|%LOCALAPPDATA%\nvim
+core|windows|yazi|yazi|yazi|false|yazi|%APPDATA%\yazi
+core|windows|lazygit|lazygit|lazygit|false|lazygit|%LOCALAPPDATA%\lazygit
+core|windows|yasb|yasb|yasb|false|Windows/yasb/config.yaml|%USERPROFILE%\.config\yasb\config.yaml
+core|windows|yasb-style|||false|Windows/yasb/styles.css|%USERPROFILE%\.config\yasb\styles.css
+core|windows|komorebi|komorebi|komorebi|false|Windows/komorebi/komorebi.json|%USERPROFILE%\komorebi.json
+core|windows|komorebi-bar|||false|Windows/komorebi/komorebi.bar.json|%USERPROFILE%\komorebi.bar.json
+core|windows|komorebi-applications|||false|Windows/komorebi/applications.json|%USERPROFILE%\applications.json
+core|windows|whkd|whkd|whkd|false|Windows/whkd/whkdrc|%USERPROFILE%\.config\whkdrc
 niri|linux|waybar|waybar|waybar|false|Linux-config/waybar|waybar
 niri|linux|swaync|swaync|swaync|false|Linux-config/swaync|swaync
 niri|linux|zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|zathura

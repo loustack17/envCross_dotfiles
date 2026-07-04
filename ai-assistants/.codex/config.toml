@@ -1,7 +1,7 @@
 personality = "pragmatic"
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
-model_instructions_file = "~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/AGENTS.md"
+model_instructions_file = "~/.codex/AGENTS.md"
 [projects."/home/lou/Documents/Cases/2026/scio-ai-backend"]
 trust_level = "trusted"
 
@@ -108,7 +108,7 @@ enabled = true
 enabled = true
 
 [[skills.config]]
-path = "~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/SKILLS/apify-ultimate-scraper/SKILL.md"
+path = "~/.codex/skills/apify-ultimate-scraper/SKILL.md"
 enabled = false
 
 [windows]

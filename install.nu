@@ -1,5 +1,5 @@
 # Windows dotfiles installer via Scoop
-# Tools: WezTerm, Windows Terminal, Nushell, Neovim, Yazi, Lazygit
+# Tools: Windows Terminal, Nushell, Neovim, Yazi, Lazygit, Yasb, Komorebi, Whkd
 
 def main [
     --dry-run (-n)          # Show what would be done without making changes
@@ -11,13 +11,15 @@ def main [
     --only: any = []        # Only process specific tools
     --help (-h)             # Show this help
 ] {
-    let repo_root = (pwd)
+    let current_file = ($env.CURRENT_FILE? | default "")
+    let repo_root = if ($current_file | str length) > 0 { $current_file | path dirname } else { pwd }
     let windows_root = ($repo_root | path join "Windows")
     let backup_root = ($repo_root | path join $"backup/(date now | format date '%Y%m%d-%H%M%S')")
 
     let home = $env.USERPROFILE
     let appdata = $env.APPDATA
     let localappdata = $env.LOCALAPPDATA
+    let user_config_home = ($home | path join ".config")
 
     def log_info  [msg: string] { print $"(ansi green)[INFO](ansi reset)  ($msg)" }
     def log_warn  [msg: string] { print $"(ansi yellow)[WARN](ansi reset)  ($msg)" }
@@ -108,27 +110,33 @@ def main [
     }
 
     def read_link_target [path: string]: nothing -> string {
-        if not ($path | path exists) {
-            return ""
-        }
-
         try {
-            ^powershell -Command $"(Get-Item -LiteralPath '($path)' -ErrorAction SilentlyContinue).Target" | str trim
+            ^powershell -NoProfile -Command $"(Get-Item -LiteralPath '($path)' -Force -ErrorAction SilentlyContinue).Target" | str trim
         } catch {
             ""
         }
     }
 
-    def is_repo_symlink [path: string, repo_root: string]: nothing -> bool {
+    def remove_existing_path [path: string]: nothing -> bool {
+        try {
+            let script = '& { param([string]$Path) $ErrorActionPreference = "Stop"; $item = Get-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue; if ($null -eq $item) { exit 0 }; if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { if ($item.PSIsContainer) { [System.IO.Directory]::Delete($Path) } else { [System.IO.File]::Delete($Path) } } else { Remove-Item -LiteralPath $Path -Recurse -Force } }'
+            let result = (^powershell -NoProfile -Command $script $path | complete)
+            $result.exit_code == 0
+        } catch {
+            false
+        }
+    }
+
+    def is_symlink [path: string]: nothing -> bool {
         let target = (read_link_target $path)
-        ($target | str length) > 0 and ($target | str starts-with $repo_root)
+        ($target | str length) > 0
     }
 
     def backup [path: string, name: string, no_bak: bool, dry: bool, bak_root: string, repo_root: string] {
         if $no_bak or not ($path | path exists) { return }
 
-        if (is_repo_symlink $path $repo_root) {
-            log_info $"($name): already symlinked to repo, skipping backup"
+        if (is_symlink $path) {
+            log_info $"($name): existing symlink, skipping backup"
             return
         }
 
@@ -152,17 +160,22 @@ def main [
             log_dry $"Would link: ($name) -> ($dest)"
             return
         }
-        if ($dest | path exists) {
-            try { rm -r $dest } catch { log_warn $"Failed to remove: ($dest)"; return }
+        let link_target = (read_link_target $dest)
+        if ($dest | path exists) or (($link_target | str length) > 0) {
+            if not (remove_existing_path $dest) {
+                log_warn $"Failed to remove: ($dest)"
+                return
+            }
         }
         mkdir ($dest | path dirname)
         try {
-            if $is_file {
-                ^cmd /c mklink $dest $source | complete | ignore
+            let result = (^powershell -NoProfile -Command $"New-Item -ItemType SymbolicLink -Path '($dest)' -Target '($source)' -Force | Out-Null" | complete)
+            if $result.exit_code == 0 {
+                log_info $"Linked: ($name) -> ($dest)"
             } else {
-                ^cmd /c mklink /D $dest $source | complete | ignore
+                log_error $"Failed to link: ($name)"
+                log_warn "Enable Developer Mode: Settings → For developers → Developer Mode"
             }
-            log_info $"Linked: ($name) -> ($dest)"
         } catch {
             log_error $"Failed to link: ($name)"
             log_warn "Enable Developer Mode: Settings → For developers → Developer Mode"
@@ -248,9 +261,15 @@ def main [
         let link_target = (read_link_target $dest)
 
         if (($link_target | str length) > 0) {
-            try { rm -r $dest } catch { log_warn $"Failed to remove: ($dest)"; return }
+            if not (remove_existing_path $dest) {
+                log_warn $"Failed to remove: ($dest)"
+                return
+            }
         } else if ($dest | path exists) and (($dest | path type) != "dir") {
-            try { rm -r $dest } catch { log_warn $"Failed to remove: ($dest)"; return }
+            if not (remove_existing_path $dest) {
+                log_warn $"Failed to remove: ($dest)"
+                return
+            }
         }
 
         if not ($dest | path exists) {
@@ -437,12 +456,14 @@ def main [
         }
 
         let tools = [
-            {name: "WezTerm",           pkg: "wezterm",           cmd: "wezterm"}
             {name: "Windows-Terminal",  pkg: "windows-terminal",  cmd: "wt"}
             {name: "Nushell",           pkg: "nu",                cmd: "nu"}
             {name: "Neovim",            pkg: "neovim",            cmd: "nvim"}
             {name: "Yazi",              pkg: "yazi",              cmd: "yazi"}
             {name: "Lazygit",           pkg: "lazygit",           cmd: "lazygit"}
+            {name: "Yasb",              pkg: "yasb",              cmd: "yasb"}
+            {name: "Komorebi",          pkg: "komorebi",          cmd: "komorebi"}
+            {name: "Whkd",              pkg: "whkd",              cmd: "whkd"}
         ]
 
         for tool in $tools {
@@ -454,42 +475,6 @@ def main [
 
     # === Step 2: Build targets ===
     mut targets = []
-
-    if (should_install "wezterm" $skip_list $only_list) {
-        mut wezterm_dir = ($windows_root | path join "wezterm")
-        if not ($wezterm_dir | path exists) {
-            let fallback = ($repo_root | path join "wezterm")
-            if ($fallback | path exists) {
-                log_warn "WezTerm dir missing under Windows/; using repo root fallback"
-                $wezterm_dir = $fallback
-            }
-        }
-        if ($wezterm_dir | path exists) {
-            $targets ++= [{
-                name: "WezTerm"
-                source: $wezterm_dir
-                dest: ($home | path join ".config" | path join "wezterm")
-                is_file: false
-            }]
-        }
-
-        let wezterm_lua_win  = ($windows_root | path join ".wezterm.lua")
-        let wezterm_lua_root = ($repo_root    | path join ".wezterm.lua")
-        let wezterm_lua = if ($wezterm_lua_win | path exists) {
-            $wezterm_lua_win
-        } else if ($wezterm_lua_root | path exists) {
-            log_warn "WezTerm .wezterm.lua missing under Windows/; using repo root fallback"
-            $wezterm_lua_root
-        } else { "" }
-        if ($wezterm_lua | str length) > 0 {
-            $targets ++= [{
-                name: ".wezterm.lua"
-                source: $wezterm_lua
-                dest: ($home | path join ".wezterm.lua")
-                is_file: true
-            }]
-        }
-    }
 
     if (should_install "windows-terminal" $skip_list $only_list) {
         mut wt_src = ($windows_root | path join "windows terminal" | path join "settings.json")
@@ -513,21 +498,23 @@ def main [
         }
     }
 
-    mut pwsh_profile = ($windows_root | path join "powershell" | path join "Microsoft.PowerShell_profile.ps1")
-    if not ($pwsh_profile | path exists) {
-        let fallback = ($repo_root | path join "powershell" | path join "Microsoft.PowerShell_profile.ps1")
-        if ($fallback | path exists) {
-            log_warn "PowerShell profile missing under Windows/; using repo root fallback"
-            $pwsh_profile = $fallback
+    if (should_install "powershell" $skip_list $only_list) {
+        mut pwsh_profile = ($windows_root | path join "powershell" | path join "Microsoft.PowerShell_profile.ps1")
+        if not ($pwsh_profile | path exists) {
+            let fallback = ($repo_root | path join "powershell" | path join "Microsoft.PowerShell_profile.ps1")
+            if ($fallback | path exists) {
+                log_warn "PowerShell profile missing under Windows/; using repo root fallback"
+                $pwsh_profile = $fallback
+            }
         }
-    }
-    if ($pwsh_profile | path exists) {
-        $targets ++= [{
-            name: "PowerShell profile"
-            source: $pwsh_profile
-            dest: ($home | path join "Documents" | path join "PowerShell" | path join "Microsoft.PowerShell_profile.ps1")
-            is_file: true
-        }]
+        if ($pwsh_profile | path exists) {
+            $targets ++= [{
+                name: "PowerShell profile"
+                source: $pwsh_profile
+                dest: ($home | path join "Documents" | path join "PowerShell" | path join "Microsoft.PowerShell_profile.ps1")
+                is_file: true
+            }]
+        }
     }
 
     if (should_install "nushell" $skip_list $only_list) {
@@ -576,6 +563,34 @@ def main [
         }]
     }
 
+    let yasb_config_dir = ($user_config_home | path join "yasb")
+    if (should_install "yasb" $skip_list $only_list) {
+        let yasb_src = ($windows_root | path join "yasb")
+        let yasb_files = [
+            {src: ($yasb_src | path join "config.yaml"), dest: ($yasb_config_dir | path join "config.yaml"), is_file: true, name: "Yasb config.yaml"}
+            {src: ($yasb_src | path join "styles.css"),  dest: ($yasb_config_dir | path join "styles.css"),  is_file: true, name: "Yasb styles.css"}
+        ]
+        $targets ++= (existing_targets $yasb_files)
+    }
+
+    if (should_install "komorebi" $skip_list $only_list) {
+        let komorebi_src = ($windows_root | path join "komorebi")
+        let komorebi_files = [
+            {src: ($komorebi_src | path join "komorebi.json"),     dest: ($home | path join "komorebi.json"),     is_file: true, name: "Komorebi config"}
+            {src: ($komorebi_src | path join "komorebi.bar.json"), dest: ($home | path join "komorebi.bar.json"), is_file: true, name: "Komorebi bar config"}
+            {src: ($komorebi_src | path join "applications.json"), dest: ($home | path join "applications.json"), is_file: true, name: "Komorebi applications"}
+        ]
+        $targets ++= (existing_targets $komorebi_files)
+    }
+
+    let link_whkd = ("whkd" not-in $skip_list) and ((should_install "komorebi" $skip_list $only_list) or (should_install "whkd" $skip_list $only_list))
+    if $link_whkd {
+        let whkd_files = [
+            {src: ($windows_root | path join "whkd" | path join "whkdrc"), dest: ($user_config_home | path join "whkdrc"), is_file: true, name: "WHKD config"}
+        ]
+        $targets ++= (existing_targets $whkd_files)
+    }
+
     # AI tools
     let ai_root      = ($repo_root | path join "ai-assistants")
     let claude_root  = ($ai_root   | path join ".claude")
@@ -583,25 +598,30 @@ def main [
     let shared_skills = ($ai_root  | path join "SKILLS")
     let claude_home = ($home | path join ".claude")
     let codex_home = ($home | path join ".codex")
-    let opencode_home = ($home | path join ".config" | path join "opencode")
+    let opencode_home = ($user_config_home | path join "opencode")
     let gemini_home = ($home | path join ".gemini")
     let has_claude = (check_cmd "claude")
     let has_codex = (check_cmd "codex")
     let has_opencode = (check_cmd "opencode")
     let has_gemini = (check_cmd "gemini")
     let has_hermes = (check_cmd "hermes")
+    let should_link_claude = $has_claude and (should_install "claude-code" $skip_list $only_list)
+    let should_link_codex = $has_codex and (should_install "codex" $skip_list $only_list)
+    let should_link_opencode = $has_opencode and (should_install "opencode" $skip_list $only_list)
+    let should_link_gemini = $has_gemini and (should_install "gemini-cli" $skip_list $only_list)
+    let should_link_hermes = $has_hermes and (should_install "hermes-agent" $skip_list $only_list)
     let claude_skills = ($claude_root | path join "skills")
     let claude_agents = ($claude_root | path join "agents")
     let claude_rules  = ($claude_root | path join "rules")
     let claude_statusline = ($claude_root | path join "statusline-command.sh")
     let claude_marketplace = ($claude_root | path join "marketplace")
     let claude_skills_dest = ($claude_home | path join "skills")
-    let active_claude_skills = if $has_claude {
+    let active_claude_skills = if $should_link_claude {
         if ($claude_skills | path exists) { $claude_skills } else { $shared_skills }
     } else {
         ""
     }
-    let resolved_claude_skill_targets = if $has_claude {
+    let resolved_claude_skill_targets = if $should_link_claude {
         collect_link_targets $active_claude_skills $claude_skills_dest ".claude skill"
     } else {
         []
@@ -618,7 +638,7 @@ def main [
         []
     }
 
-    if $has_claude {
+    if $should_link_claude {
         let claude_files = [
             {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: ".claude CLAUDE.md"}
             {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: ".claude settings"}
@@ -642,7 +662,7 @@ def main [
     }
 
     let codex_config = ($ai_root | path join ".codex" | path join "config.toml")
-    if $has_codex {
+    if $should_link_codex {
         let codex_files = [
             {src: $shared_agents,  dest: ($codex_home | path join "AGENTS.md"),   is_file: true,  name: "Codex AGENTS.md"}
             {src: $codex_config,   dest: ($codex_home | path join "config.toml"), is_file: true,  name: "Codex config.toml"}
@@ -651,7 +671,7 @@ def main [
         $targets ++= (existing_targets $codex_files)
     }
 
-    if $has_opencode {
+    if $should_link_opencode {
         let opencode_files = [
             {src: $shared_agents, dest: ($opencode_home | path join "AGENTS.md"),    is_file: true,  name: "opencode AGENTS.md"}
             {src: ($ai_root | path join ".opencode" | path join "opencode.json"),     dest: ($opencode_home | path join "opencode.json"), is_file: true,  name: "opencode config"}
@@ -666,7 +686,7 @@ def main [
     }
 
     let gemini_md = ($ai_root | path join ".gemini" | path join "GEMINI.md")
-    if $has_gemini and ($gemini_md | path exists) {
+    if $should_link_gemini and ($gemini_md | path exists) {
         $targets ++= [{
             name: ".gemini GEMINI.md"
             source: $gemini_md
@@ -681,7 +701,7 @@ def main [
         {src: ($ai_root | path join ".hermes" | path join "config.yaml"),  dest: ($hermes_home | path join "config.yaml"),  is_file: true,  name: "Hermes config.yaml"}
         {src: ($ai_root | path join ".hermes" | path join "hooks"),        dest: ($hermes_home | path join "hooks"),        is_file: false, name: "Hermes hooks"}
     ]
-    if $has_hermes {
+    if $should_link_hermes {
         $targets ++= (existing_targets $hermes_files)
     }
 
@@ -714,12 +734,15 @@ def main [
     if ($active_claude_skill_targets | is-not-empty) {
         ensure_real_dir $claude_skills_dest ".claude skills" $dry_run
     }
+    if (should_install "yasb" $skip_list $only_list) {
+        ensure_real_dir $yasb_config_dir "Yasb config dir" $dry_run
+    }
 
     for t in $targets {
         link_config $t.source $t.dest $t.is_file $t.name $dry_run
     }
 
-    if $has_claude {
+    if $should_link_claude {
         ensure_claude_local_plugin $claude_marketplace $dry_run
     }
 
