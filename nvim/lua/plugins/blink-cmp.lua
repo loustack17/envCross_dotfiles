@@ -25,6 +25,9 @@ return {
       trigger = {
         show_in_snippet = false,
       },
+      ghost_text = {
+        enabled = false,
+      },
       list = {
         selection = {
           preselect = false,
@@ -48,9 +51,8 @@ return {
       preset = "luasnip",
     },
     sources = {
-      default = { "lsp", "path", "snippets", "buffer", "codeium" },
+      default = { "lsp", "path", "snippets", "buffer" },
       providers = {
-        codeium = { name = "Codeium", module = "codeium.blink", async = true },
         buffer = {
           score_offset = -5,
           opts = {

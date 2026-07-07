@@ -13,6 +13,7 @@ end
 require("config.options")
 require("config.lazy")
 require("config.keymaps")
+require("config.autocmds")
 
 -- detect OS
 local is_windows = vim.loop.os_uname().sysname:find("Windows") ~= nil
