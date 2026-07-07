@@ -193,6 +193,16 @@ def main [
         } }
     }
 
+    def path_has_entries [path: string]: nothing -> bool {
+        if not ($path | path exists) { return false }
+        if (($path | path type) != "dir") { return true }
+        try { ls -a $path | first | is-not-empty } catch { false }
+    }
+
+    def existing_non_empty_targets [items: list<any>]: nothing -> list<any> {
+        existing_targets ($items | where { |it| path_has_entries $it.src })
+    }
+
     def is_stub_link_candidate [source: string]: nothing -> bool {
         let name = ($source | path basename)
         ($name == ".system") or not ($name | str contains ".")
@@ -596,6 +606,7 @@ def main [
     let claude_root  = ($ai_root   | path join ".claude")
     let shared_agents = ($ai_root  | path join "AGENTS.md")
     let shared_skills = ($ai_root  | path join "SKILLS")
+    let shared_hooks = ($ai_root  | path join "hooks")
     let claude_home = ($home | path join ".claude")
     let codex_home = ($home | path join ".codex")
     let opencode_home = ($user_config_home | path join "opencode")
@@ -610,19 +621,13 @@ def main [
     let should_link_opencode = $has_opencode and (should_install "opencode" $skip_list $only_list)
     let should_link_gemini = $has_gemini and (should_install "gemini-cli" $skip_list $only_list)
     let should_link_hermes = $has_hermes and (should_install "hermes-agent" $skip_list $only_list)
-    let claude_skills = ($claude_root | path join "skills")
     let claude_agents = ($claude_root | path join "agents")
     let claude_rules  = ($claude_root | path join "rules")
     let claude_statusline = ($claude_root | path join "statusline-command.sh")
     let claude_marketplace = ($claude_root | path join "marketplace")
     let claude_skills_dest = ($claude_home | path join "skills")
-    let active_claude_skills = if $should_link_claude {
-        if ($claude_skills | path exists) { $claude_skills } else { $shared_skills }
-    } else {
-        ""
-    }
     let resolved_claude_skill_targets = if $should_link_claude {
-        collect_link_targets $active_claude_skills $claude_skills_dest ".claude skill"
+        collect_link_targets $shared_skills $claude_skills_dest ".claude skill"
     } else {
         []
     }
@@ -642,19 +647,21 @@ def main [
         let claude_files = [
             {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: ".claude CLAUDE.md"}
             {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: ".claude settings"}
-            {src: ($claude_root | path join "hooks"),          dest: ($claude_home | path join "hooks"),                   is_file: false, name: ".claude hooks"}
-            {src: $claude_agents,                              dest: ($claude_home | path join "agents"),                  is_file: false, name: ".claude agents"}
-            {src: $claude_rules,                               dest: ($claude_home | path join "rules"),                   is_file: false, name: ".claude rules"}
+            {src: $shared_hooks,                               dest: ($claude_home | path join "hooks"),                   is_file: false, name: ".claude hooks"}
             {src: $claude_statusline,                          dest: ($claude_home | path join "statusline-command.sh"),   is_file: true,  name: ".claude statusline"}
-            {src: $claude_marketplace,                         dest: ($claude_home | path join "marketplace"),             is_file: false, name: ".claude marketplace"}
         ]
         $targets ++= (existing_targets $claude_files)
+        $targets ++= (existing_non_empty_targets [
+            {src: $claude_agents,      dest: ($claude_home | path join "agents"),      is_file: false, name: ".claude agents"}
+            {src: $claude_rules,       dest: ($claude_home | path join "rules"),       is_file: false, name: ".claude rules"}
+            {src: $claude_marketplace, dest: ($claude_home | path join "marketplace"), is_file: false, name: ".claude marketplace"}
+        ])
         if $should_expand_claude_skills {
             $targets ++= $active_claude_skill_targets
         } else {
             $targets ++= [{
                 name: ".claude skills"
-                source: $active_claude_skills
+                source: $shared_skills
                 dest: $claude_skills_dest
                 is_file: false
             }]

@@ -2,7 +2,7 @@
 Type=Application
 Name=pCloud Drive
 Comment=Cloud storage service for your files
-Exec="/home/lou/Downloads/pCloud.AppImage"
+Exec="/opt/pcloud/pCloud.AppImage"
 Icon=appimagekit-pcloud
 StartupWMClass=pcloud
 Terminal=false

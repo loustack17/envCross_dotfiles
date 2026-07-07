@@ -39,7 +39,3 @@ end
 
 # google cloud sdk
 if [ -f '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc' ]; . '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc'; end
-
-
-# Added by Antigravity CLI installer
-set -gx PATH "/home/lou/.local/bin" $PATH

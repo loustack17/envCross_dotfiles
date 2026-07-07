@@ -359,37 +359,42 @@ create_path_link() {
     fi
 }
 
+directory_has_entries() {
+    local path="$1"
+    [[ -d "$path" ]] || return 1
+    [[ -n "$(find "$path" -mindepth 1 -maxdepth 1 -print -quit)" ]]
+}
+
+create_optional_path_link() {
+    local src="$1"
+    local dst="$2"
+    local name="$3"
+
+    if directory_has_entries "$src"; then
+        create_path_link "$src" "$dst" "$name"
+    elif [[ "$DRY_RUN" == "true" ]]; then
+        log_dry "Would skip optional link: $name"
+    else
+        log_info "$name: skipped (source empty or missing)"
+    fi
+}
+
 link_ai_shared_files() {
     local name="$1"
     local shared_agents="$REPO_ROOT/ai-assistants/AGENTS.md"
     local shared_skills="$REPO_ROOT/ai-assistants/SKILLS"
-    local claude_root="$REPO_ROOT/ai-assistants/.claude"
-    local claude_skills="$claude_root/skills"
-    local claude_agents="$claude_root/agents"
-    local claude_rules="$claude_root/rules"
-    local claude_marketplace="$claude_root/marketplace"
-    local claude_statusline="$claude_root/statusline-command.sh"
-    local opencode_root="$REPO_ROOT/ai-assistants/.opencode"
-    local hermes_root="$REPO_ROOT/ai-assistants/.hermes"
-
-    [[ -d "$claude_skills" ]] || claude_skills="$shared_skills"
 
     case "$name" in
         claude-code)
+            local claude_root="$REPO_ROOT/ai-assistants/.claude"
             create_file_link "$claude_root/CLAUDE.md" "$HOME/.claude/CLAUDE.md" "claude-rules"
             create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings"
-            create_path_link "$claude_root/hooks" "$HOME/.claude/hooks" "claude-hooks"
-            create_path_link "$claude_skills" "$HOME/.claude/skills" "claude-skills"
-            create_file_link "$claude_statusline" "$HOME/.claude/statusline-command.sh" "claude-statusline"
-            if [[ -d "$claude_agents" ]]; then
-                create_path_link "$claude_agents" "$HOME/.claude/agents" "claude-agents"
-            fi
-            if [[ -d "$claude_rules" ]]; then
-                create_path_link "$claude_rules" "$HOME/.claude/rules" "claude-rules-dir"
-            fi
-            if [[ -d "$claude_marketplace" ]]; then
-                create_path_link "$claude_marketplace" "$HOME/.claude/marketplace" "claude-marketplace"
-            fi
+            create_path_link "$REPO_ROOT/ai-assistants/hooks" "$HOME/.claude/hooks" "claude-hooks"
+            create_path_link "$shared_skills" "$HOME/.claude/skills" "claude-skills"
+            create_file_link "$claude_root/statusline-command.sh" "$HOME/.claude/statusline-command.sh" "claude-statusline"
+            create_optional_path_link "$claude_root/agents" "$HOME/.claude/agents" "claude-agents"
+            create_optional_path_link "$claude_root/rules" "$HOME/.claude/rules" "claude-rules-dir"
+            create_optional_path_link "$claude_root/marketplace" "$HOME/.claude/marketplace" "claude-marketplace"
             ;;
         codex)
             create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules"
@@ -397,17 +402,19 @@ link_ai_shared_files() {
             create_path_link "$shared_skills" "$HOME/.codex/skills" "codex-skills"
             ;;
         opencode)
+            local opencode_root="$REPO_ROOT/ai-assistants/.opencode"
             create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules"
-            create_file_link "$REPO_ROOT/ai-assistants/.opencode/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
-            create_file_link "$REPO_ROOT/ai-assistants/.opencode/oh-my-opencode-slim.json" "$HOME/.config/opencode/oh-my-opencode-slim.json" "opencode-omc-slim"
-            create_file_link "$REPO_ROOT/ai-assistants/.opencode/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
+            create_file_link "$opencode_root/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config"
+            create_file_link "$opencode_root/oh-my-opencode-slim.json" "$HOME/.config/opencode/oh-my-opencode-slim.json" "opencode-omc-slim"
+            create_file_link "$opencode_root/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui"
             create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills"
             create_path_link "$opencode_root/agents" "$HOME/.config/opencode/agents" "opencode-agents"
             create_path_link "$opencode_root/commands" "$HOME/.config/opencode/commands" "opencode-commands"
             create_path_link "$opencode_root/plugins" "$HOME/.config/opencode/plugins" "opencode-plugins"
             create_file_link "$opencode_root/enforce-shell-policy.sh" "$HOME/.config/opencode/enforce-shell-policy.sh" "opencode-shell-policy"
             ;;
-        hermes)
+        hermes-agent)
+            local hermes_root="$REPO_ROOT/ai-assistants/.hermes"
             create_file_link "$hermes_root/SOUL.md" "$HOME/.hermes/SOUL.md" "hermes-soul"
             create_file_link "$hermes_root/config.yaml" "$HOME/.hermes/config.yaml" "hermes-config"
             create_path_link "$hermes_root/hooks" "$HOME/.hermes/hooks" "hermes-hooks"
@@ -542,7 +549,7 @@ step_symlink_configs() {
             fi
         fi
 
-        case "$name" in claude-code|codex|opencode|hermes) link_ai_shared_files "$name" ;; esac
+        case "$name" in claude-code|codex|opencode|hermes-agent) link_ai_shared_files "$name" ;; esac
         case "$name" in claude-code) ensure_claude_local_plugin ;; esac
     done
 }

@@ -30,7 +30,7 @@ validate_target_group() {
 
 validate_target_scope() {
     case "$1" in
-        linux|shared|ai) return 0 ;;
+        linux|shared|ai|windows) return 0 ;;
     esac
 
     targets_manifest_error "unsupported scope '$1'"
@@ -64,13 +64,12 @@ load_install_targets() {
         validate_target_scope "$scope"
         [[ -n "$name" ]] || targets_manifest_error "line $line_no is missing a target name"
         [[ "$is_aur" == "true" || "$is_aur" == "false" ]] || targets_manifest_error "line $line_no has invalid is_aur '$is_aur'"
+        [[ "$wanted" == *",$scope,"* ]] || continue
         [[ -z "${seen_names[$name]:-}" ]] || targets_manifest_error "duplicate target name '$name'"
 
         seen_names["$name"]=1
         src="$(expand_target_value "$src")"
         dst="$(expand_target_value "$dst")"
-
-        [[ "$wanted" == *",$scope,"* ]] || continue
 
         TOOLS+=("$name|$cmd|$pkg|$is_aur|$src|$dst")
         TOOL_NAMES+=("$name")

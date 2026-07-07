@@ -83,9 +83,9 @@ During installation, these files are linked to the appropriate locations for eac
 | **Claude Code** | `ai-assistants/.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | **Claude Code** | `ai-assistants/.claude/settings.json` | `~/.claude/settings.json` |
 | **Claude Code** | `ai-assistants/.claude/agents/` | `~/.claude/agents` |
-| **Claude Code** | `ai-assistants/.claude/hooks/` | `~/.claude/hooks` |
+| **Claude Code** | `ai-assistants/hooks/` | `~/.claude/hooks` |
 | **Claude Code** | `ai-assistants/.claude/rules/` | `~/.claude/rules` |
-| **Claude Code** | `ai-assistants/.claude/skills/` | `~/.claude/skills` |
+| **Claude Code** | `ai-assistants/SKILLS/` | `~/.claude/skills` |
 | **Claude Code** | `ai-assistants/.claude/statusline-command.sh` | `~/.claude/statusline-command.sh` |
 | **Claude Code** | `ai-assistants/.claude/marketplace/` | `~/.claude/marketplace` |
 | **Codex** | `ai-assistants/AGENTS.md` | `~/.codex/AGENTS.md` |
@@ -137,6 +137,7 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **fish** | `~/.config/fish` |
 | **direnv** | `~/.config/direnv` |
 | **neovim** | `~/.config/nvim` |
+| **helix** | `~/.config/helix` |
 | **zed** | `~/.config/zed` |
 | **yazi** | `~/.config/yazi` |
 | **lazygit** | `~/.config/lazygit` |
@@ -145,7 +146,6 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **zellij** | `~/.config/zellij` |
 | **systemd-user** | `~/.config/systemd/user` |
 | **waybar** | `~/.config/waybar` |
-| **mako** | `~/.config/mako` |
 | **vicinae** | `~/.config/vicinae` |
 | **pcmanfm-qt** | `~/.config/pcmanfm-qt` |
 | **hyprlock** | `~/.config/hypr` |
