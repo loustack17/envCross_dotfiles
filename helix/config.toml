@@ -1,0 +1,153 @@
+theme = "tokyonight"
+
+[editor]
+line-number = "absolute"
+cursorline = true
+mouse = true
+true-color = true
+color-modes = true
+bufferline = "multiple"
+rulers = [120]
+text-width = 120
+idle-timeout = 250
+completion-timeout = 250
+completion-trigger-len = 2
+auto-completion = true
+preview-completion-insert = false
+completion-replace = false
+path-completion = true
+auto-format = true
+popup-border = "all"
+insert-final-newline = true
+trim-final-newlines = false
+trim-trailing-whitespace = true
+atomic-save = true
+end-of-line-diagnostics = "disable"
+gutters = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
+
+[editor.statusline]
+left = [
+  "mode",
+  "spinner",
+  "file-name",
+  "read-only-indicator",
+  "file-modification-indicator"
+]
+center = []
+right = [
+  "diagnostics",
+  "workspace-diagnostics",
+  "selections",
+  "register",
+  "position",
+  "file-encoding",
+  "file-line-ending",
+  "file-type",
+  "version-control"
+]
+separator = "│"
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+diagnostics = ["warning", "error"]
+workspace-diagnostics = ["warning", "error"]
+
+[editor.lsp]
+enable = true
+display-messages = true
+display-progress-messages = false
+auto-signature-help = true
+display-inlay-hints = false
+display-color-swatches = true
+display-signature-help-docs = true
+snippets = true
+goto-reference-include-declaration = true
+
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+follow-symlinks = true
+deduplicate-links = true
+parents = true
+ignore = true
+git-ignore = true
+git-global = true
+git-exclude = true
+
+[editor.auto-pairs]
+"(" = ")"
+"{" = "}"
+"[" = "]"
+'"' = '"'
+"'" = "'"
+"`" = "`"
+
+[editor.auto-save]
+focus-lost = false
+
+[editor.auto-save.after-delay]
+enable = false
+timeout = 3000
+
+[editor.search]
+smart-case = true
+wrap-around = true
+
+[editor.whitespace]
+render = "none"
+
+[editor.indent-guides]
+render = true
+character = "│"
+skip-levels = 1
+
+[editor.soft-wrap]
+enable = false
+wrap-at-text-width = false
+
+[editor.smart-tab]
+enable = true
+
+[editor.inline-diagnostics]
+cursor-line = "warning"
+other-lines = "disable"
+prefix-len = 1
+max-diagnostics = 5
+
+[keys.normal]
+C-s = ":write"
+C-q = ":quit"
+C-o = ":config-open"
+C-r = ":config-reload"
+F2 = "rename_symbol"
+C-f = "format_selections"
+"C-/" = "toggle_comments"
+# plugins
+A-g = ":run-shell-command lazygit"
+A-y = ":run-shell-command yazi"
+
+# Vim-like
+V = "extend_to_line_bounds"
+p = "paste_clipboard_after"
+P = "paste_clipboard_before"
+y = "yank_to_clipboard"
+
+[keys.insert]
+C-s = [":write", "insert_mode"]
+C-j = "completion"
+
+[keys.select]
+C-s = ":write"
+C-f = "format_selections"
+"C-/" = "toggle_comments"
+A-ret = "code_action"
+
+# Vim-Like
+V = "extend_to_line_bounds"
+p = "paste_clipboard_after"
+P = "paste_clipboard_before"
+y = "yank_to_clipboard"
