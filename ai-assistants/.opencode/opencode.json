@@ -30,7 +30,7 @@
     },
     "orchestrator": {
       "permission": {
-        "*": "deny",
+        "*": "ask",
         "bash": "ask",
         "edit": "ask",
         "glob": "allow",
