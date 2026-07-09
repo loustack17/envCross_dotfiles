@@ -24,10 +24,10 @@ return {
 	"nanozuki/tabby.nvim",
 	lazy = false,
 	keys = {
-		{ "<S-h>", "<Cmd>tabprevious<CR>", desc = "Previous Tab" },
-		{ "<S-l>", "<Cmd>tabnext<CR>", desc = "Next Tab" },
-		{ "<leader>tn", "<Cmd>tabnew<CR>", desc = "New Tab" },
-		{ "<leader>tc", "<Cmd>tabclose<CR>", desc = "Close Tab" },
+		{ "<S-h>", "<Cmd>tabprevious<CR>", desc = "Previous workspace" },
+		{ "<S-l>", "<Cmd>tabnext<CR>", desc = "Next workspace" },
+		{ "<leader>tn", "<Cmd>tabnew<CR>", desc = "New workspace" },
+		{ "<leader>tc", "<Cmd>tabclose<CR>", desc = "Close workspace" },
 	},
 	opts = {
 		line = function(line)
