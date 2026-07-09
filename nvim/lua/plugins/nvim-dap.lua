@@ -109,17 +109,7 @@ end
 
 return {
   "mfussenegger/nvim-dap",
-  keys = {
-    { "<F5>", function() require("dap").continue() end, desc = "Debug continue" },
-    { "<F10>", function() require("dap").step_over() end, desc = "Debug step over" },
-    { "<F11>", function() require("dap").step_into() end, desc = "Debug step into" },
-    { "<F12>", function() require("dap").step_out() end, desc = "Debug step out" },
-    { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "Debug breakpoint" },
-    { "<leader>dB", function() require("dap").set_breakpoint(vim.fn.input("Condition: ")) end, desc = "Debug conditional breakpoint" },
-    { "<leader>dl", function() require("dap").run_last() end, desc = "Debug run last" },
-    { "<leader>dr", function() require("dap").repl.open() end, desc = "Debug REPL" },
-    { "<leader>du", function() require("dapui").toggle() end, desc = "Debug UI" },
-  },
+  lazy = true,
   dependencies = {
     { "theHamsta/nvim-dap-virtual-text", opts = {} },
     { "nvim-neotest/nvim-nio" },

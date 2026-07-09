@@ -3,24 +3,11 @@ return {
 		"folke/which-key.nvim",
 		event = "VeryLazy",
 		opts = {},
-		keys = {
-			{
-				"<leader>?",
-				function()
-					require("which-key").show({ global = false })
-				end,
-				desc = "Buffer Local Keymaps (which-key)",
-			},
-		},
 	},
 	{
 		"nvim-telescope/telescope.nvim",
+		cmd = "Telescope",
 		dependencies = { "nvim-lua/plenary.nvim" },
-		keys = {
-			{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-			{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-			{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
-		},
 	},
 	{
 		"rmagatti/auto-session",
@@ -37,10 +24,7 @@ return {
 	},
 	{
 		"numToStr/Comment.nvim",
-		keys = {
-			{ "<leader>/", "gcc", mode = "n", desc = "Toggle Comment (line)" },
-			{ "<leader>/", "gc", mode = "v", desc = "Toggle Comment (visual)" },
-		},
+		lazy = true,
 		opts = {},
 	},
 	{

@@ -23,12 +23,6 @@ end
 return {
 	"nanozuki/tabby.nvim",
 	lazy = false,
-	keys = {
-		{ "<S-h>", "<Cmd>tabprevious<CR>", desc = "Previous workspace" },
-		{ "<S-l>", "<Cmd>tabnext<CR>", desc = "Next workspace" },
-		{ "<leader>tn", "<Cmd>tabnew<CR>", desc = "New workspace" },
-		{ "<leader>tc", "<Cmd>tabclose<CR>", desc = "Close workspace" },
-	},
 	opts = {
 		line = function(line)
 			local fill, active, inactive = tab_highlights()
@@ -38,12 +32,8 @@ return {
 					local hl = tab.is_current() and active or inactive
 
 					return {
-						line.sep("", hl, fill),
-						{
-							" " .. tab.number() .. " " .. tab.name() .. " ",
-							hl = hl,
-						},
-						line.sep("", hl, fill),
+						" " .. tab.number() .. " " .. tab.name() .. " ",
+						hl = hl,
 						margin = " ",
 					}
 				end),

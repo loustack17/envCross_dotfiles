@@ -20,20 +20,10 @@ return {
     require("render-markdown").setup(opts)
 
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = { "markdown", "quarto", "rmd", "octo" },
+      pattern = { "markdown", "quarto", "rmd", "octo", "octo_panel" },
       callback = function(args)
         vim.opt_local.wrap = true
         vim.opt_local.linebreak = true
-
-        vim.keymap.set("n", "<leader>mw", function()
-          local wrap = not vim.wo.wrap
-          vim.wo.wrap = wrap
-          vim.wo.linebreak = wrap
-        end, { buffer = args.buf, desc = "Toggle markdown wrap" })
-
-        vim.keymap.set("n", "<leader>mp", function()
-          require("render-markdown").toggle()
-        end, { buffer = args.buf, desc = "Toggle markdown render" })
       end,
     })
   end,
