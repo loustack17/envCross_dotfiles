@@ -222,6 +222,12 @@ init_backup_dir() {
     fi
 }
 
+path_in_repo() {
+    local path="$1"
+
+    [[ "$path" == "$REPO_ROOT" || "$path" == "$REPO_ROOT/"* ]]
+}
+
 backup_path() {
     local path="$1"
     local name="$2"
@@ -232,7 +238,7 @@ backup_path() {
     if [[ -L "$path" ]]; then
         local target
         target=$(readlink -f "$path" 2>/dev/null || true)
-        if [[ "$target" == "$REPO_ROOT"* ]]; then
+        if path_in_repo "$target"; then
             log_info "$name: already symlinked to repo"
             return 0
         fi
@@ -256,7 +262,7 @@ backup_path() {
 remove_stow_conflicts() {
     local src_dir="$1"
     local dst_dir="$2"
-    local item base target
+    local item base target link link_target
 
     shopt -s dotglob nullglob
     for item in "$src_dir"/*; do
@@ -272,6 +278,12 @@ remove_stow_conflicts() {
             [[ -e "$target" || -L "$target" ]] && rm -f "$target"
         fi
     done
+
+    while IFS= read -r -d '' link; do
+        link_target="$(readlink -m "$link" 2>/dev/null || true)"
+        path_in_repo "$link_target" && rm -f "$link"
+    done < <(find "$dst_dir" -maxdepth 1 -xtype l -print0)
+
     shopt -u dotglob nullglob
 }
 
