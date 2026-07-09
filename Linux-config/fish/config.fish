@@ -10,6 +10,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # paths
 # go
 fish_add_path (go env GOPATH)/bin
+fish_add_path --move --path "$HOME/.local/share/nvim/mason/bin"
 # uv (astral)
 fish_add_path "/home/lou/.local/bin"
 fish_add_path --path "$HOME/.dotnet/tools"

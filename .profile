@@ -8,4 +8,4 @@ export XMODIFIERS=@im=fcitx
 
 
 # Added by Antigravity CLI installer
-export PATH="/home/lou/.local/bin:$PATH"
+export PATH="$HOME/.local/share/nvim/mason/bin:/home/lou/.local/bin:$PATH"

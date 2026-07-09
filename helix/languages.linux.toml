@@ -1,3 +1,67 @@
+[[language]]
+name = "python"
+language-servers = ["ruff", "ty"]
+
+[[language]]
+name = "go"
+language-servers = ["gopls"]
+
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer"]
+
+[[language]]
+name = "javascript"
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "jsx"
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "typescript"
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "tsx"
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "lua"
+language-servers = ["lua-language-server"]
+
+[[language]]
+name = "html"
+language-servers = ["vscode-html-language-server", "emmet-ls"]
+
+[[language]]
+name = "css"
+language-servers = ["vscode-css-language-server", "tailwindcss-ls"]
+
+[[language]]
+name = "scss"
+language-servers = ["vscode-css-language-server", "tailwindcss-ls"]
+
+[[language]]
+name = "json"
+language-servers = ["vscode-json-language-server"]
+
+[[language]]
+name = "yaml"
+language-servers = ["yaml-language-server"]
+
+[[language]]
+name = "hcl"
+language-servers = ["terraform-ls", "tflint"]
+
+[[language]]
+name = "tfvars"
+language-servers = ["terraform-ls", "tflint"]
+
+[[language]]
+name = "typst"
+language-servers = ["tinymist"]
+
 [language-server.ty]
 command = "sh"
 args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ty\" server"]
@@ -41,6 +105,10 @@ args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/yaml-language-server\" 
 [language-server.terraform-ls]
 command = "sh"
 args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/terraform-ls\" serve"]
+
+[language-server.tflint]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/tflint\" --langserver"]
 
 [language-server.tinymist]
 command = "sh"

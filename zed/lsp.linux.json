@@ -3,38 +3,241 @@
     "pyright": {
       "binary": {
         "path": "/bin/sh",
-        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/pyright-langserver\" --stdio"]
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/pyright-langserver\" --stdio"
+        ]
       }
     },
     "ruff": {
       "binary": {
         "path": "/bin/sh",
-        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ruff\" server"]
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/ruff\" server"
+        ]
       }
     },
     "ty": {
       "binary": {
         "path": "/bin/sh",
-        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ty\" server"]
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/ty\" server"
+        ]
       }
     },
     "gopls": {
       "binary": {
         "path": "/bin/sh",
-        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/gopls\""]
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/gopls\""
+        ]
       }
     },
     "rust-analyzer": {
       "binary": {
         "path": "/bin/sh",
-        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/rust-analyzer\""]
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/rust-analyzer\""
+        ]
       }
     },
     "typescript-language-server": {
       "binary": {
         "path": "/bin/sh",
-        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/typescript-language-server\" --stdio"]
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/typescript-language-server\" --stdio"
+        ]
       }
+    },
+    "vtsls": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/vtsls\" --stdio"
+        ]
+      }
+    },
+    "lua-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/lua-language-server\""
+        ]
+      }
+    },
+    "vscode-html-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/vscode-html-language-server\" --stdio"
+        ]
+      }
+    },
+    "emmet-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/emmet-language-server\" --stdio"
+        ]
+      }
+    },
+    "vscode-css-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/vscode-css-language-server\" --stdio"
+        ]
+      }
+    },
+    "tailwindcss-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/tailwindcss-language-server\" --stdio"
+        ]
+      }
+    },
+    "vscode-json-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/vscode-json-language-server\" --stdio"
+        ]
+      }
+    },
+    "yaml-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/yaml-language-server\" --stdio"
+        ]
+      }
+    },
+    "terraform-ls": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/terraform-ls\" serve"
+        ]
+      }
+    },
+    "tflint": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/tflint\" --langserver"
+        ]
+      }
+    },
+    "tinymist": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": [
+          "-lc",
+          "exec \"$HOME/.local/share/nvim/mason/bin/tinymist\""
+        ]
+      }
+    }
+  },
+  "languages": {
+    "JavaScript": {
+      "language_servers": [
+        "typescript-language-server"
+      ]
+    },
+    "TypeScript": {
+      "language_servers": [
+        "typescript-language-server"
+      ]
+    },
+    "TSX": {
+      "language_servers": [
+        "typescript-language-server"
+      ]
+    },
+    "Python": {
+      "language_servers": [
+        "ruff",
+        "ty"
+      ]
+    },
+    "Go": {
+      "language_servers": [
+        "gopls"
+      ]
+    },
+    "Rust": {
+      "language_servers": [
+        "rust-analyzer"
+      ]
+    },
+    "Lua": {
+      "language_servers": [
+        "lua-language-server"
+      ]
+    },
+    "HTML": {
+      "language_servers": [
+        "vscode-html-language-server",
+        "emmet-language-server"
+      ]
+    },
+    "CSS": {
+      "language_servers": [
+        "vscode-css-language-server",
+        "tailwindcss-language-server"
+      ]
+    },
+    "SCSS": {
+      "language_servers": [
+        "vscode-css-language-server",
+        "tailwindcss-language-server"
+      ]
+    },
+    "JSON": {
+      "language_servers": [
+        "vscode-json-language-server"
+      ]
+    },
+    "JSONC": {
+      "language_servers": [
+        "vscode-json-language-server"
+      ]
+    },
+    "YAML": {
+      "language_servers": [
+        "yaml-language-server"
+      ]
+    },
+    "HCL": {
+      "language_servers": [
+        "terraform-ls"
+      ]
+    },
+    "Terraform": {
+      "language_servers": [
+        "terraform-ls"
+      ]
+    },
+    "Typst": {
+      "language_servers": [
+        "tinymist"
+      ]
     }
   }
 }
