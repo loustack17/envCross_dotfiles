@@ -121,7 +121,6 @@ return {
           'htmldjango',
           'eruby',
           'markdown',
-          'razor',
         },
       })
 
@@ -129,14 +128,6 @@ return {
         ensure_installed = names,
         automatic_enable = names,
       })
-    end,
-  },
-  {
-    'tris203/rzls.nvim',
-    dependencies = { 'neovim/nvim-lspconfig' },
-    ft = 'razor',
-    config = function()
-      require('rzls').setup()
     end,
   },
 }
