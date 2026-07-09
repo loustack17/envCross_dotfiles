@@ -1,0 +1,40 @@
+{
+  "lsp": {
+    "pyright": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/pyright-langserver\" --stdio"]
+      }
+    },
+    "ruff": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ruff\" server"]
+      }
+    },
+    "ty": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ty\" server"]
+      }
+    },
+    "gopls": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/gopls\""]
+      }
+    },
+    "rust-analyzer": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/rust-analyzer\""]
+      }
+    },
+    "typescript-language-server": {
+      "binary": {
+        "path": "/bin/sh",
+        "arguments": ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/typescript-language-server\" --stdio"]
+      }
+    }
+  }
+}

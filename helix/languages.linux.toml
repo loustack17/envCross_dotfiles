@@ -1,0 +1,55 @@
+[language-server.ty]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ty\" server"]
+
+[language-server.ruff]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/ruff\" server"]
+
+[language-server.gopls]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/gopls\""]
+
+[language-server.rust-analyzer]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/rust-analyzer\""]
+
+[language-server.typescript-language-server]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/typescript-language-server\" --stdio"]
+
+[language-server.lua-language-server]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/lua-language-server\""]
+
+[language-server.vscode-html-language-server]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/vscode-html-language-server\" --stdio"]
+
+[language-server.vscode-css-language-server]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/vscode-css-language-server\" --stdio"]
+
+[language-server.vscode-json-language-server]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/vscode-json-language-server\" --stdio"]
+
+[language-server.yaml-language-server]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/yaml-language-server\" --stdio"]
+
+[language-server.terraform-ls]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/terraform-ls\" serve"]
+
+[language-server.tinymist]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/tinymist\""]
+
+[language-server.tailwindcss-ls]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/tailwindcss-language-server\" --stdio"]
+
+[language-server.emmet-ls]
+command = "sh"
+args = ["-lc", "exec \"$HOME/.local/share/nvim/mason/bin/emmet-language-server\" --stdio"]

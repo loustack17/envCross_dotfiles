@@ -1,0 +1,40 @@
+{
+  "lsp": {
+    "pyright": {
+      "binary": {
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "arguments": ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\pyright-langserver.cmd", "--stdio"]
+      }
+    },
+    "ruff": {
+      "binary": {
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "arguments": ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\ruff.cmd", "server"]
+      }
+    },
+    "ty": {
+      "binary": {
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "arguments": ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\ty.cmd", "server"]
+      }
+    },
+    "gopls": {
+      "binary": {
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "arguments": ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\gopls.cmd"]
+      }
+    },
+    "rust-analyzer": {
+      "binary": {
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "arguments": ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\rust-analyzer.cmd"]
+      }
+    },
+    "typescript-language-server": {
+      "binary": {
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "arguments": ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\typescript-language-server.cmd", "--stdio"]
+      }
+    }
+  }
+}

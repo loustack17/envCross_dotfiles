@@ -530,7 +530,19 @@ step_symlink_configs() {
             full_dst="$CONFIG_HOME/$dst"
         fi
 
-        if [[ -n "$src" ]]; then
+        if [[ "$name" == "zed" ]]; then
+            local generated_zed_settings="${XDG_CACHE_HOME:-$HOME/.cache}/envCross_dotfiles/zed/settings.json"
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_dry "Would render: Zed settings -> $generated_zed_settings"
+                log_dry "Would link: Zed settings -> $full_dst"
+            else
+                python3 "$REPO_ROOT/scripts/merge-json.py" \
+                    "$REPO_ROOT/zed/settings.json" \
+                    "$REPO_ROOT/zed/lsp.linux.json" \
+                    "$generated_zed_settings"
+                create_file_link "$generated_zed_settings" "$full_dst" "$name"
+            fi
+        elif [[ -n "$src" ]]; then
             local full_src="$REPO_ROOT/$src"
 
             if [[ -d "$full_src" ]]; then
