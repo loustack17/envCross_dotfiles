@@ -1,7 +1,7 @@
 -- Normal mode
 vim.keymap.set("n", "rh", "<C-w><", { desc = "Resize window left" })
 vim.keymap.set("n", "rj", "<C-w>+", { desc = "Resize window down" })
-vim.keymap.set("n", "rk", "<C-wl-", { desc = "Resize window up" })
+vim.keymap.set("n", "rk", "<C-w>-", { desc = "Resize window up" })
 vim.keymap.set("n", "rl", "<C-w>>", { desc = "Resize window right" })
 
 vim.keymap.set("n", "<A-Down>", ":m .+1<CR>==", { desc = "Move line down" })

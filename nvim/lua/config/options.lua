@@ -3,8 +3,6 @@ vim.opt.textwidth = 0
 vim.opt.wrapmargin = 0
 vim.opt.wrap = false
 vim.opt.linebreak = false
-vim.opt.formatoptions:remove({ "t", "c", "a" })
-vim.opt.formatoptions:append({ "q", "j" })
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2

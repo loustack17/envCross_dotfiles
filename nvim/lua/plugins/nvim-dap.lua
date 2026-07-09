@@ -1,8 +1,9 @@
 local js_languages = { "typescript", "javascript", "typescriptreact", "javascriptreact" }
-local mason_path = vim.fn.stdpath("data") .. "/mason"
+local is_windows = vim.fn.has("win32") == 1
+local suffix = is_windows and ".cmd" or ""
 
 local function mason_bin(name)
-  return mason_path .. "/bin/" .. name
+  return vim.fn.stdpath("data") .. "/mason/bin/" .. name .. suffix
 end
 
 local function configure_js(dap)
@@ -61,9 +62,13 @@ local function configure_js(dap)
 end
 
 local function configure_python(dap)
+  local debugpy_python = vim.fn.stdpath("data")
+    .. "/mason/packages/debugpy/venv/"
+    .. (is_windows and "Scripts/python.exe" or "bin/python")
+
   dap.adapters.python = {
     type = "executable",
-    command = mason_path .. "/packages/debugpy/venv/bin/python",
+    command = debugpy_python,
     args = { "-m", "debugpy.adapter" },
   }
 
@@ -75,7 +80,8 @@ local function configure_python(dap)
       program = "${file}",
       console = "integratedTerminal",
       pythonPath = function()
-        return vim.fn.exepath("python3") or vim.fn.exepath("python") or "python"
+        local python = vim.fn.exepath(is_windows and "python" or "python3")
+        return python ~= "" and python or "python"
       end,
     },
   }
