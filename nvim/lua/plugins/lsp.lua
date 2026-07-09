@@ -1,15 +1,89 @@
+local servers = {
+  lua_ls = { 'lua-language-server' },
+  rust_analyzer = { 'rust-analyzer' },
+  vtsls = { 'vtsls', '--stdio' },
+  tailwindcss = { 'tailwindcss-language-server', '--stdio' },
+  gopls = { 'gopls' },
+  pyright = { 'pyright-langserver', '--stdio' },
+  ruff = { 'ruff', 'server' },
+  ty = { 'ty', 'server' },
+  html = { 'vscode-html-language-server', '--stdio' },
+  emmet_language_server = { 'emmet-language-server', '--stdio' },
+  cssls = { 'vscode-css-language-server', '--stdio' },
+  terraformls = {
+    'terraform-ls',
+    'serve',
+    init_options = {
+      ignoreSingleFileWarning = true,
+    },
+  },
+  tflint = { 'tflint', '--langserver' },
+  jsonls = { 'vscode-json-language-server', '--stdio' },
+  yamlls = {
+    'yaml-language-server',
+    '--stdio',
+    settings = {
+      yaml = {
+        format = {
+          enable = true,
+        },
+        keyOrdering = false,
+        schemaStore = {
+          enable = true,
+        },
+        validate = true,
+      },
+    },
+  },
+  tinymist = {
+    'tinymist',
+    settings = {
+      exportPdf = 'onSave',
+    },
+  },
+}
+
 return {
   {
     'neovim/nvim-lspconfig',
     dependencies = {
-      { 'mason-org/mason.nvim' },
-      { 'mason-org/mason-lspconfig.nvim' },
-      { 'saghen/blink.cmp' }
+      {
+        'mason-org/mason.nvim',
+        opts = {
+          ui = {
+            icons = {
+              package_installed = '✓',
+              package_pending = '➜',
+              package_uninstalled = '✗',
+            },
+          },
+        },
+      },
+      'mason-org/mason-lspconfig.nvim',
+      'saghen/blink.cmp',
     },
     config = function()
+      local mason_bin = vim.fn.stdpath('data') .. '/mason/bin/'
+      local suffix = vim.fn.has('win32') == 1 and '.cmd' or ''
+      local names = vim.tbl_keys(servers)
+
+      table.sort(names)
       vim.lsp.config('*', {
-        capabilities = require('blink.cmp').get_lsp_capabilities()
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
       })
+
+      for name, config in pairs(servers) do
+        local options = vim.deepcopy(config)
+        local command = {}
+
+        while options[1] do
+          table.insert(command, table.remove(options, 1))
+        end
+
+        command[1] = mason_bin .. command[1] .. suffix
+        options.cmd = command
+        vim.lsp.config(name, options)
+      end
 
       local function python_root(bufnr, on_dir)
         local markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile', 'uv.lock', '.git' }
@@ -47,49 +121,13 @@ return {
           'htmldjango',
           'eruby',
           'markdown',
-          'razor',
         },
       })
 
-      vim.lsp.config('terraformls', {
-        init_options = {
-          ignoreSingleFileWarning = true,
-        },
+      require('mason-lspconfig').setup({
+        ensure_installed = names,
+        automatic_enable = names,
       })
-
-      vim.lsp.config('yamlls', {
-        filetypes = { 'yaml' },
-        settings = {
-          yaml = {
-            format = {
-              enable = true,
-            },
-            keyOrdering = false,
-            schemaStore = {
-              enable = true,
-            },
-            validate = true,
-          },
-        },
-      })
-
-      vim.lsp.config('tinymist', {
-        cmd = { 'tinymist' },
-        filetypes = { 'typst' },
-        settings = {
-          exportPdf = 'onSave',
-        },
-      })
-
-      vim.lsp.enable('tinymist')
-    end
-  },
-  {
-    "tris203/rzls.nvim",
-    dependencies = { "neovim/nvim-lspconfig" },
-    ft = "razor",
-    config = function()
-      require("rzls").setup()
     end,
   },
 }

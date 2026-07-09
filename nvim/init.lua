@@ -7,7 +7,7 @@ vim.g.loaded_node_provider = 0
 
 local dotnet_tools = vim.fn.expand("~/.dotnet/tools")
 if vim.fn.isdirectory(dotnet_tools) == 1 then
-  vim.env.PATH = dotnet_tools .. ":" .. vim.env.PATH
+  vim.env.PATH = dotnet_tools .. (vim.fn.has("win32") == 1 and ";" or ":") .. vim.env.PATH
 end
 
 require("config.options")
@@ -15,7 +15,6 @@ require("config.lazy")
 require("config.keymaps")
 require("config.autocmds")
 
--- detect OS
 local is_windows = vim.loop.os_uname().sysname:find("Windows") ~= nil
 
 if is_windows then

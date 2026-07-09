@@ -469,6 +469,8 @@ def main [
             {name: "Windows-Terminal",  pkg: "windows-terminal",  cmd: "wt"}
             {name: "Nushell",           pkg: "nu",                cmd: "nu"}
             {name: "Neovim",            pkg: "neovim",            cmd: "nvim"}
+            {name: "Helix",              pkg: "helix",             cmd: "hx"}
+            {name: "Zed",                pkg: "zed",               cmd: "zed"}
             {name: "Yazi",              pkg: "yazi",              cmd: "yazi"}
             {name: "Lazygit",           pkg: "lazygit",           cmd: "lazygit"}
             {name: "Yasb",              pkg: "yasb",              cmd: "yasb"}
@@ -549,6 +551,29 @@ def main [
             dest: ($localappdata | path join "nvim")
             is_file: false
         }]
+    }
+
+    if (should_install "helix" $skip_list $only_list) {
+        let helix_files = [
+            {src: ($repo_root | path join "helix" | path join "config.toml"), dest: ($appdata | path join "helix" | path join "config.toml"), is_file: true, name: "Helix config"}
+            {src: ($repo_root | path join "helix" | path join "languages.windows.toml"), dest: ($appdata | path join "helix" | path join "languages.toml"), is_file: true, name: "Helix languages"}
+        ]
+        $targets ++= (existing_targets $helix_files)
+    }
+
+    if (should_install "zed" $skip_list $only_list) {
+        let generated_zed_settings = ($localappdata | path join "envCross_dotfiles" | path join "zed" | path join "settings.json")
+        if $dry_run {
+            log_dry $"Would render: Zed settings -> ($generated_zed_settings)"
+        } else {
+            mkdir ($generated_zed_settings | path dirname)
+            ^python ($repo_root | path join "scripts" | path join "merge-json.py") ($repo_root | path join "zed" | path join "settings.json") ($repo_root | path join "zed" | path join "lsp.windows.json") $generated_zed_settings
+        }
+        let zed_files = [
+            {src: $generated_zed_settings, dest: ($appdata | path join "Zed" | path join "settings.json"), is_file: true, name: "Zed settings"}
+            {src: ($repo_root | path join "zed" | path join "keymap.json"), dest: ($appdata | path join "Zed" | path join "keymap.json"), is_file: true, name: "Zed keymap"}
+        ]
+        $targets ++= (existing_targets $zed_files)
     }
 
     if (should_install "yazi" $skip_list $only_list) {

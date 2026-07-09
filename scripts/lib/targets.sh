@@ -30,7 +30,7 @@ validate_target_group() {
 
 validate_target_scope() {
     case "$1" in
-        linux|shared|ai|windows) return 0 ;;
+        linux|windows|shared|ai) return 0 ;;
     esac
 
     targets_manifest_error "unsupported scope '$1'"

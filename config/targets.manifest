@@ -22,8 +22,11 @@ core|linux|kitty|kitty|kitty-git|true|Linux-config/kitty|kitty
 core|linux|ghostty|ghostty|ghostty-git|true|Linux-config/ghostty|ghostty
 core|linux|fish|fish|fish|false|Linux-config/fish|fish
 core|linux|neovim|nvim|neovim|false|nvim|nvim
-core|linux|helix|hx|helix|false|helix|helix
-core|linux|zed|zed|zed-git|true|zed|zed
+core|linux|zed|zed|zed-git|true||zed/settings.json
+core|linux|helix|hx|helix|false|helix/config.toml|helix/config.toml
+config|linux|helix-languages|||false|helix/languages.linux.toml|helix/languages.toml
+config|linux|zed-keymap|||false|zed/keymap.json|zed/keymap.json
+config|linux|zed-snippets|||false|zed/snippets|zed/snippets
 core|linux|yazi|yazi|yazi|false|yazi|yazi
 core|linux|lazygit|lazygit|lazygit|false|lazygit|lazygit
 core|linux|lazysql|lazysql|lazysql-bin|true|lazysql|lazysql

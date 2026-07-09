@@ -1,0 +1,55 @@
+[language-server.ty]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\ty.cmd", "server"]
+
+[language-server.ruff]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\ruff.cmd", "server"]
+
+[language-server.gopls]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\gopls.cmd"]
+
+[language-server.rust-analyzer]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\rust-analyzer.cmd"]
+
+[language-server.typescript-language-server]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\typescript-language-server.cmd", "--stdio"]
+
+[language-server.lua-language-server]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\lua-language-server.cmd"]
+
+[language-server.vscode-html-language-server]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\vscode-html-language-server.cmd", "--stdio"]
+
+[language-server.vscode-css-language-server]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\vscode-css-language-server.cmd", "--stdio"]
+
+[language-server.vscode-json-language-server]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\vscode-json-language-server.cmd", "--stdio"]
+
+[language-server.yaml-language-server]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\yaml-language-server.cmd", "--stdio"]
+
+[language-server.terraform-ls]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\terraform-ls.cmd", "serve"]
+
+[language-server.tinymist]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\tinymist.cmd"]
+
+[language-server.tailwindcss-ls]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\tailwindcss-language-server.cmd", "--stdio"]
+
+[language-server.emmet-ls]
+command = "cmd"
+args = ["/c", "%LOCALAPPDATA%\\nvim-data\\mason\\bin\\emmet-language-server.cmd", "--stdio"]
