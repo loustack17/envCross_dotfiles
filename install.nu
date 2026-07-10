@@ -395,9 +395,9 @@ def main [
             {name: "init.lua",        is_file: true}
             {name: "keymap.toml",     is_file: true}
             {name: "package.toml",    is_file: true}
-            {name: "theme-dark.toml", is_file: true}
             {name: "theme.toml",      is_file: true}
             {name: "yazi.toml",       is_file: true}
+            {name: "flavors",         is_file: false}
             {name: "plugins",         is_file: false}
             {name: "scripts",         is_file: false}
         ]

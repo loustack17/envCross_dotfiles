@@ -573,6 +573,24 @@ step_symlink_configs() {
             fi
         fi
 
+        if [[ "$name" == "yazi" ]]; then
+            local yazi_dst="${CONFIG_HOME}/yazi"
+            for dir in flavors plugins scripts; do
+                local src_dir="$REPO_ROOT/yazi/$dir"
+                local dst_dir="$yazi_dst/$dir"
+                if [[ -d "$src_dir" ]]; then
+                    if [[ "$DRY_RUN" == "true" ]]; then
+                        log_dry "Would link dir: yazi/$dir -> $dst_dir"
+                    else
+                        [[ -L "$dst_dir" ]] && rm -f "$dst_dir"
+                        [[ -d "$dst_dir" ]] && rm -rf "$dst_dir"
+                        ln -sf "$src_dir" "$dst_dir"
+                        log_info "yazi: linked dir $dir"
+                    fi
+                fi
+            done
+        fi
+
         case "$name" in claude-code|codex|opencode|hermes-agent) link_ai_shared_files "$name" ;; esac
         case "$name" in claude-code) ensure_claude_local_plugin ;; esac
     done
