@@ -10,11 +10,16 @@ trust_level = "trusted"
 [projects."/home/lou/.claude"]
 trust_level = "untrusted"
 
-[projects."/home/lou"]
-trust_level = "trusted"
-
 [projects."/home/lou/Documents/Personal_Notes"]
 trust_level = "trusted"
+
+[desktop]
+show-context-window-usage = true
+browser-download-prompt-enabled = true
+followUpQueueMode = "queue"
+
+[desktop.open-in-target-preferences]
+global = "zed"
 
 [projects."/home/lou/Documents/LazyBlog"]
 trust_level = "untrusted"

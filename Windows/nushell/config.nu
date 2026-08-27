@@ -45,3 +45,12 @@ def --env y [...args] {
 source ./catppuccin_mocha.nu
 source ./aliases.nu
 source ./zoxide.nu
+
+let envcross_system_root = ($env.SYSTEMROOT? | default "")
+let envcross_whoami = ($envcross_system_root | path join "System32" | path join "whoami.exe")
+let envcross_user_sid = (^$envcross_whoami /user /fo csv /nh | str trim | str replace --regex '^"[^"]+","([^"]+)"$' '$1')
+let envcross_state_root = 'D:\ProgramData\envCross_dotfiles'
+if ($envcross_system_root | is-empty) or ($envcross_user_sid | is-empty) or ($envcross_state_root | is-empty) or (($envcross_user_sid | str starts-with "S-") == false) {
+    error make {msg: "Unable to resolve the protected Nushell history path"}
+}
+$env.config.history.path = ($envcross_state_root | path join "users" | path join $envcross_user_sid | path join "nushell" | path join "history.txt")

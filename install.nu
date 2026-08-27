@@ -7,6 +7,7 @@ def main [
     --no-backup             # Skip backup step
     --no-install            # Skip package installation
     --force-install         # Force reinstall packages
+    --finalize-nushell-history # Remove migrated repository history after commit
     --skip: any = []        # Skip specific tools (comma-separated or list)
     --only: any = []        # Only process specific tools
     --help (-h)             # Show this help
@@ -14,12 +15,15 @@ def main [
     let current_file = ($env.CURRENT_FILE? | default "")
     let repo_root = if ($current_file | str length) > 0 { $current_file | path dirname } else { pwd }
     let windows_root = ($repo_root | path join "Windows")
-    let backup_root = ($repo_root | path join $"backup/(date now | format date '%Y%m%d-%H%M%S')")
+    let state_root = ($env.ENVCROSS_STATE_ROOT? | default 'D:\ProgramData\envCross_dotfiles')
+    let backup_root = ($state_root | path join "backups" | path join (date now | format date '%Y%m%d-%H%M%S'))
 
     let home = $env.USERPROFILE
     let appdata = $env.APPDATA
     let localappdata = $env.LOCALAPPDATA
     let user_config_home = ($home | path join ".config")
+    let state_boundary = ($state_root | path dirname)
+    let nushell_migration_helper = ($repo_root | path join "scripts" | path join "windows" | path join "migrate-nushell-history.ps1")
 
     def log_info  [msg: string] { print $"(ansi green)[INFO](ansi reset)  ($msg)" }
     def log_warn  [msg: string] { print $"(ansi yellow)[WARN](ansi reset)  ($msg)" }
@@ -56,6 +60,31 @@ def main [
 
     def powershell_host []: nothing -> string {
         if (check_cmd "pwsh") { "pwsh" } else { "powershell" }
+    }
+
+    def migrate_nushell_history [source: string, config: string, helper: string, boundary: string, installer_pid: int, dry: bool, remove_source: bool = false]: nothing -> bool {
+        if $dry {
+            log_dry "Would migrate Nushell history to protected D drive state"
+            return true
+        }
+        if not ($helper | path exists) {
+            log_error $"Nushell migration helper not found: ($helper)"
+            return false
+        }
+        let ps = (powershell_host)
+        let result = if $remove_source {
+            (^$ps -NoProfile -ExecutionPolicy Bypass -File $helper -SourceHistory $source -ConfigPath $config -BoundaryPath $boundary -InstallerPid ($installer_pid | into string) -NuPath $nu.current-exe -RemoveSource | complete)
+        } else {
+            (^$ps -NoProfile -ExecutionPolicy Bypass -File $helper -SourceHistory $source -ConfigPath $config -BoundaryPath $boundary -InstallerPid ($installer_pid | into string) -NuPath $nu.current-exe | complete)
+        }
+        if $result.exit_code != 0 {
+            let detail = ($result.stderr | str trim)
+            if ($detail | str length) > 0 { print $detail }
+            log_error "Nushell history migration failed"
+            return false
+        }
+        log_info "Nushell history is protected outside the repository"
+        true
     }
 
     def --env ensure_scoop [dry: bool, elevated: bool]: nothing -> bool {
@@ -183,7 +212,7 @@ def main [
     }
 
     def initialize_transaction_journal [path: string]: nothing -> bool {
-        let script = '& { param([string]$Path) $ErrorActionPreference = "Stop"; $directory = Split-Path -Parent $Path; $identity = [Security.Principal.WindowsIdentity]::GetCurrent().User; $directoryAcl = New-Object Security.AccessControl.DirectorySecurity; $directoryAcl.SetAccessRuleProtection($true, $false); $directoryAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($identity, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow"))); [IO.Directory]::CreateDirectory($directory) | Out-Null; [IO.Directory]::SetAccessControl($directory, $directoryAcl); $fileAcl = New-Object Security.AccessControl.FileSecurity; $fileAcl.SetAccessRuleProtection($true, $false); $fileAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($identity, "FullControl", "Allow"))); [IO.File]::WriteAllText($Path, ""); [IO.File]::SetAccessControl($Path, $fileAcl) }'
+        let script = '& { param([string]$Path) $ErrorActionPreference = "Stop"; $directory = Split-Path -Parent $Path; $stateRoot = Split-Path -Parent $directory; $identity = [Security.Principal.WindowsIdentity]::GetCurrent().User; $rootAcl = New-Object Security.AccessControl.DirectorySecurity; $rootAcl.SetAccessRuleProtection($true, $false); foreach ($principal in @($identity, [Security.Principal.SecurityIdentifier]::new("S-1-5-18"), [Security.Principal.SecurityIdentifier]::new("S-1-5-32-544"))) { $rootAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($principal, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow"))) }; [IO.Directory]::CreateDirectory($stateRoot) | Out-Null; [IO.Directory]::SetAccessControl($stateRoot, $rootAcl); $directoryAcl = New-Object Security.AccessControl.DirectorySecurity; $directoryAcl.SetAccessRuleProtection($true, $false); $directoryAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($identity, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow"))); [IO.Directory]::CreateDirectory($directory) | Out-Null; [IO.Directory]::SetAccessControl($directory, $directoryAcl); $fileAcl = New-Object Security.AccessControl.FileSecurity; $fileAcl.SetAccessRuleProtection($true, $false); $fileAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($identity, "FullControl", "Allow"))); [IO.File]::WriteAllText($Path, ""); [IO.File]::SetAccessControl($Path, $fileAcl) }'
         try {
             let result = (^powershell -NoProfile -Command $script $path | complete)
             $result.exit_code == 0
@@ -616,6 +645,8 @@ def main [
 
     # === Step 2: Build targets ===
     mut targets = []
+    mut nushell_history_source = ""
+    mut nushell_config = ""
     let scoop_root = ($env.SCOOP? | default "")
 
     if (should_install "windows-terminal" $skip_list $only_list) {
@@ -697,6 +728,8 @@ def main [
             log_warn "Nushell dir missing under Windows/; using repo root fallback"
             $repo_root | path join "nushell"
         }
+        $nushell_history_source = ($nu_src | path join "history.txt")
+        $nushell_config = ($nu_src | path join "config.nu")
         $targets ++= [{
             name: "Nushell"
             source: $nu_src
@@ -723,7 +756,7 @@ def main [
     }
 
     if (should_install "zed" $skip_list $only_list) {
-        let generated_zed_settings = ($localappdata | path join "envCross_dotfiles" | path join "zed" | path join "settings.json")
+        let generated_zed_settings = ($state_root | path join "generated" | path join "zed" | path join "settings.json")
         if $dry_run {
             log_dry $"Would render: Zed settings -> ($generated_zed_settings)"
         } else {
@@ -863,9 +896,17 @@ def main [
     let codex_hooks = ($ai_root | path join ".codex" | path join "hooks.json")
     let codex_agents = ($ai_root | path join ".codex" | path join "agents")
     if $should_link_codex {
+        let generated_codex_config = ($state_root | path join "generated" | path join "codex" | path join "config.toml")
+        if $dry_run {
+            log_dry $"Would render: Codex Windows config -> ($generated_codex_config)"
+        } else {
+            ^python ($repo_root | path join "scripts" | path join "merge-codex-config.py") $codex_config $codex_windows_config $generated_codex_config
+            if $env.LAST_EXIT_CODE != 0 {
+                error make {msg: "Failed to render Codex Windows config"}
+            }
+        }
         let codex_files = [
             {src: $shared_agents,       dest: ($codex_home | path join "AGENTS.md"),            is_file: true,  name: "Codex AGENTS.md"}
-            {src: $codex_config,         dest: ($codex_home | path join "config.toml"),          is_file: true,  name: "Codex config"}
             {src: $codex_windows_config, dest: ($codex_home | path join "windows.config.toml"), is_file: true,  name: "Codex Windows profile"}
             {src: $codex_linux_config,  dest: ($codex_home | path join "linux.config.toml"),     is_file: true,  name: "Codex Linux profile"}
             {src: $codex_hooks,         dest: ($codex_home | path join "hooks.json"),             is_file: true,  name: "Codex hooks"}
@@ -873,6 +914,13 @@ def main [
             {src: $shared_skills,       dest: ($codex_home | path join "skills"),                is_file: false, name: "Codex skills"}
         ]
         $targets ++= (existing_targets $codex_files)
+        let active_codex_source = if $dry_run { $codex_config } else { $generated_codex_config }
+        $targets ++= [{
+            source: $active_codex_source
+            dest: ($codex_home | path join "config.toml")
+            is_file: true
+            name: "Codex config"
+        }]
     }
 
     if $should_link_grok {
@@ -917,6 +965,12 @@ def main [
         $targets ++= (existing_targets $hermes_files)
     }
 
+    if not $backup_only and (should_install "nushell" $skip_list $only_list) {
+        if not (migrate_nushell_history $nushell_history_source $nushell_config $nushell_migration_helper $state_boundary $nu.pid $dry_run) {
+            error make {msg: "Nushell history migration failed"}
+        }
+    }
+
     # === Step 2: Backup ===
     if not $no_backup {
         print ""
@@ -955,7 +1009,7 @@ def main [
     }
 
     let transaction_id = (random uuid | into string)
-    let transaction_root = ($localappdata | path join "envCross_dotfiles" | path join "transactions")
+    let transaction_root = ($state_root | path join "transactions")
     let transaction_journal = ($transaction_root | path join $"($transaction_id).jsonl")
     mut linked_targets = []
 
@@ -1066,6 +1120,15 @@ def main [
                         log_warn $"Failed to journal rollback cleanup warning: ($linked.name)"
                     }
                 }
+            }
+        }
+        if $finalize_nushell_history and (should_install "nushell" $skip_list $only_list) {
+            if not (migrate_nushell_history $nushell_history_source $nushell_config $nushell_migration_helper $state_boundary $nu.pid false true) {
+                let _ = (append_transaction_journal $transaction_journal {
+                    event: "nushell_history_finalization_failed"
+                    timestamp: (date now | format date "%+")
+                })
+                error make {msg: "Committed links, but Nushell history finalization failed"}
             }
         }
         if not (append_transaction_journal $transaction_journal {

@@ -1,13 +1,23 @@
-openai_base_url = "http://127.0.0.1:15721/v1"
-
 [projects.'d:\ca\cases\2026\nexusdb']
 trust_level = "trusted"
 
 [projects.'d:\notes\workflow\envcross_dotfiles']
 trust_level = "trusted"
 
-[projects.'c:\users\lou']
-trust_level = "trusted"
+[model_providers.cc-switch-official]
+name = "OpenAI"
+requires_openai_auth = true
+supports_websockets = true
+wire_api = "responses"
+
+[desktop]
+integratedTerminalShell = "commandPrompt"
+show-context-window-usage = true
+browser-download-prompt-enabled = true
+followUpQueueMode = "queue"
+
+[desktop.open-in-target-preferences]
+global = "zed"
 
 [windows]
 sandbox = "elevated"

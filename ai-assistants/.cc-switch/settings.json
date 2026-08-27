@@ -11,7 +11,7 @@
   "usageConfirmed": true,
   "enableFailoverToggle": false,
   "showProfileSwitcher": true,
-  "preserveCodexOfficialAuthOnSwitch": false,
+  "preserveCodexOfficialAuthOnSwitch": true,
   "unifyCodexSessionHistory": false,
   "failoverConfirmed": true,
   "firstRunNoticeConfirmed": true,

@@ -225,7 +225,11 @@ class PackagePinTests(unittest.TestCase):
         )
         self.assertEqual(
             codex["mcp_servers"]["mem0"],
-            {"url": "https://mcp.mem0.ai/mcp"},
+            {
+                "url": "https://mcp.mem0.ai/mcp",
+                "enabled": True,
+                "required": False,
+            },
         )
 
 

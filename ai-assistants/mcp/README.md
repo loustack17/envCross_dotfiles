@@ -65,6 +65,9 @@ scripts/mcp/sync-cc-switch-mcp.py
 - Zed uses `context_servers` inside `zed/settings.json`; it cannot consume the shared `mcp.json` directly.
 - cc-switch app settings are symlinked from `ai-assistants/.cc-switch/settings.json`.
 - cc-switch stores MCP servers in `~/.cc-switch/cc-switch.db`, not a symlink-friendly JSON file. The repo manages a seed JSON plus sync script, not the DB or auth files.
+- Codex profiles use the official endpoint by default. cc-switch owns temporary provider and localhost routing state when takeover is explicitly enabled.
+- `code-review-graph` is enabled for Codex and OpenCode. Optional seed entries other than Mem0 stay disabled for Codex, Claude, Gemini, and Hermes; existing OpenCode-only defaults remain explicit.
+- Mem0 is the shared durable memory provider for Claude, Codex, OpenCode, and Hermes. Codex keeps it enabled and non-required so service or quota failures do not block startup.
 
 ## Zed Firecrawl / MarkItDown
 

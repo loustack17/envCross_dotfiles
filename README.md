@@ -92,7 +92,7 @@ During installation, these files are linked to the appropriate locations for eac
 | **Claude Code** | `ai-assistants/.claude/statusline-command.sh` | `~/.claude/statusline-command.sh` |
 | **Claude Code** | `ai-assistants/.claude/marketplace/` | `~/.claude/marketplace` |
 | **Codex** | `ai-assistants/AGENTS.md` | `~/.codex/AGENTS.md` |
-| **Codex** | `ai-assistants/.codex/config.toml` | `~/.codex/config.toml` |
+| **Codex** | common config + platform config | generated active `~/.codex/config.toml` |
 | **Codex** | `ai-assistants/.codex/windows.config.toml` | `~/.codex/windows.config.toml` |
 | **Codex** | `ai-assistants/.codex/linux.config.toml` | `~/.codex/linux.config.toml` |
 | **Codex** | `ai-assistants/.codex/hooks.json` | `~/.codex/hooks.json` |

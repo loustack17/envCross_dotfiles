@@ -19,6 +19,7 @@ yazi/plugins/custom-shell.yazi/yazi_cmd_history
 yazi/plugins/whoosh.yazi/bookmarks
 yazi/config/
 Windows/yasb/**/*.log
+Windows/nushell/history.txt
 C:Users*
 nvim.log
 /.codex

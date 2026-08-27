@@ -3,10 +3,8 @@
     "code-review-graph": {
       "name": "code-review-graph",
       "enabled": [
-        "claude",
         "codex",
-        "opencode",
-        "hermes"
+        "opencode"
       ],
       "config": {
         "type": "stdio",
@@ -20,10 +18,7 @@
     "content-i18n": {
       "name": "content-i18n",
       "enabled": [
-        "claude",
-        "codex",
-        "opencode",
-        "hermes"
+        "opencode"
       ],
       "config": {
         "type": "stdio",
@@ -37,12 +32,7 @@
     },
     "crawl4ai": {
       "name": "crawl4ai",
-      "enabled": [
-        "claude",
-        "codex",
-        "opencode",
-        "hermes"
-      ],
+      "enabled": [],
       "config": {
         "type": "stdio",
         "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-crawl4ai.sh",
@@ -51,11 +41,7 @@
     },
     "exa": {
       "name": "exa",
-      "enabled": [
-        "claude",
-        "codex",
-        "hermes"
-      ],
+      "enabled": [],
       "config": {
         "type": "http",
         "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
@@ -64,10 +50,7 @@
     "firecrawl": {
       "name": "firecrawl",
       "enabled": [
-        "claude",
-        "codex",
-        "opencode",
-        "hermes"
+        "opencode"
       ],
       "config": {
         "type": "stdio",
@@ -78,10 +61,7 @@
     "markitdown": {
       "name": "markitdown",
       "enabled": [
-        "claude",
-        "codex",
-        "opencode",
-        "hermes"
+        "opencode"
       ],
       "config": {
         "type": "stdio",
@@ -105,10 +85,7 @@
     "tavily": {
       "name": "tavily",
       "enabled": [
-        "claude",
-        "codex",
-        "opencode",
-        "hermes"
+        "opencode"
       ],
       "config": {
         "type": "stdio",
@@ -118,12 +95,7 @@
     },
     "github": {
       "name": "github",
-      "enabled": [
-        "claude",
-        "codex",
-        "opencode",
-        "hermes"
-      ],
+      "enabled": [],
       "config": {
         "type": "stdio",
         "command": "/home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-github.sh",

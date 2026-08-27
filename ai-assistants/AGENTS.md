@@ -14,4 +14,4 @@
 - Verify current or high-stakes claims with reliable current primary sources. Separate fact, inference, and recommendation.
 - Lead with the result. Match detail to task complexity. Remove filler, repetition, hedging, and unnecessary background.
 - Use Traditional Chinese (Taiwan) for Chinese responses.
-- Avoid comments by default. Add them only for required documentation or non-obvious intent.
+- Keep code, scripts, config, SQL, and Markdown free of comments and docstrings by default. Add only required documentation or brief non-obvious rationale; prefer clear naming and structure.

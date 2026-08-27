@@ -816,8 +816,19 @@ link_ai_shared_files() {
             create_optional_path_link "$claude_root/marketplace" "$HOME/.claude/marketplace" "claude-marketplace" || return 1
             ;;
         codex)
+            local generated_codex_config="${XDG_STATE_HOME:-$HOME/.local/state}/envcross/generated/codex/config.toml"
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_dry "Would render: Codex Linux config -> $generated_codex_config"
+            else
+                python3 "$REPO_ROOT/scripts/merge-codex-config.py" \
+                    "$REPO_ROOT/ai-assistants/.codex/config.toml" \
+                    "$REPO_ROOT/ai-assistants/.codex/linux.config.toml" \
+                    "$generated_codex_config" || return 1
+            fi
             create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules" || return 1
-            create_file_link "$REPO_ROOT/ai-assistants/.codex/config.toml" "$HOME/.codex/config.toml" "codex-config" || return 1
+            local active_codex_source="$generated_codex_config"
+            [[ "$DRY_RUN" == "true" ]] && active_codex_source="$REPO_ROOT/ai-assistants/.codex/config.toml"
+            create_file_link "$active_codex_source" "$HOME/.codex/config.toml" "codex-config" || return 1
             create_file_link "$REPO_ROOT/ai-assistants/.codex/windows.config.toml" "$HOME/.codex/windows.config.toml" "codex-windows-profile" || return 1
             create_file_link "$REPO_ROOT/ai-assistants/.codex/linux.config.toml" "$HOME/.codex/linux.config.toml" "codex-linux-profile" || return 1
             create_file_link "$REPO_ROOT/ai-assistants/.codex/hooks.json" "$HOME/.codex/hooks.json" "codex-hooks" || return 1

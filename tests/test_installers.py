@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -97,6 +98,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "USERPROFILE": str(home),
                     "APPDATA": str(home / "AppData" / "Roaming"),
                     "LOCALAPPDATA": str(home / "AppData" / "Local"),
+                    "ENVCROSS_STATE_ROOT": str(home / "envCross-state"),
                     "HOME": str(home),
                     "DURABILITY_MARKER": str(marker),
                     "PATH": os.pathsep.join(
@@ -125,7 +127,7 @@ class InstallerRollbackTests(unittest.TestCase):
             self.assertTrue(marker.exists())
             self.assertTrue((destination / "managed.txt").exists())
             journals = list(
-                (home / "AppData" / "Local" / "envCross_dotfiles" / "transactions").glob("*.jsonl")
+                (home / "envCross-state" / "transactions").glob("*.jsonl")
             )
             self.assertEqual(len(journals), 1)
             events = [json.loads(line)["event"] for line in journals[0].read_text(encoding="utf-8").splitlines()]
@@ -165,6 +167,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "USERPROFILE": str(home),
                     "APPDATA": str(home / "AppData" / "Roaming"),
                     "LOCALAPPDATA": str(home / "AppData" / "Local"),
+                    "ENVCROSS_STATE_ROOT": str(home / "envCross-state"),
                     "HOME": str(home),
                     "PATH": os.pathsep.join(
                         (str(Path(powershell).parent), str(Path(cmd).parent))
@@ -198,7 +201,7 @@ class InstallerRollbackTests(unittest.TestCase):
                 "foreign\n",
             )
             journals = list(
-                (home / "AppData" / "Local" / "envCross_dotfiles" / "transactions").glob("*.jsonl")
+                (home / "envCross-state" / "transactions").glob("*.jsonl")
             )
             self.assertEqual(len(journals), 1)
             events = [json.loads(line)["event"] for line in journals[0].read_text(encoding="utf-8").splitlines()]
@@ -238,6 +241,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "USERPROFILE": str(home),
                     "APPDATA": str(home / "AppData" / "Roaming"),
                     "LOCALAPPDATA": str(home / "AppData" / "Local"),
+                    "ENVCROSS_STATE_ROOT": str(home / "envCross-state"),
                     "HOME": str(home),
                     "PATH": os.pathsep.join(
                         (str(Path(powershell).parent), str(Path(cmd).parent))
@@ -269,7 +273,7 @@ class InstallerRollbackTests(unittest.TestCase):
                 "foreign\n",
             )
             journals = list(
-                (home / "AppData" / "Local" / "envCross_dotfiles" / "transactions").glob("*.jsonl")
+                (home / "envCross-state" / "transactions").glob("*.jsonl")
             )
             events = [json.loads(line)["event"] for line in journals[0].read_text(encoding="utf-8").splitlines()]
             self.assertIn("rollback_cleanup_failed", events)
@@ -308,6 +312,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "USERPROFILE": str(home),
                     "APPDATA": str(home / "AppData" / "Roaming"),
                     "LOCALAPPDATA": str(home / "AppData" / "Local"),
+                    "ENVCROSS_STATE_ROOT": str(home / "envCross-state"),
                     "HOME": str(home),
                     "PATH": os.pathsep.join(
                         (str(Path(powershell).parent), str(Path(shutil.which("cmd.exe")).parent))
@@ -351,9 +356,11 @@ class InstallerRollbackTests(unittest.TestCase):
             fake_bin = Path(temp) / "bin"
             fixture = Path(temp) / "repo"
             fixture_config = fixture / "ai-assistants" / ".codex"
+            fixture_scripts = fixture / "scripts"
             config.parent.mkdir(parents=True)
             fake_bin.mkdir()
             fixture_config.mkdir(parents=True)
+            fixture_scripts.mkdir()
             transaction_id = "00000000-0000-0000-0000-000000000000"
             installer = (ROOT / "install.nu").read_text(encoding="utf-8")
             installer = installer.replace(
@@ -368,6 +375,10 @@ class InstallerRollbackTests(unittest.TestCase):
             shutil.copy2(
                 ROOT / "ai-assistants" / ".codex" / "windows.config.toml",
                 fixture_config / "windows.config.toml",
+            )
+            shutil.copy2(
+                ROOT / "scripts" / "merge-codex-config.py",
+                fixture_scripts / "merge-codex-config.py",
             )
             original = b"original-windows-config\n"
             original_profile = b"original-windows-profile\n"
@@ -386,6 +397,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "USERPROFILE": str(home),
                     "APPDATA": str(home / "AppData" / "Roaming"),
                     "LOCALAPPDATA": str(home / "AppData" / "Local"),
+                    "ENVCROSS_STATE_ROOT": str(home / "envCross-state"),
                     "HOME": str(home),
                     "CODEX_HOME": str(home / ".codex"),
                     "XDG_CACHE_HOME": str(home / ".cache"),
@@ -394,6 +406,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "PATH": os.pathsep.join(
                         (
                             str(fake_bin),
+                            str(Path(sys.executable).parent),
                             str(Path(shutil.which("powershell.exe")).parent),
                             str(Path(shutil.which("cmd.exe")).parent),
                         )
@@ -423,7 +436,7 @@ class InstallerRollbackTests(unittest.TestCase):
             self.assertTrue(config.exists(), "installer removed the existing Windows config")
             self.assertEqual(config.read_bytes(), original)
             self.assertEqual(windows_profile.read_bytes(), original_profile)
-            journal = home / "AppData" / "Local" / "envCross_dotfiles" / "transactions" / f"{transaction_id}.jsonl"
+            journal = home / "envCross-state" / "transactions" / f"{transaction_id}.jsonl"
             events = [json.loads(line)["event"] for line in journal.read_text(encoding="utf-8").splitlines()]
             self.assertIn("run_started", events)
             self.assertIn("target_failed", events)
