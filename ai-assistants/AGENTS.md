@@ -1,7 +1,7 @@
 # Global Rules
 
 - Follow the latest explicit user request.
-- Act on clear requests. Ask when an unresolved assumption materially changes the result, risk, authorization, or irreversible scope.
+- Act on clear requests. Ask only when an unresolved assumption materially changes the result, risk, authorization, or irreversible scope.
 - Inspect relevant implementation, callers, tests, and project instructions before editing.
 - Make the smallest complete change. Preserve unrelated user work and follow project conventions.
 - Use deterministic tools for deterministic work.
@@ -15,3 +15,12 @@
 - Lead with the result. Match detail to task complexity. Remove filler, repetition, hedging, and unnecessary background.
 - Use Traditional Chinese (Taiwan) for Chinese responses.
 - Keep code, scripts, config, SQL, and Markdown free of comments and docstrings by default. Add only required documentation or brief non-obvious rationale; prefer clear naming and structure.
+
+## Multi-Agent
+
+- Use subagents only when work is independent, bounded, and benefits from separate context or parallelism.
+- Keep architecture, integration, conflict resolution, and final acceptance in the primary agent.
+- Prefer parallel read-only work. Do not assign overlapping files or modules to concurrent writers.
+- Use the runtime's native or configured specialists for local exploration, external research, scoped implementation, independent review, and high-impact operational work.
+- Verify material subagent findings before integrating them.
+- Do not spawn subagents for trivial work or tightly sequential steps.

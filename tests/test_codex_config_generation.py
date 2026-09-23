@@ -24,19 +24,16 @@ class CodexConfigGenerationTests(unittest.TestCase):
 
     def test_windows_active_config_contains_common_and_windows_values(self):
         config = self.render("windows.config.toml")
-        self.assertTrue(config["mcp_servers"]["mem0"]["enabled"])
-        self.assertEqual(config["windows"]["sandbox"], "elevated")
-        self.assertNotIn("model_provider", config)
-        self.assertNotIn(
-            "base_url",
-            config["model_providers"]["cc-switch-official"],
-        )
+        self.assertEqual(set(config["mcp_servers"]), {"code-review-graph", "mem0"})
+        self.assertEqual(config["windows"]["sandbox"], "unelevated")
+        self.assertEqual(config["model_provider"], "openai")
+        self.assertNotIn("model_providers", config)
         self.assertIn(r"d:\notes\workflow\envcross_dotfiles", config["projects"])
         self.assertNotIn("/home/lou/Documents/WorkFlow/envCross_dotfiles", config["projects"])
 
     def test_linux_active_config_contains_common_and_linux_values(self):
         config = self.render("linux.config.toml")
-        self.assertTrue(config["mcp_servers"]["mem0"]["enabled"])
+        self.assertEqual(set(config["mcp_servers"]), {"code-review-graph", "mem0"})
         self.assertIn("/home/lou/Documents/WorkFlow/envCross_dotfiles", config["projects"])
         self.assertNotIn("windows", config)
 

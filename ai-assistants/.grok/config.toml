@@ -1,6 +1,16 @@
 [cli]
 installer = "internal"
 
+[models]
+default_reasoning_effort = "medium"
+
+[subagents]
+enabled = true
+sampling_limit = 2
+
+[skills]
+ignore = ["~/.grok/skills", "~/.grok/commands", "~/.grok/bundled/skills", "~/.agents/skills", "~/.agents/commands"]
+
 [ui]
 max_thoughts_width = 120
 fork_secondary_model = "grok-build"

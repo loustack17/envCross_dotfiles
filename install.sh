@@ -806,6 +806,7 @@ link_ai_shared_files() {
     case "$name" in
         claude-code)
             local claude_root="$REPO_ROOT/ai-assistants/.claude"
+            create_file_link "$shared_agents" "$HOME/.claude/AGENTS.md" "claude-shared-rules" || return 1
             create_file_link "$claude_root/CLAUDE.md" "$HOME/.claude/CLAUDE.md" "claude-rules" || return 1
             create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings" || return 1
             create_path_link "$REPO_ROOT/ai-assistants/hooks" "$HOME/.claude/hooks" "claude-hooks" || return 1
@@ -840,15 +841,26 @@ link_ai_shared_files() {
             ;;
         opencode)
             local opencode_root="$REPO_ROOT/ai-assistants/.opencode"
+            local generated_opencode_config="${XDG_STATE_HOME:-$HOME/.local/state}/envcross/generated/opencode/opencode.json"
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_dry "Would render: OpenCode Linux config -> $generated_opencode_config"
+            else
+                python3 "$REPO_ROOT/scripts/merge-opencode-config.py" \
+                    "$opencode_root/opencode.json" \
+                    "$opencode_root/opencode.linux.json" \
+                    "$generated_opencode_config" || return 1
+            fi
             create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules" || return 1
-            create_file_link "$opencode_root/opencode.json" "$HOME/.config/opencode/opencode.json" "opencode-config" || return 1
+            local active_opencode_source="$generated_opencode_config"
+            [[ "$DRY_RUN" == "true" ]] && active_opencode_source="$opencode_root/opencode.json"
+            create_file_link "$active_opencode_source" "$HOME/.config/opencode/opencode.json" "opencode-config" || return 1
             create_file_link "$opencode_root/oh-my-opencode-slim.json" "$HOME/.config/opencode/oh-my-opencode-slim.json" "opencode-omc-slim" || return 1
             create_file_link "$opencode_root/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui" || return 1
+            create_file_link "$opencode_root/cli.json" "$HOME/.config/opencode/cli.json" "opencode-cli" || return 1
             create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills" || return 1
             create_path_link "$opencode_root/agents" "$HOME/.config/opencode/agents" "opencode-agents" || return 1
             create_path_link "$opencode_root/commands" "$HOME/.config/opencode/commands" "opencode-commands" || return 1
             create_path_link "$opencode_root/plugins" "$HOME/.config/opencode/plugins" "opencode-plugins" || return 1
-            create_file_link "$opencode_root/enforce-shell-policy.sh" "$HOME/.config/opencode/enforce-shell-policy.sh" "opencode-shell-policy" || return 1
             ;;
         hermes-agent)
             local hermes_root="$REPO_ROOT/ai-assistants/.hermes"
@@ -1010,6 +1022,7 @@ step_symlink_configs() {
         fi
 
         case "$name" in claude-code|codex|grok|opencode|hermes-agent) link_ai_shared_files "$name" ;; esac
+        case "$name" in gemini-cli) create_file_link "$REPO_ROOT/ai-assistants/AGENTS.md" "$HOME/.gemini/GEMINI.md" "gemini-shared-rules" || return 1 ;; esac
         case "$name" in claude-code) ensure_claude_local_plugin ;; esac
     done
 

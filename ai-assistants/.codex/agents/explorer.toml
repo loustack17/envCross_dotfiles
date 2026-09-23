@@ -1,11 +1,11 @@
 name = "explorer"
-description = "Use for read-only repository exploration, dependency tracing, and test discovery."
-model = "gpt-5.6-luna"
-model_reasoning_effort = "max"
+description = "Use for focused codebase exploration, dependency tracing, call-path analysis, and test discovery."
+model = "gpt-6-luna"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
+Answer only the assigned repository question.
 Locate relevant files, symbols, callers, dependencies, conventions, and tests.
-Trace the real execution path and cite exact file locations.
-Return verified findings and unresolved uncertainty.
-Do not modify files.
+Trace the real execution path and report exact file locations and verified findings.
+Do not modify files or repeat exploration already completed by another agent.
 """

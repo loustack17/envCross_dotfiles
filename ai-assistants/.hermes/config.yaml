@@ -481,10 +481,6 @@ approvals:
   destructive_slash_confirm: true
 command_allowlist:
   - script execution via -e/-c flag
-hooks:
-  pre_tool_call:
-    - matcher: terminal
-      command: ~/.hermes/hooks/enforce-shell-policy.sh
 hooks_auto_accept: false
 security:
   allow_private_urls: false

@@ -16,24 +16,14 @@ class SecurityDefaultsTests(unittest.TestCase):
         cls.linux = tomllib.loads((CODEX / "linux.config.toml").read_text(encoding="utf-8"))
 
     def test_official_provider_has_no_persistent_endpoint_override(self):
-        for name, config in (
-            ("common", self.common),
-            ("linux", self.linux),
-        ):
+        for name, config in (("common", self.common), ("linux", self.linux)):
             self.assertNotIn("openai_base_url", config, name)
-            self.assertNotIn("model_provider", config, name)
             self.assertNotIn("model_providers", config, name)
+        self.assertEqual(self.common["model_provider"], "openai")
+        self.assertNotIn("model_provider", self.linux)
         self.assertNotIn("openai_base_url", self.windows)
         self.assertNotIn("model_provider", self.windows)
-        self.assertEqual(
-            self.windows["model_providers"]["cc-switch-official"],
-            {
-                "name": "OpenAI",
-                "requires_openai_auth": True,
-                "supports_websockets": True,
-                "wire_api": "responses",
-            },
-        )
+        self.assertNotIn("model_providers", self.windows)
 
     def test_home_roots_are_not_trusted(self):
         windows_projects = {path.lower() for path in self.windows.get("projects", {})}
@@ -42,7 +32,7 @@ class SecurityDefaultsTests(unittest.TestCase):
         self.assertNotIn("/home/lou", linux_projects)
 
     def test_windows_uses_only_the_platform_sandbox_default(self):
-        self.assertEqual(self.windows["windows"]["sandbox"], "elevated")
+        self.assertEqual(self.windows["windows"]["sandbox"], "unelevated")
         self.assertNotIn("windows", self.common)
         self.assertNotIn("windows", self.linux)
         self.assertEqual(
@@ -113,6 +103,12 @@ class SecurityDefaultsTests(unittest.TestCase):
         )
         post_tool_use = claude["hooks"]["PostToolUse"]
         self.assertEqual(post_tool_use[0]["matcher"], "Edit|Write")
+
+    def test_shared_skills_do_not_depend_on_windows_local_links(self):
+        skills = ROOT / "ai-assistants" / "SKILLS"
+        for entry in skills.iterdir():
+            self.assertFalse(entry.is_symlink(), entry.name)
+        self.assertTrue((skills / "caveman-compress" / "SKILL.md").is_file())
 
 
 if __name__ == "__main__":

@@ -867,6 +867,7 @@ def main [
 
     if $should_link_claude {
         let claude_files = [
+            {src: $shared_agents,                           dest: ($claude_home | path join "AGENTS.md"),              is_file: true,  name: ".claude shared rules"}
             {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: ".claude CLAUDE.md"}
             {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: ".claude settings"}
             {src: $shared_hooks,                               dest: ($claude_home | path join "hooks"),                   is_file: false, name: ".claude hooks"}
@@ -932,24 +933,39 @@ def main [
     }
 
     if $should_link_opencode {
+        let opencode_root = ($ai_root | path join ".opencode")
+        let generated_opencode_config = ($state_root | path join "generated" | path join "opencode" | path join "opencode.json")
+        if $dry_run {
+            log_dry $"Would render: OpenCode Windows config -> ($generated_opencode_config)"
+        } else {
+            ^python ($repo_root | path join "scripts" | path join "merge-opencode-config.py") ($opencode_root | path join "opencode.json") ($opencode_root | path join "opencode.windows.json") $generated_opencode_config
+            if $env.LAST_EXIT_CODE != 0 {
+                error make {msg: "Failed to render OpenCode Windows config"}
+            }
+        }
+        let active_opencode_source = if $dry_run { ($opencode_root | path join "opencode.json") } else { $generated_opencode_config }
         let opencode_files = [
             {src: $shared_agents, dest: ($opencode_home | path join "AGENTS.md"),    is_file: true,  name: "opencode AGENTS.md"}
-            {src: ($ai_root | path join ".opencode" | path join "opencode.json"),     dest: ($opencode_home | path join "opencode.json"), is_file: true,  name: "opencode config"}
-            {src: ($ai_root | path join ".opencode" | path join "tui.json"),          dest: ($opencode_home | path join "tui.json"),      is_file: true,  name: "opencode tui"}
+            {src: ($opencode_root | path join "oh-my-opencode-slim.json"), dest: ($opencode_home | path join "oh-my-opencode-slim.json"), is_file: true, name: "opencode oh-my-opencode-slim"}
+            {src: ($opencode_root | path join "cli.json"), dest: ($opencode_home | path join "cli.json"), is_file: true, name: "opencode cli"}
             {src: $shared_skills, dest: ($opencode_home | path join "skills"),        is_file: false, name: "opencode skills"}
             {src: ($ai_root | path join ".opencode" | path join "agents"),            dest: ($opencode_home | path join "agents"),        is_file: false, name: "opencode agents"}
             {src: ($ai_root | path join ".opencode" | path join "commands"),          dest: ($opencode_home | path join "commands"),      is_file: false, name: "opencode commands"}
             {src: ($ai_root | path join ".opencode" | path join "plugins"),           dest: ($opencode_home | path join "plugins"),       is_file: false, name: "opencode plugins"}
-            {src: ($ai_root | path join ".opencode" | path join "enforce-shell-policy.sh"), dest: ($opencode_home | path join "enforce-shell-policy.sh"), is_file: true, name: "opencode shell policy"}
         ]
         $targets ++= (existing_targets $opencode_files)
+        $targets ++= [{
+            source: $active_opencode_source
+            dest: ($opencode_home | path join "opencode.json")
+            is_file: true
+            name: "opencode config"
+        }]
     }
 
-    let gemini_md = ($ai_root | path join ".gemini" | path join "GEMINI.md")
-    if $should_link_gemini and ($gemini_md | path exists) {
+    if $should_link_gemini {
         $targets ++= [{
             name: ".gemini GEMINI.md"
-            source: $gemini_md
+            source: $shared_agents
             dest: ($gemini_home | path join "GEMINI.md")
             is_file: true
         }]

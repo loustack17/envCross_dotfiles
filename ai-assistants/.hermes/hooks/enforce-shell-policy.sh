@@ -1,1 +1,0 @@
-/home/lou/Documents/WorkFlow/envCross_dotfiles/AI-Supporter/hooks/enforce-shell-policy.sh

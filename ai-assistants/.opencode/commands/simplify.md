@@ -1,11 +1,17 @@
 ---
-description: Run code-simplifier on the current git diff while preserving behavior.
+description: Simplify recently modified code for clarity and maintainability while preserving behavior.
 ---
 
-Use the `code-simplifier` skill on the current git diff (or user-provided target).
+Use the `code-simplifier` subagent on the current git diff or the target supplied in `$ARGUMENTS`.
 
-Spawn `@reuse-reviewer`, `@quality-reviewer`, and `@efficiency-reviewer` in a single parallel dispatch. If unavailable, stop with: "Cannot run: subagent spawning unavailable in this runtime."
+If there is no diff and no target, ask for target files.
 
-Reviewers are read-only. Merge findings only after all three return, then apply local behavior-preserving fixes. Run minimal validation. Report using the skill's four-section format.
+Wait for the simplifier result. Verify each proposed change against the actual code and project instructions.
+Apply only local, behavior-preserving simplifications in the primary session.
+Do not apply suggestions that change behavior, add features, broaden scope, or conflict with project conventions.
 
-If no diff and no target, ask for target files.
+Run the smallest relevant validation after edits.
+Report:
+- what was simplified
+- what was intentionally left unchanged
+- validation run

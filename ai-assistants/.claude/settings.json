@@ -13,7 +13,6 @@
     "code-simplifier@claude-plugins-official": true,
     "codex@openai-codex": true,
     "commit-commands@claude-plugins-official": true,
-    "common-lsp@lou-local-ai": true,
     "csharp-lsp@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "github@claude-plugins-official": true,
@@ -51,12 +50,6 @@
         "source": "github"
       }
     },
-    "lou-local-ai": {
-      "source": {
-        "path": "~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/.claude/marketplace",
-        "source": "directory"
-      }
-    },
     "openai-codex": {
       "source": {
         "repo": "openai/codex-plugin-cc",
@@ -83,17 +76,6 @@
         "matcher": "Edit|Write"
       }
     ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "~/.claude/hooks/enforce-shell-policy.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      }
-    ],
     "SessionStart": [
       {
         "hooks": [
@@ -104,28 +86,6 @@
           }
         ],
         "matcher": ""
-      },
-      {
-        "hooks": [
-          {
-            "command": "node \"/home/lou/.claude/hooks/caveman-activate.js\"",
-            "statusMessage": "Loading caveman mode...",
-            "timeout": 5,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "command": "node \"/home/lou/.claude/hooks/caveman-mode-tracker.js\"",
-            "statusMessage": "Tracking caveman mode...",
-            "timeout": 5,
-            "type": "command"
-          }
-        ]
       }
     ]
   },

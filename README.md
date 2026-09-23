@@ -51,17 +51,13 @@ ai-assistants/
 ├── SKILLS/
 ├── .claude/
 │   ├── CLAUDE.md
-│   ├── agents/
-│   ├── hooks/
-│   ├── marketplace/
-│   ├── rules/
 │   ├── settings.json
-│   ├── skills/
 │   └── statusline-command.sh
 ├── .codex/
-│   └── config.toml
-├── .gemini/
-│   └── GEMINI.md
+│   ├── config.toml
+│   ├── windows.config.toml
+│   ├── linux.config.toml
+│   └── agents/
 ├── .grok/
 │   └── config.toml
 ├── .hermes/
@@ -72,8 +68,10 @@ ai-assistants/
 │   ├── agents/
 │   ├── commands/
 │   ├── plugins/
-│   ├── enforce-shell-policy.sh
 │   ├── opencode.json
+│   ├── opencode.windows.json
+│   ├── opencode.linux.json
+│   ├── cli.json
 │   └── tui.json
 └── mcp/
 ```
@@ -84,13 +82,10 @@ During installation, these files are linked to the appropriate locations for eac
 | AI Tool | Source | Target Path |
 |---------|--------|-------------|
 | **Claude Code** | `ai-assistants/.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
+| **Claude Code** | `ai-assistants/AGENTS.md` | `~/.claude/AGENTS.md` |
 | **Claude Code** | `ai-assistants/.claude/settings.json` | `~/.claude/settings.json` |
-| **Claude Code** | `ai-assistants/.claude/agents/` | `~/.claude/agents` |
-| **Claude Code** | `ai-assistants/hooks/` | `~/.claude/hooks` |
-| **Claude Code** | `ai-assistants/.claude/rules/` | `~/.claude/rules` |
 | **Claude Code** | `ai-assistants/SKILLS/` | `~/.claude/skills` |
 | **Claude Code** | `ai-assistants/.claude/statusline-command.sh` | `~/.claude/statusline-command.sh` |
-| **Claude Code** | `ai-assistants/.claude/marketplace/` | `~/.claude/marketplace` |
 | **Codex** | `ai-assistants/AGENTS.md` | `~/.codex/AGENTS.md` |
 | **Codex** | common config + platform config | generated active `~/.codex/config.toml` |
 | **Codex** | `ai-assistants/.codex/windows.config.toml` | `~/.codex/windows.config.toml` |
@@ -101,17 +96,17 @@ During installation, these files are linked to the appropriate locations for eac
 | **Grok Build** | `ai-assistants/AGENTS.md` | `~/.grok/AGENTS.md` |
 | **Grok Build** | `ai-assistants/.grok/config.toml` | `~/.grok/config.toml` |
 | **OpenCode** | `ai-assistants/AGENTS.md` | `~/.config/opencode/AGENTS.md` |
-| **OpenCode** | `ai-assistants/.opencode/opencode.json` | `~/.config/opencode/opencode.json` |
-| **OpenCode** | `ai-assistants/.opencode/tui.json` | `~/.config/opencode/tui.json` |
+| **OpenCode** | common config + platform config | generated active `~/.config/opencode/opencode.json` |
+| **OpenCode** | `ai-assistants/.opencode/cli.json` | `~/.config/opencode/cli.json` |
+| **OpenCode (Linux V1)** | `ai-assistants/.opencode/tui.json` | `~/.config/opencode/tui.json` |
+| **OpenCode** | `ai-assistants/.opencode/oh-my-opencode-slim.json` | `~/.config/opencode/oh-my-opencode-slim.json` |
 | **OpenCode** | `ai-assistants/.opencode/agents/` | `~/.config/opencode/agents` |
 | **OpenCode** | `ai-assistants/.opencode/commands/` | `~/.config/opencode/commands` |
 | **OpenCode** | `ai-assistants/.opencode/plugins/` | `~/.config/opencode/plugins` |
-| **OpenCode** | `ai-assistants/.opencode/enforce-shell-policy.sh` | `~/.config/opencode/enforce-shell-policy.sh` |
 | **OpenCode** | `ai-assistants/SKILLS/` | `~/.config/opencode/skills` |
-| **Gemini CLI** | `ai-assistants/.gemini/GEMINI.md` | `~/.gemini/GEMINI.md` |
+| **Gemini CLI** | `ai-assistants/AGENTS.md` | `~/.gemini/GEMINI.md` |
 | **Hermes** | `ai-assistants/.hermes/SOUL.md` | `~/.hermes/SOUL.md` |
 | **Hermes** | `ai-assistants/.hermes/config.yaml` | `~/.hermes/config.yaml` |
-| **Hermes** | `ai-assistants/.hermes/hooks/` | `~/.hermes/hooks` |
 
 ### MCP Configuration
 
