@@ -138,6 +138,11 @@ is_installed() {
 install_packages() {
     local pkgs="$1"
     local is_aur="$2"
+    local needed=()
+
+    if [[ "$FORCE_INSTALL" != "true" ]]; then
+        needed=(--needed)
+    fi
 
     # Split comma-separated packages
     IFS=',' read -ra pkg_array <<< "$pkgs"
@@ -147,12 +152,12 @@ install_packages() {
             log_warn "No AUR helper available, skipping: ${pkg_array[*]}"
             return 1
         fi
-        $AUR_HELPER -S --noconfirm --needed "${pkg_array[@]}"
+        $AUR_HELPER -S --noconfirm "${needed[@]}" "${pkg_array[@]}"
     else
         if [[ -n "$AUR_HELPER" ]]; then
-            $AUR_HELPER -S --noconfirm --needed "${pkg_array[@]}"
+            $AUR_HELPER -S --noconfirm "${needed[@]}" "${pkg_array[@]}"
         else
-            sudo pacman -S --noconfirm --needed "${pkg_array[@]}"
+            sudo pacman -S --noconfirm "${needed[@]}" "${pkg_array[@]}"
         fi
     fi
 }
@@ -864,8 +869,19 @@ link_ai_shared_files() {
             ;;
         hermes-agent)
             local hermes_root="$REPO_ROOT/ai-assistants/.hermes"
+            local generated_hermes_config="${XDG_CACHE_HOME:-$HOME/.cache}/envCross_dotfiles/hermes/config.yaml"
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_dry "Would render: Hermes Linux config -> $generated_hermes_config"
+            else
+                python3 "$REPO_ROOT/scripts/render-hermes-config.py" \
+                    "$hermes_root/config.yaml" \
+                    "$hermes_root/mcp.linux.yaml" \
+                    "$generated_hermes_config" || return 1
+            fi
             create_file_link "$hermes_root/SOUL.md" "$HOME/.hermes/SOUL.md" "hermes-soul" || return 1
-            create_file_link "$hermes_root/config.yaml" "$HOME/.hermes/config.yaml" "hermes-config" || return 1
+            local active_hermes_source="$generated_hermes_config"
+            [[ "$DRY_RUN" == "true" ]] && active_hermes_source="$hermes_root/config.yaml"
+            create_file_link "$active_hermes_source" "$HOME/.hermes/config.yaml" "hermes-config" || return 1
             create_path_link "$hermes_root/hooks" "$HOME/.hermes/hooks" "hermes-hooks" || return 1
             ;;
     esac
@@ -940,6 +956,13 @@ step_install_tools() {
         should_process "$name" || continue
         install_tool "$name" "$cmd" "$pkg" "$is_aur"
     done
+
+    if should_process "neovim"; then
+        install_tool "tree-sitter-cli" "tree-sitter" "tree-sitter-cli" "false" || return 1
+        if ! command -v cc &>/dev/null && ! command -v gcc &>/dev/null && ! command -v clang &>/dev/null; then
+            install_tool "gcc" "gcc" "gcc" "false" || return 1
+        fi
+    fi
 }
 
 step_backup_configs() {
@@ -994,7 +1017,7 @@ step_symlink_configs() {
             else
                 python3 "$REPO_ROOT/scripts/merge-json.py" \
                     "$REPO_ROOT/zed/settings.json" \
-                    "$REPO_ROOT/zed/lsp.linux.json" \
+                    "$REPO_ROOT/zed/platform.linux.json" \
                     "$generated_zed_settings"
                 create_file_link "$generated_zed_settings" "$full_dst" "$name"
             fi

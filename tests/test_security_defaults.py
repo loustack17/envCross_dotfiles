@@ -110,6 +110,22 @@ class SecurityDefaultsTests(unittest.TestCase):
             self.assertFalse(entry.is_symlink(), entry.name)
         self.assertTrue((skills / "caveman-compress" / "SKILL.md").is_file())
 
+    def test_headset_rules_limit_device_access_to_active_user(self):
+        rules = (ROOT / "Linux-system" / "udev" / "rules.d" / "99-HyperHeadset.rules").read_text(encoding="utf-8")
+        for rule in rules.splitlines():
+            self.assertIn('MODE="0660"', rule)
+            self.assertIn('TAG+="uaccess"', rule)
+        self.assertNotIn('MODE="0666"', rules)
+
+    def test_gdrive_mount_refuses_nonempty_mountpoint(self):
+        service = (ROOT / "Linux-config" / "systemd" / "user" / "gdrive.service").read_text(encoding="utf-8")
+        self.assertNotIn("--allow-non-empty", service)
+
+    def test_crawl4ai_intentionally_tracks_latest_image(self):
+        compose = (ROOT / "Linux-config" / "docker" / "crawl4ai" / "compose.yaml").read_text(encoding="utf-8")
+        self.assertIn("image: unclecode/crawl4ai:latest", compose)
+        self.assertIn("pull_policy: always", compose)
+
 
 if __name__ == "__main__":
     unittest.main()

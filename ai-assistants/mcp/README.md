@@ -41,7 +41,7 @@ with-secrets -- <cmd>
 
 Grok Build reads MCP from `~/.grok/config.toml`, `~/.claude.json`, and `~/.mcp.json`. Keep all three aligned with the stdio wrappers.
 
-Mem0 uses local stdio through `run-mem0.sh`. Set `MEM0_API_KEY`; the wrapper derives its authorization header without putting the token on the process argv.
+On Linux, Mem0 uses local stdio through `run-mem0.sh`. Set `MEM0_API_KEY`; the wrapper derives its authorization header without putting the token on the process argv. On Windows, Zed and Hermes use the hosted Mem0 endpoint with browser authorization. Sign in to the same Mem0 account when prompted.
 
 Tavily uses local stdio through `run-tavily.sh` so BWS can inject `TAVILY_API_KEY`.
 
@@ -62,7 +62,8 @@ scripts/mcp/sync-cc-switch-mcp.py
 ## Boundaries
 
 - Cursor uses `mcpServers`; VS Code uses `servers`, so they cannot share one JSON shape.
-- Zed uses `context_servers` inside `zed/settings.json`; it cannot consume the shared `mcp.json` directly.
+- Zed uses platform-specific `context_servers` in `zed/platform.linux.json` and `zed/platform.windows.json`; it cannot consume the shared `mcp.json` directly.
+- Hermes combines `.hermes/config.yaml` with `.hermes/mcp.linux.yaml` or `.hermes/mcp.windows.yaml` into the active config during installation.
 - cc-switch app settings are symlinked from `ai-assistants/.cc-switch/settings.json`.
 - cc-switch stores MCP servers in `~/.cc-switch/cc-switch.db`, not a symlink-friendly JSON file. The repo manages a seed JSON plus sync script, not the DB or auth files.
 - Codex profiles use the official endpoint by default. cc-switch owns temporary provider and localhost routing state when takeover is explicitly enabled.

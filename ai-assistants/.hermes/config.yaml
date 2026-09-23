@@ -624,36 +624,6 @@ session_reset:
 known_plugin_toolsets:
   cli:
     - spotify
-mcp_servers:
-  code-review-graph:
-    enabled: true
-    command: uvx
-    args:
-      - code-review-graph
-      - serve
-  firecrawl:
-    enabled: true
-    command: /home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh
-  content-i18n:
-    command: /home/lou/.local/bin/content-i18n
-    args:
-      - mcp
-      - --config
-      - /home/lou/Documents/LouStackBase/content-i18n.yaml
-    enabled: true
-  tavily:
-    enabled: true
-    url: https://mcp.tavily.com/mcp/
-    auth: oauth
-  exa:
-    enabled: true
-    url: https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa
-  markitdown:
-    command: markitdown-mcp
-    enabled: true
-  mem0:
-    enabled: true
-    command: /home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh
 platforms:
   discord:
     enabled: false

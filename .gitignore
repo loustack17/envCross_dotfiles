@@ -14,6 +14,7 @@ Linux-config/**/*.backup
 Linux-local-share/**/*.bak
 Linux-local-share/**/*.backup
 /lazygit/state.yml
+/lazygit/github_pull_requests.json
 nvim/lazy-lock.json
 yazi/plugins/custom-shell.yazi/yazi_cmd_history
 yazi/plugins/whoosh.yazi/bookmarks

@@ -1,0 +1,18 @@
+mcp_servers:
+  code-review-graph:
+    enabled: true
+    command: D:\ProgramData\Scoop\shims\uvx.exe
+    args:
+      - code-review-graph
+      - serve
+  tavily:
+    enabled: true
+    url: https://mcp.tavily.com/mcp/
+    auth: oauth
+  exa:
+    enabled: true
+    url: https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa
+  mem0:
+    enabled: true
+    url: https://mcp.mem0.ai/mcp/
+    auth: oauth

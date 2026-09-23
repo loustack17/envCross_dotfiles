@@ -5,8 +5,13 @@ if ($host.Name -eq 'ConsoleHost') {
     Import-Module PSReadLine
 
     if (-not [Console]::IsOutputRedirected -and $Host.UI.SupportsVirtualTerminal) {
-        Set-PSReadLineOption -PredictionSource History
-        Set-PSReadLineOption -PredictionViewStyle ListView
+        $predictionParameters = (Get-Command Set-PSReadLineOption).Parameters
+        if ($predictionParameters.ContainsKey('PredictionSource')) {
+            Set-PSReadLineOption -PredictionSource History
+        }
+        if ($predictionParameters.ContainsKey('PredictionViewStyle')) {
+            Set-PSReadLineOption -PredictionViewStyle ListView
+        }
     }
 
     Set-PSReadLineOption -EditMode Windows

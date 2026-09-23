@@ -54,6 +54,8 @@ def main [
         return ($tool not-in $skip_list)
     }
 
+    let needs_python = (["zed", "codex", "opencode", "hermes-agent"] | any {|tool| should_install $tool $skip_list $only_list })
+
     def check_cmd [cmd: string]: nothing -> bool {
         (which $cmd | is-not-empty)
     }
@@ -620,9 +622,14 @@ def main [
             error make "Scoop required"
         }
 
+        if $needs_python and not (check_cmd "python") {
+            if not (install_tool "Python" "python" "python" $dry_run $force_install) {
+                error make "Python is required to render platform configs"
+            }
+        }
+
         let tools = [
             {name: "Windows-Terminal",  pkg: "windows-terminal",  cmd: "wt"}
-            {name: "WezTerm",           pkg: "wezterm",           cmd: "wezterm"}
             {name: "Nushell",           pkg: "nu",                cmd: "nu"}
             {name: "Neovim",            pkg: "neovim",            cmd: "nvim"}
             {name: "Helix",              pkg: "helix",             cmd: "hx"}
@@ -638,12 +645,52 @@ def main [
 
         for tool in $tools {
             if (should_install ($tool.name | str lowercase) $skip_list $only_list) {
-                install_tool $tool.name $tool.pkg $tool.cmd $dry_run $force_install
+                if not (install_tool $tool.name $tool.pkg $tool.cmd $dry_run $force_install) {
+                    error make $"Failed to install ($tool.name)"
+                }
+            }
+        }
+
+        if (should_install "neovim" $skip_list $only_list) {
+            if not (install_tool "Tree-sitter CLI" "tree-sitter" "tree-sitter" $dry_run $force_install) {
+                error make "Failed to install Tree-sitter CLI"
+            }
+            if not ((check_cmd "gcc") or (check_cmd "clang") or (check_cmd "cl")) {
+                if not (install_tool "GCC" "gcc" "gcc" $dry_run $force_install) {
+                    error make "Failed to install a C compiler for Neovim parsers"
+                }
+            }
+        }
+
+        if (should_install "wezterm" $skip_list $only_list) {
+            let scoop_root = ($env.SCOOP? | default ($env.USERPROFILE | path join "scoop"))
+            let nightly = ($scoop_root | path join "apps" "wezterm-nightly" "current" "wezterm.exe")
+            if ($nightly | path exists) and (not $force_install) {
+                log_info "WezTerm nightly: already installed"
+            } else if $dry_run {
+                log_dry "Would install: WezTerm nightly (versions/wezterm-nightly)"
+            } else {
+                if not (($scoop_root | path join "buckets" "versions") | path exists) {
+                    let bucket = (^scoop bucket add versions | complete)
+                    if $bucket.exit_code != 0 { error make "Failed to add Scoop versions bucket" }
+                }
+                let result = if ($nightly | path exists) {
+                    (^scoop update wezterm-nightly | complete)
+                } else {
+                    (^scoop install versions/wezterm-nightly | complete)
+                }
+                if ($result.exit_code != 0) or (not ($nightly | path exists)) {
+                    error make "Failed to install WezTerm nightly"
+                }
+                log_info "WezTerm nightly: installed"
             }
         }
     }
 
     # === Step 2: Build targets ===
+    if $needs_python and not $dry_run and not (check_cmd "python") {
+        error make "Python is required to render platform configs"
+    }
     mut targets = []
     mut nushell_history_source = ""
     mut nushell_config = ""
@@ -761,7 +808,7 @@ def main [
             log_dry $"Would render: Zed settings -> ($generated_zed_settings)"
         } else {
             mkdir ($generated_zed_settings | path dirname)
-            ^python ($repo_root | path join "scripts" | path join "merge-json.py") ($repo_root | path join "zed" | path join "settings.json") ($repo_root | path join "zed" | path join "lsp.windows.json") $generated_zed_settings
+            ^python ($repo_root | path join "scripts" | path join "merge-json.py") ($repo_root | path join "zed" | path join "settings.json") ($repo_root | path join "zed" | path join "platform.windows.json") $generated_zed_settings
         }
         let zed_files = [
             {src: $generated_zed_settings, dest: ($appdata | path join "Zed" | path join "settings.json"), is_file: true, name: "Zed settings"}
@@ -972,9 +1019,19 @@ def main [
     }
 
     let hermes_home = ($home | path join ".hermes")
+    let generated_hermes_config = ($state_root | path join "generated" "hermes" "config.yaml")
+    if $should_link_hermes {
+        if $dry_run {
+            log_dry $"Would render: Hermes Windows config -> ($generated_hermes_config)"
+        } else {
+            let result = (^python ($repo_root | path join "scripts" "render-hermes-config.py") ($ai_root | path join ".hermes" "config.yaml") ($ai_root | path join ".hermes" "mcp.windows.yaml") $generated_hermes_config | complete)
+            if $result.exit_code != 0 { error make "Failed to render Hermes Windows config" }
+        }
+    }
+    let hermes_config_source = if $dry_run { ($ai_root | path join ".hermes" "config.yaml") } else { $generated_hermes_config }
     let hermes_files = [
         {src: ($ai_root | path join ".hermes" | path join "SOUL.md"),      dest: ($hermes_home | path join "SOUL.md"),      is_file: true,  name: "Hermes SOUL.md"}
-        {src: ($ai_root | path join ".hermes" | path join "config.yaml"),  dest: ($hermes_home | path join "config.yaml"),  is_file: true,  name: "Hermes config.yaml"}
+        {src: $hermes_config_source,  dest: ($hermes_home | path join "config.yaml"),  is_file: true,  name: "Hermes config.yaml"}
         {src: ($ai_root | path join ".hermes" | path join "hooks"),        dest: ($hermes_home | path join "hooks"),        is_file: false, name: "Hermes hooks"}
     ]
     if $should_link_hermes {

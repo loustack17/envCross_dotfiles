@@ -119,7 +119,7 @@ end
 --   - Defensive fallback: if url.path is missing/empty, fall back to tostring(url)
 ----------------------------------------------------------------------
 local function fs_path(url)
-  if url and url.is_search then
+  if url and ((url.spec and url.spec.is_search) or (not url.spec and url.is_search)) then
     local p = url.path
     if p then
       local s = tostring(p)

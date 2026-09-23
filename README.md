@@ -29,14 +29,14 @@ bash ./scripts/install-udev-rules.sh
 ```
 
 ### Windows
-```powershell
+```nu
 # Full installation
 nu install.nu
 
 # Advanced usage examples
 nu install.nu --dry-run
-nu install.nu --skip [yasb]
-nu install.nu --only [nvim lazygit]
+nu install.nu --skip yasb
+nu install.nu --only "neovim,lazygit"
 ```
 
 ## 🤖 AI Assistant Configuration
@@ -106,11 +106,11 @@ During installation, these files are linked to the appropriate locations for eac
 | **OpenCode** | `ai-assistants/SKILLS/` | `~/.config/opencode/skills` |
 | **Gemini CLI** | `ai-assistants/AGENTS.md` | `~/.gemini/GEMINI.md` |
 | **Hermes** | `ai-assistants/.hermes/SOUL.md` | `~/.hermes/SOUL.md` |
-| **Hermes** | `ai-assistants/.hermes/config.yaml` | `~/.hermes/config.yaml` |
+| **Hermes** | common config + platform MCP config | generated active `~/.hermes/config.yaml` |
 
 ### MCP Configuration
 
-Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed uses its own `context_servers` section inside `zed/settings.json`. cc-switch MCP servers are synced into its SQLite DB from a secret-free catalog.
+Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed keeps platform-specific MCP servers in `zed/platform.linux.json` and `zed/platform.windows.json`; Windows Mem0 uses browser authorization. cc-switch MCP servers are synced into its SQLite DB from a secret-free catalog.
 
 ```bash
 bash ./install.sh --no-install --only-cursor-mcp --only-cursor-user-mcp --only-vscode-mcp --only-cc-switch
