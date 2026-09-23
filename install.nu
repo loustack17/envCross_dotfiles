@@ -944,11 +944,16 @@ def main [
     let codex_hooks = ($ai_root | path join ".codex" | path join "hooks.json")
     let codex_agents = ($ai_root | path join ".codex" | path join "agents")
     if $should_link_codex {
-        let generated_codex_config = ($state_root | path join "generated" | path join "codex" | path join "config.toml")
+        let codex_generated_root = ($state_root | path join "generated" | path join "codex")
+        let codex_slot_a = ($codex_generated_root | path join "config.0.toml")
+        let codex_slot_b = ($codex_generated_root | path join "config.1.toml")
+        let active_codex_config = ($codex_home | path join "config.toml")
+        let resolved_active_codex = if ($active_codex_config | path exists) { $active_codex_config | path expand } else { "" }
+        let generated_codex_config = if $resolved_active_codex == ($codex_slot_a | path expand --no-symlink) { $codex_slot_b } else { $codex_slot_a }
         if $dry_run {
             log_dry $"Would render: Codex Windows config -> ($generated_codex_config)"
         } else {
-            ^python ($repo_root | path join "scripts" | path join "merge-codex-config.py") $codex_config $codex_windows_config $generated_codex_config
+            ^python ($repo_root | path join "scripts" | path join "merge-codex-config.py") $codex_config $codex_windows_config $generated_codex_config --runtime-source $active_codex_config
             if $env.LAST_EXIT_CODE != 0 {
                 error make {msg: "Failed to render Codex Windows config"}
             }
@@ -965,7 +970,7 @@ def main [
         let active_codex_source = if $dry_run { $codex_config } else { $generated_codex_config }
         $targets ++= [{
             source: $active_codex_source
-            dest: ($codex_home | path join "config.toml")
+            dest: $active_codex_config
             is_file: true
             name: "Codex config"
         }]

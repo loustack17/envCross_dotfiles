@@ -19,12 +19,16 @@ def leaves(value, prefix=()):
 RUNTIME_PATHS = (
     ("notify",),
     ("mcp_servers", "node_repl"),
+    ("mcp_servers", "cua_repl"),
     ("hooks", "state"),
     ("marketplaces", "openai-bundled"),
     ("marketplaces", "openai-primary-runtime"),
+    ("desktop",),
+    ("tui",),
+    ("apps",),
 )
 
-RUNTIME_PLUGIN_SUFFIX = "@openai-primary-runtime"
+RUNTIME_PLUGIN_SUFFIXES = ("@openai-primary-runtime", "@openai-bundled")
 
 
 def get_path(value, path):
@@ -66,39 +70,50 @@ def render_table(path, value):
     return lines
 
 
-def runtime_text(output, durable_leaves):
-    if not output.exists() or output.is_symlink():
-        return "", ""
-    existing = tomllib.loads(output.read_text(encoding="utf-8"))
-    root_lines = []
-    table_lines = []
+def merge_missing(target, source):
+    for key, value in source.items():
+        if key not in target:
+            target[key] = value
+        elif isinstance(target[key], dict) and isinstance(value, dict):
+            merge_missing(target[key], value)
+
+
+def merge_overwriting(target, source):
+    for key, value in source.items():
+        if key in target and isinstance(target[key], dict) and isinstance(value, dict):
+            merge_overwriting(target[key], value)
+        else:
+            target[key] = value
+
+
+def runtime_values(source):
+    selected = {}
     paths = list(RUNTIME_PATHS)
-    plugins = existing.get("plugins", {})
+    plugins = source.get("plugins", {})
     if isinstance(plugins, dict):
         paths.extend(
             ("plugins", name)
             for name, value in sorted(plugins.items())
-            if name.endswith(RUNTIME_PLUGIN_SUFFIX)
+            if name.endswith(RUNTIME_PLUGIN_SUFFIXES)
             and isinstance(value, dict)
             and isinstance(value.get("enabled"), bool)
         )
     for path in paths:
-        value = get_path(existing, path)
+        value = get_path(source, path)
         if value is None:
             continue
         if len(path) == 2 and path[0] == "plugins":
             value = {"enabled": value["enabled"]}
-        selected_leaves = leaves(value, path)
-        overlap = selected_leaves & durable_leaves
-        if overlap:
-            names = ", ".join(".".join(item) for item in sorted(overlap))
-            raise SystemExit(f"runtime state conflicts with durable config: {names}")
-        if len(path) == 1:
-            root_lines.append(f"{key_text(path[0])} = {value_text(value)}")
-        else:
-            table_lines.extend(render_table(path, value))
-            table_lines.append("")
-    return "\n".join(root_lines), "\n".join(table_lines).rstrip()
+        current = selected
+        for key in path[:-1]:
+            current = current.setdefault(key, {})
+        current[path[-1]] = value
+    projects = source.get("projects", {})
+    if isinstance(projects, dict):
+        for name, value in projects.items():
+            if isinstance(value, dict) and value.get("trust_level") in {"trusted", "untrusted"}:
+                selected.setdefault("projects", {})[name] = {"trust_level": value["trust_level"]}
+    return selected
 
 
 def main():
@@ -106,6 +121,7 @@ def main():
     parser.add_argument("common", type=pathlib.Path)
     parser.add_argument("platform", type=pathlib.Path)
     parser.add_argument("output", type=pathlib.Path)
+    parser.add_argument("--runtime-source", type=pathlib.Path)
     args = parser.parse_args()
 
     common_text = args.common.read_text(encoding="utf-8")
@@ -117,16 +133,31 @@ def main():
         names = ", ".join(".".join(path) for path in sorted(overlap))
         raise SystemExit(f"duplicate config ownership: {names}")
 
-    durable_leaves = leaves(common) | leaves(platform)
-    runtime_root, runtime_tables = runtime_text(args.output, durable_leaves)
-    merged = ""
-    if runtime_root:
-        merged += runtime_root + "\n"
-    merged += common_text.rstrip() + "\n\n" + platform_text.lstrip().rstrip()
-    if runtime_tables:
-        merged += "\n\n" + runtime_tables
-    merged += "\n"
-    tomllib.loads(merged)
+    config = common
+    merge_missing(config, platform)
+    if args.runtime_source and args.runtime_source.is_symlink() and not args.runtime_source.exists():
+        raise SystemExit(f"runtime source is a broken symlink: {args.runtime_source}")
+    source = args.runtime_source if args.runtime_source and args.runtime_source.exists() else args.output
+    if source.exists():
+        if source.is_symlink() and source.resolve().parent != args.output.resolve().parent:
+            raise SystemExit(f"runtime source must link within generated config directory: {source}")
+        runtime = tomllib.loads(source.read_text(encoding="utf-8"))
+        selected = runtime_values(runtime)
+        merge_missing(config, selected)
+        for key in ("desktop", "projects", "plugins"):
+            if key in selected:
+                merge_overwriting(config[key], selected[key])
+    root = []
+    tables = []
+    for key, value in config.items():
+        if isinstance(value, dict):
+            tables.extend(render_table((key,), value))
+            tables.append("")
+        else:
+            root.append(f"{key_text(key)} = {value_text(value)}")
+    merged = "\n".join(root + ([""] if root and tables else []) + tables).rstrip() + "\n"
+    if tomllib.loads(merged) != config:
+        raise SystemExit("rendered config differs from merged values")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     if args.output.is_symlink():
         raise SystemExit(f"output must not be a symlink: {args.output}")
