@@ -1,6 +1,15 @@
 # Dotfiles
 
-A cross-platform dotfiles repository for Linux and Windows, featuring centralized configuration management and shared AI assistant instructions.
+A cross-platform dotfiles repository for CachyOS/Arch Linux and Windows, featuring centralized configuration management and shared AI assistant instructions.
+
+Run the installers from the repository root. Preview changes before applying them, and keep the repository at a stable location because live symlinks point back to it.
+
+| Task | Windows (Nushell) | Linux (Bash) |
+|------|-------------------|--------------|
+| Preview all targets | `nu install.nu --dry-run` | `./install.sh --dry-run` |
+| Apply all targets | `nu install.nu` | `./install.sh` |
+| Reapply Codex config | `nu install.nu --no-install --only codex` | `./install.sh --no-install --only-codex` |
+| Reapply Yazi config | `nu install.nu --no-install --only yazi` | `./install.sh --no-install --only-yazi` |
 
 ## 🚀 Installation
 
@@ -29,6 +38,8 @@ bash ./scripts/install-udev-rules.sh
 ```
 
 ### Windows
+Install Nushell before running the installer. Scoop supplies packages; Python is required when rendering platform-specific AI or Zed settings. Creating file symlinks requires Administrator privileges or Windows Developer Mode.
+
 ```nu
 # Full installation
 nu install.nu
@@ -39,9 +50,21 @@ nu install.nu --skip yasb
 nu install.nu --only "neovim,lazygit"
 ```
 
+Windows `--only` and `--skip` accept a single tool name or a comma-separated string. Use `--no-install` to relink an already installed tool, or `--backup-only` to save current settings without applying changes. The installer prints the backup location; `ENVCROSS_STATE_ROOT` controls where Windows installer state is stored. Keep backups enabled for normal installs.
+
+### Changing settings later
+
+1. Edit the tracked source in this repository. Use the shared file for settings common to both platforms and the matching platform file for OS-specific settings.
+2. Run a selective install with `--dry-run`, then repeat without `--dry-run` if the preview matches your intent.
+3. Restart the affected application and verify the result. Check `git status --short` and `git diff --check` before committing.
+
+Directly linked files reflect source edits immediately. Generated configs must be rebuilt by the installer. Do not edit generated output: the next install replaces it. If an install fails, inspect its error and transaction record before retrying; use the backup location printed by the installer to restore affected settings. Linux backups are kept in the repository's ignored `backup/` directory.
+
 ## 🤖 AI Assistant Configuration
 
 This repository centralizes assistant context and tool-specific settings under `ai-assistants/`. Shared rules live in `ai-assistants/AGENTS.md`; shared skills live in `ai-assistants/SKILLS/`; tool-specific files live in hidden subdirectories such as `ai-assistants/.claude` and `ai-assistants/.opencode`.
+
+Codex and OpenCode active configs are generated from their common config plus the appropriate Windows or Linux config. Reapply the corresponding tool after changing either source. On Windows, the Codex installer also carries forward App-managed preferences, first-party plugin state, and project trust from the active config; it renders to an inactive slot before switching the live symlink. The active and generated files are not the source of truth for repository-managed settings.
 
 ### Directory Structure
 ```text
@@ -110,14 +133,14 @@ During installation, these files are linked to the appropriate locations for eac
 
 ### MCP Configuration
 
-Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed keeps platform-specific MCP servers in `zed/platform.linux.json` and `zed/platform.windows.json`; Windows Mem0 uses browser authorization. cc-switch MCP servers are synced into its SQLite DB from a secret-free catalog.
+Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed keeps platform-specific MCP servers in `zed/platform.linux.json` and `zed/platform.windows.json`; Windows Mem0 uses browser authorization. The cc-switch sync below is for Linux; Windows Codex uses the official provider directly.
 
 ```bash
 bash ./install.sh --no-install --only-cursor-mcp --only-cursor-user-mcp --only-vscode-mcp --only-cc-switch
 scripts/mcp/sync-cc-switch-mcp.py
 ```
 
-Secrets stay outside git in `~/.config/mcp/secrets.env`; see `ai-assistants/mcp/README.md`.
+Keep secrets and OAuth state outside git. Linux MCP secrets use Bitwarden Secrets Manager and the local Secret Service/cache workflow described in `ai-assistants/mcp/README.md`; Windows hosted Mem0 uses browser authorization. Review app-managed settings, history, and generated output before adding files to Git.
 
 ## 📁 Paths & Configuration
 
