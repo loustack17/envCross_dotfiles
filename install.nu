@@ -54,7 +54,7 @@ def main [
         return ($tool not-in $skip_list)
     }
 
-    let needs_python = (["zed", "codex", "opencode", "hermes-agent"] | any {|tool| should_install $tool $skip_list $only_list })
+    let needs_python = (["zed", "opencode", "hermes-agent"] | any {|tool| should_install $tool $skip_list $only_list })
 
     def check_cmd [cmd: string]: nothing -> bool {
         (which $cmd | is-not-empty)
@@ -872,9 +872,9 @@ def main [
     let claude_root  = ($ai_root   | path join ".claude")
     let shared_agents = ($ai_root  | path join "AGENTS.md")
     let shared_skills = ($ai_root  | path join "SKILLS")
-    let shared_hooks = ($ai_root  | path join "hooks")
     let claude_home = ($home | path join ".claude")
     let codex_home = ($home | path join ".codex")
+    let agents_home = ($home | path join ".agents")
     let grok_home = ($home | path join ".grok")
     let opencode_home = ($user_config_home | path join "opencode")
     let gemini_home = ($home | path join ".gemini")
@@ -892,7 +892,6 @@ def main [
     let should_link_hermes = $has_hermes and (should_install "hermes-agent" $skip_list $only_list)
     let claude_agents = ($claude_root | path join "agents")
     let claude_rules  = ($claude_root | path join "rules")
-    let claude_statusline = ($claude_root | path join "statusline-command.sh")
     let claude_marketplace = ($claude_root | path join "marketplace")
     let claude_skills_dest = ($claude_home | path join "skills")
     let resolved_claude_skill_targets = if $should_link_claude {
@@ -914,11 +913,9 @@ def main [
 
     if $should_link_claude {
         let claude_files = [
-            {src: $shared_agents,                           dest: ($claude_home | path join "AGENTS.md"),              is_file: true,  name: ".claude shared rules"}
-            {src: ($claude_root | path join "CLAUDE.md"),      dest: ($claude_home | path join "CLAUDE.md"),               is_file: true,  name: ".claude CLAUDE.md"}
-            {src: ($claude_root | path join "settings.json"),  dest: ($claude_home | path join "settings.json"),           is_file: true,  name: ".claude settings"}
-            {src: $shared_hooks,                               dest: ($claude_home | path join "hooks"),                   is_file: false, name: ".claude hooks"}
-            {src: $claude_statusline,                          dest: ($claude_home | path join "statusline-command.sh"),   is_file: true,  name: ".claude statusline"}
+            {src: $shared_agents, dest: ($claude_home | path join "AGENTS.md"), is_file: true, name: ".claude shared rules"}
+            {src: ($claude_root | path join "CLAUDE.md"), dest: ($claude_home | path join "CLAUDE.md"), is_file: true, name: ".claude CLAUDE.md"}
+            {src: ($claude_root | path join "settings.json"), dest: ($claude_home | path join "settings.json"), is_file: true, name: ".claude settings"}
         ]
         $targets ++= (existing_targets $claude_files)
         $targets ++= (existing_non_empty_targets [
@@ -939,41 +936,20 @@ def main [
     }
 
     let codex_config = ($ai_root | path join ".codex" | path join "config.toml")
-    let codex_windows_config = ($ai_root | path join ".codex" | path join "windows.config.toml")
-    let codex_linux_config = ($ai_root | path join ".codex" | path join "linux.config.toml")
+    let codex_system_home = ($env.ProgramData? | default 'C:\ProgramData' | path join "OpenAI" "Codex")
     let codex_hooks = ($ai_root | path join ".codex" | path join "hooks.json")
     let codex_agents = ($ai_root | path join ".codex" | path join "agents")
     if $should_link_codex {
-        let codex_generated_root = ($state_root | path join "generated" | path join "codex")
-        let codex_slot_a = ($codex_generated_root | path join "config.0.toml")
-        let codex_slot_b = ($codex_generated_root | path join "config.1.toml")
-        let active_codex_config = ($codex_home | path join "config.toml")
-        let resolved_active_codex = if ($active_codex_config | path exists) { $active_codex_config | path expand } else { "" }
-        let generated_codex_config = if $resolved_active_codex == ($codex_slot_a | path expand --no-symlink) { $codex_slot_b } else { $codex_slot_a }
-        if $dry_run {
-            log_dry $"Would render: Codex Windows config -> ($generated_codex_config)"
-        } else {
-            ^python ($repo_root | path join "scripts" | path join "merge-codex-config.py") $codex_config $codex_windows_config $generated_codex_config --runtime-source $active_codex_config
-            if $env.LAST_EXIT_CODE != 0 {
-                error make {msg: "Failed to render Codex Windows config"}
-            }
-        }
         let codex_files = [
+            {src: $codex_config, dest: ($codex_system_home | path join "config.toml"), is_file: true, name: "Codex system defaults"}
+            {src: ($ai_root | path join ".codex" "local" "windows" "config.toml"), dest: ($codex_home | path join "config.toml"), is_file: true, name: "Codex Windows user config"}
             {src: $shared_agents,       dest: ($codex_home | path join "AGENTS.md"),            is_file: true,  name: "Codex AGENTS.md"}
-            {src: $codex_windows_config, dest: ($codex_home | path join "windows.config.toml"), is_file: true,  name: "Codex Windows profile"}
-            {src: $codex_linux_config,  dest: ($codex_home | path join "linux.config.toml"),     is_file: true,  name: "Codex Linux profile"}
             {src: $codex_hooks,         dest: ($codex_home | path join "hooks.json"),             is_file: true,  name: "Codex hooks"}
             {src: $codex_agents,        dest: ($codex_home | path join "agents"),                is_file: false, name: "Codex agents"}
-            {src: $shared_skills,       dest: ($codex_home | path join "skills"),                is_file: false, name: "Codex skills"}
+            {src: $shared_skills,       dest: ($agents_home | path join "skills"),               is_file: false, name: "Codex global skills"}
         ]
         $targets ++= (existing_targets $codex_files)
-        let active_codex_source = if $dry_run { $codex_config } else { $generated_codex_config }
-        $targets ++= [{
-            source: $active_codex_source
-            dest: $active_codex_config
-            is_file: true
-            name: "Codex config"
-        }]
+
     }
 
     if $should_link_grok {

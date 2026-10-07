@@ -18,6 +18,7 @@
 
 ## Multi-Agent
 
+- For material coding tasks that benefit from independent specialist work, use the shared `omo-slim` skill and the host's configured agents. Keep orchestration in the main conversation.
 - Use subagents only when work is independent, bounded, and benefits from separate context or parallelism.
 - Keep architecture, integration, conflict resolution, and final acceptance in the primary agent.
 - Prefer parallel read-only work. Do not assign overlapping files or modules to concurrent writers.

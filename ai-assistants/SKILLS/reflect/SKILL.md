@@ -17,10 +17,10 @@ The goal is to identify real repeated friction and suggest practical improvement
 Use Reflect when the user asks to:
 
 - run `/reflect` or `/reflect <focus>`;
-- run `/reflect --sessions` for session archaeology;
+- run `/reflect --sessions` for OpenCode session archaeology;
 - learn from recent sessions or repeated workflows;
 - find work they keep doing manually;
-- improve their oh-my-opencode-slim setup based on actual usage using oh-my-opencode-slim skill;
+- improve their current host's OMO-Slim setup based on actual usage;
 - review whether a recurring process should become a reusable playbook;
 - turn repeated workflow friction into a safer future default.
 
@@ -29,9 +29,12 @@ architecture review, or speculative agent creation without workflow evidence.
 
 ## Session Mode
 
-When the user includes `--sessions` in their reflect command, shift to session
+When the user includes `--sessions` while running OpenCode, shift to session
 archaeology: analyze historical OpenCode sessions across all repos to find
-repeated patterns, friction, and improvement opportunities.
+repeated patterns, friction, and improvement opportunities. This mode is
+OpenCode-only. In Claude Code or Codex, do not query the OpenCode database or
+claim access to another host's session history; explain that session archaeology
+is unavailable and use current-conversation and project evidence when useful.
 
 ### Session Discovery
 
@@ -84,7 +87,9 @@ For each session, analyze and produce a structured summary:
 
 ### Storage and Caching
 
-Store session summaries in `~/.config/opencode/oh-my-opencode-slim/reflections/sessions/`.
+In OpenCode, store session summaries in
+`~/.config/opencode/oh-my-opencode-slim/reflections/sessions/`. Do not use this
+path from Claude Code or Codex.
 
 **Cache logic:**
 1. Check if `<session-id>.json` exists in reflections directory
@@ -144,6 +149,8 @@ Needs more evidence
 
 ### Error Handling
 
+These log checks apply only to OpenCode session archaeology.
+
 **Log file issues:**
 - Log doesn't exist → "No OpenCode log found at <path>. Run OpenCode in at least one repo first."
 - Log is empty → "OpenCode log is empty. No sessions to analyze."
@@ -169,20 +176,22 @@ Required behavior:
 - treat "create nothing" as a successful result when evidence is weak;
 - ask before changing prompts, skills, commands, agents, MCP access, or config;
 - avoid duplicating existing assets;
-- explain restart requirements for OpenCode config, prompt, agent, skill, MCP, or
-  plugin changes.
+- explain restart requirements for the current host's config, prompt, agent,
+  skill, MCP, or plugin changes.
 
 ## Evidence Sources
 
 Use available evidence in this order:
 
 1. Current conversation and explicit user instructions.
-2. Project-local guidance and memories, such as `AGENTS.md`, `.opencode/`,
-   `.slim/`, notes, checkpoints, task progress files, and codemaps.
+2. Project-local guidance and memories, such as project instruction files,
+   `.slim/`, notes, checkpoints, task progress files, and codemaps. Inspect
+   `.opencode/` only when the current host is OpenCode.
 3. Existing skills, commands, agents, prompt overrides, MCP permissions, and
    oh-my-opencode-slim configuration.
-4. Recent OpenCode logs or session artifacts if they are available and safe to
-   inspect.
+4. Recent session logs or artifacts only when the current host provides them
+   and they are safe to inspect. The OpenCode database is available only to
+   OpenCode session archaeology.
 5. External docs only when a proposed workflow depends on a third-party tool or
    library whose behavior needs confirmation.
 
@@ -197,8 +206,8 @@ Reflect can be triggered directly:
 ```text
 /reflect
 /reflect release workflow and checks
-/reflect --sessions
-/reflect --sessions --last 100
+/reflect --sessions (OpenCode only)
+/reflect --sessions --last 100 (OpenCode only)
 ```
 
 With no arguments, review recent work broadly. With arguments, focus the review
@@ -210,10 +219,11 @@ it.
 Before proposing anything, identify what already exists:
 
 - bundled and user-installed skills;
-- custom agents and their `orchestratorPrompt` guidance;
+- custom agents and host-specific orchestration guidance, such as OpenCode's
+  `orchestratorPrompt`;
 - custom commands;
 - prompt overrides and append files;
-- active oh-my-opencode-slim preset, model routing, skills, and MCP permissions;
+- active host's OMO-Slim preset, model routing, skills, and MCP permissions;
 - project playbooks, docs, codemaps, and local workflow notes.
 
 If an existing asset already covers the candidate, recommend extending or using
@@ -321,6 +331,5 @@ yet.
 - Do not overfit to a single session unless the user explicitly asks for that
   exact reusable workflow.
 - Do not use private or sensitive material as examples in generated assets.
-- When config, prompt, agent, skill, MCP, or plugin files change, tell the user:
-  "This should apply on the next OpenCode run; restart OpenCode if you need it
-  immediately."
+- When config, prompt, agent, skill, MCP, or plugin files change, explain when
+  the change takes effect for the current host and whether it needs a restart.

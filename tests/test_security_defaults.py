@@ -12,37 +12,28 @@ class SecurityDefaultsTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.common = tomllib.loads((CODEX / "config.toml").read_text(encoding="utf-8"))
-        cls.windows = tomllib.loads((CODEX / "windows.config.toml").read_text(encoding="utf-8"))
-        cls.linux = tomllib.loads((CODEX / "linux.config.toml").read_text(encoding="utf-8"))
 
     def test_official_provider_has_no_persistent_endpoint_override(self):
-        for name, config in (("common", self.common), ("linux", self.linux)):
-            self.assertNotIn("openai_base_url", config, name)
-            self.assertNotIn("model_providers", config, name)
         self.assertEqual(self.common["model_provider"], "openai")
-        self.assertNotIn("model_provider", self.linux)
-        self.assertNotIn("openai_base_url", self.windows)
-        self.assertNotIn("model_provider", self.windows)
-        self.assertNotIn("model_providers", self.windows)
+        self.assertNotIn("openai_base_url", self.common)
+        self.assertNotIn("model_providers", self.common)
 
     def test_home_roots_are_not_trusted(self):
-        windows_projects = {path.lower() for path in self.windows.get("projects", {})}
-        linux_projects = set(self.linux.get("projects", {}))
-        self.assertNotIn(r"c:\users\lou", windows_projects)
-        self.assertNotIn("/home/lou", linux_projects)
+        projects = {path.lower() for path in self.common.get("projects", {})}
+        self.assertNotIn(r"c:\users\lou", projects)
+        self.assertNotIn("/home/lou", projects)
 
     def test_windows_uses_only_the_platform_sandbox_default(self):
-        self.assertEqual(self.windows["windows"]["sandbox"], "unelevated")
-        self.assertNotIn("windows", self.common)
-        self.assertNotIn("windows", self.linux)
-        self.assertEqual(
-            self.windows["desktop"]["integratedTerminalShell"],
-            "commandPrompt",
-        )
+        self.assertEqual(self.common["windows"]["sandbox"], "elevated")
+        self.assertNotIn("sandbox_mode", self.common)
         self.assertNotIn("integratedTerminalShell", self.common.get("desktop", {}))
-        self.assertNotIn("integratedTerminalShell", self.linux["desktop"])
 
     def test_durable_common_excludes_application_runtime_state(self):
+        self.assertNotIn("projects", self.common)
+        self.assertNotIn("desktop", self.common)
+        self.assertNotIn("plugins", self.common)
+        self.assertNotIn("skills", self.common)
+        self.assertNotIn("notice", self.common)
         self.assertNotIn("notify", self.common)
         self.assertNotIn("node_repl", self.common.get("mcp_servers", {}))
         self.assertNotIn("hooks", self.common)

@@ -40,3 +40,4 @@ __pycache__/
 /.claude/
 /nvim/.claude/
 .slim/deepwork/
+/ai-assistants/.codex/local/

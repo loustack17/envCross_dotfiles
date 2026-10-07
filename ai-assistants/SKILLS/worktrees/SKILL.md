@@ -10,10 +10,11 @@ managing Git worktrees as isolated coding lanes. Its value is giving the Orchest
 
 ## Core Contract
 
-This is an **orchestrator-only** workflow. Other specialists such as `@fixer`
-or `@designer` can be assigned tasks inside a worktree lane, but the
-Orchestrator owns lane planning, branch/path selection, file ownership,
-delegation, diff validation, integration, and cleanup.
+This is an **orchestrator-only** workflow. Other specialists can be assigned
+tasks inside a worktree lane, but the Orchestrator owns lane planning,
+branch/path selection, file ownership, delegation, diff validation,
+integration, and cleanup. Route through OMO-Slim using `fixer` and `designer`
+in Claude Code, or `worker` and `designer` in Codex.
 
 All worktrees reside under the default path:
 
@@ -67,17 +68,9 @@ following guards:
 - Ensure the branch name (e.g. `omos/<slug>` or custom project convention) does not already exist locally or on remote.
 - Ensure `.slim/worktrees/` is ignored by Git before creating nested worktrees.
 
-### 2. Mandatory User Confirmation
-You must seek explicit user confirmation before executing:
-- `git worktree add` or `git worktree remove`
-- Branch creation, deletion, or renaming
-- Merges, rebases, or cherry-picks
-- `git prune` or `git worktree prune`
-- Destructive commands (e.g., `git reset --hard`, `git clean`, `git push --force`, or removing a dirty worktree directory).
+### 2. Authorization
 
-Never execute destructive commands, delete branches, remove dirty worktrees, or
-clean uncommitted changes without explicit user confirmation for that exact
-operation.
+Create isolated worktrees and branches when needed for an authorized task. Ask only when scope or authorization is unresolved. Preserve unrelated work. Require explicit authorization for commits, pushes, merges, rebases, cherry-picks, branch deletion, pruning, destructive commands, and removal of dirty worktrees. Existing explicit authorization remains valid.
 
 ### 3. Ignore File Setup
 
@@ -92,7 +85,7 @@ Before creating lanes, add or update managed marker blocks only.
 # END oh-my-opencode-slim worktrees
 ```
 
-`.ignore`:
+`.ignore` (OpenCode only, when agents need to read files inside the Git-ignored worktree directory):
 
 ```ignore
 # BEGIN oh-my-opencode-slim worktrees

@@ -14,8 +14,6 @@ class AgentRoutingTests(unittest.TestCase):
         self.assertEqual(config["model_reasoning_effort"], "medium")
         self.assertTrue(config["features"]["multi_agent"])
         self.assertTrue(config["agents"]["enabled"])
-        self.assertEqual(config["profiles"]["astra"]["model"], "gpt-6-astra")
-        self.assertEqual(config["profiles"]["astra"]["model_reasoning_effort"], "low")
         self.assertEqual(config["agents"]["default_subagent_model"], "gpt-6-luna")
         self.assertEqual(config["agents"]["default_subagent_reasoning_effort"], "high")
         self.assertEqual(config["agents"]["max_concurrent_threads_per_session"], 4)
@@ -28,6 +26,7 @@ class AgentRoutingTests(unittest.TestCase):
             "researcher": ("gpt-6-luna", "high", "read-only"),
             "worker": ("gpt-6-luna", "high", "workspace-write"),
             "reviewer": ("gpt-6-sol", "medium", "read-only"),
+            "designer": ("gpt-6-luna", "high", "workspace-write"),
         }
         self.assertEqual(
             {path.stem for path in (ROOT / ".codex/agents").glob("*.toml")},

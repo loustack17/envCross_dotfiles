@@ -352,7 +352,8 @@ class InstallerRollbackTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="dotfiles-rollback-") as temp:
             home = Path(temp) / "home"
             config = home / ".codex" / "config.toml"
-            windows_profile = home / ".codex" / "windows.config.toml"
+            windows_hooks = home / ".codex" / "hooks.json"
+            system_config = home / "ProgramData" / "OpenAI" / "Codex" / "config.toml"
             fake_bin = Path(temp) / "bin"
             fixture = Path(temp) / "repo"
             fixture_config = fixture / "ai-assistants" / ".codex"
@@ -373,18 +374,16 @@ class InstallerRollbackTests(unittest.TestCase):
                 fixture_config / "config.toml",
             )
             shutil.copy2(
-                ROOT / "ai-assistants" / ".codex" / "windows.config.toml",
-                fixture_config / "windows.config.toml",
-            )
-            shutil.copy2(
-                ROOT / "scripts" / "merge-codex-config.py",
-                fixture_scripts / "merge-codex-config.py",
+                ROOT / "ai-assistants" / ".codex" / "hooks.json",
+                fixture_config / "hooks.json",
             )
             original = b"original-windows-config\n"
-            original_profile = b"original-windows-profile\n"
+            original_hooks = b"original-windows-hooks\n"
             config.write_bytes(original)
-            windows_profile.write_bytes(original_profile)
-            marker = config.parent / f".config.toml.envCross-{transaction_id}.stage"
+            windows_hooks.write_bytes(original_hooks)
+            system_config.parent.mkdir(parents=True)
+            system_config.write_bytes(b"original-system-config\n")
+            marker = system_config.parent / f".config.toml.envCross-{transaction_id}.stage"
             marker.write_text("occupied stage\n", encoding="utf-8")
             (fake_bin / "codex.cmd").write_text(
                 "exit /b 0\n",
@@ -400,6 +399,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "ENVCROSS_STATE_ROOT": str(home / "envCross-state"),
                     "HOME": str(home),
                     "CODEX_HOME": str(home / ".codex"),
+                    "ProgramData": str(home / "ProgramData"),
                     "XDG_CACHE_HOME": str(home / ".cache"),
                     "XDG_CONFIG_HOME": str(home / ".config"),
                     "XDG_STATE_HOME": str(home / ".local" / "state"),
@@ -435,7 +435,8 @@ class InstallerRollbackTests(unittest.TestCase):
             self.assertNotIn("Copied: Codex Windows config", result.stdout)
             self.assertTrue(config.exists(), "installer removed the existing Windows config")
             self.assertEqual(config.read_bytes(), original)
-            self.assertEqual(windows_profile.read_bytes(), original_profile)
+            self.assertEqual(system_config.read_bytes(), b"original-system-config\n")
+            self.assertEqual(windows_hooks.read_bytes(), original_hooks)
             journal = home / "envCross-state" / "transactions" / f"{transaction_id}.jsonl"
             events = [json.loads(line)["event"] for line in journal.read_text(encoding="utf-8").splitlines()]
             self.assertIn("run_started", events)
@@ -458,11 +459,14 @@ class InstallerRollbackTests(unittest.TestCase):
                 path = fake_bin / name
                 path.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
                 path.chmod(0o755)
+            sudo = fake_bin / "sudo"
+            sudo.write_text('#!/usr/bin/env bash\nprintf called > "$SUDO_MARKER"\nexit 0\n', encoding="utf-8")
+            sudo.chmod(0o755)
             ln = fake_bin / "ln"
             ln.write_text(
                 "#!/usr/bin/env bash\n"
                 "for arg in \"$@\"; do\n"
-                "    if [[ \"$arg\" == */.codex/windows.config.toml ]]; then\n"
+                "    if [[ \"$arg\" == */.codex/hooks.json ]]; then\n"
                 "        printf reached > \"$FAILURE_MARKER\"\n"
                 "        exit 1\n"
                 "    fi\n"
@@ -501,6 +505,7 @@ class InstallerRollbackTests(unittest.TestCase):
                     "XDG_DATA_HOME": f"{home_posix}/.local/share",
                     "XDG_STATE_HOME": f"{home_posix}/.local/state",
                     "FAILURE_MARKER": bash_path(marker),
+                    "SUDO_MARKER": bash_path(temp_path / "sudo-called"),
                     "TEST_BIN_POSIX": fake_bin_posix,
                 }
             )
@@ -518,6 +523,7 @@ class InstallerRollbackTests(unittest.TestCase):
             )
 
             self.assertTrue(marker.exists(), "Linux config link failure was not injected")
+            self.assertFalse((temp_path / "sudo-called").exists(), "system config changed before user links committed")
             self.assertNotEqual(result.returncode, 0, result.stdout)
             self.assertTrue(config.exists(), "installer removed the existing Linux config")
             self.assertEqual(config.read_bytes(), b"original-linux-config\n")

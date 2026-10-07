@@ -814,32 +814,20 @@ link_ai_shared_files() {
             create_file_link "$shared_agents" "$HOME/.claude/AGENTS.md" "claude-shared-rules" || return 1
             create_file_link "$claude_root/CLAUDE.md" "$HOME/.claude/CLAUDE.md" "claude-rules" || return 1
             create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings" || return 1
-            create_path_link "$REPO_ROOT/ai-assistants/hooks" "$HOME/.claude/hooks" "claude-hooks" || return 1
             create_path_link "$shared_skills" "$HOME/.claude/skills" "claude-skills" || return 1
-            create_file_link "$claude_root/statusline-command.sh" "$HOME/.claude/statusline-command.sh" "claude-statusline" || return 1
             create_optional_path_link "$claude_root/agents" "$HOME/.claude/agents" "claude-agents" || return 1
             create_optional_path_link "$claude_root/rules" "$HOME/.claude/rules" "claude-rules-dir" || return 1
             create_optional_path_link "$claude_root/marketplace" "$HOME/.claude/marketplace" "claude-marketplace" || return 1
             ;;
         codex)
-            local generated_codex_config="${XDG_STATE_HOME:-$HOME/.local/state}/envcross/generated/codex/config.toml"
-            if [[ "$DRY_RUN" == "true" ]]; then
-                log_dry "Would render: Codex Linux config -> $generated_codex_config"
-            else
-                python3 "$REPO_ROOT/scripts/merge-codex-config.py" \
-                    "$REPO_ROOT/ai-assistants/.codex/config.toml" \
-                    "$REPO_ROOT/ai-assistants/.codex/linux.config.toml" \
-                    "$generated_codex_config" || return 1
-            fi
             create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules" || return 1
-            local active_codex_source="$generated_codex_config"
-            [[ "$DRY_RUN" == "true" ]] && active_codex_source="$REPO_ROOT/ai-assistants/.codex/config.toml"
-            create_file_link "$active_codex_source" "$HOME/.codex/config.toml" "codex-config" || return 1
-            create_file_link "$REPO_ROOT/ai-assistants/.codex/windows.config.toml" "$HOME/.codex/windows.config.toml" "codex-windows-profile" || return 1
-            create_file_link "$REPO_ROOT/ai-assistants/.codex/linux.config.toml" "$HOME/.codex/linux.config.toml" "codex-linux-profile" || return 1
+            local codex_user_source="$REPO_ROOT/ai-assistants/.codex/local/linux/config.toml"
+            if [[ -f "$codex_user_source" ]]; then
+                create_file_link "$codex_user_source" "$HOME/.codex/config.toml" "codex-user-config" || return 1
+            fi
             create_file_link "$REPO_ROOT/ai-assistants/.codex/hooks.json" "$HOME/.codex/hooks.json" "codex-hooks" || return 1
             create_path_link "$REPO_ROOT/ai-assistants/.codex/agents" "$HOME/.codex/agents" "codex-agents" || return 1
-            create_path_link "$shared_skills" "$HOME/.codex/skills" "codex-skills" || return 1
+            create_path_link "$shared_skills" "$HOME/.agents/skills" "codex-global-skills" || return 1
             ;;
         grok)
             create_file_link "$shared_agents" "$HOME/.grok/AGENTS.md" "grok-rules" || return 1
@@ -1050,6 +1038,19 @@ step_symlink_configs() {
     done
 
     commit_transaction
+
+    if should_process "codex"; then
+        local codex_system_source="$REPO_ROOT/ai-assistants/.codex/config.toml"
+        if [[ -f "$codex_system_source" ]]; then
+            if [[ "$DRY_RUN" == "true" ]]; then
+                log_dry "Would link Codex system defaults: /etc/codex/config.toml"
+            elif ! link_resolves_to /etc/codex/config.toml "$codex_system_source"; then
+                log_info "User links committed; applying system defaults with a numbered backup"
+                sudo mkdir -p /etc/codex || return 1
+                sudo ln --symbolic --force --no-target-directory --backup=numbered "$codex_system_source" /etc/codex/config.toml || return 1
+            fi
+        fi
+    fi
 }
 
 show_summary() {

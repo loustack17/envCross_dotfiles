@@ -6,8 +6,6 @@ service_tier = "default"
 
 [features]
 multi_agent = true
-plugins = false
-apps = false
 skill_mcp_dependency_install = false
 
 [agents]
@@ -16,57 +14,9 @@ default_subagent_model = "gpt-6-luna"
 default_subagent_reasoning_effort = "high"
 max_concurrent_threads_per_session = 4
 
-[profiles.luna]
-model = "gpt-6-luna"
-model_reasoning_effort = "medium"
-
-[profiles.sol-high]
-model = "gpt-6-sol"
-model_reasoning_effort = "high"
-
-[profiles.sol-xhigh]
-model = "gpt-6-sol"
-model_reasoning_effort = "xhigh"
-
-[profiles.astra]
-model = "gpt-6-astra"
-model_reasoning_effort = "low"
-
-[skills.bundled]
-enabled = false
-
-[notice]
-hide_rate_limit_model_nudge = true
-
 [tui]
 status_line = ["model-with-reasoning", "five-hour-limit", "git-branch", "project-name", "pull-request-number", "run-state", "context-used", "used-tokens"]
 theme = "dracula"
-session_picker_view = "dense"
-status_line_use_colors = true
-
-[plugins."linear@openai-curated"]
-enabled = true
-
-[plugins."superpowers@openai-curated"]
-enabled = true
-
-[plugins."codex-app-tools@openai-bundled"]
-enabled = true
-
-[plugins."sites@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."computer-use@openai-bundled"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
 
 [mcp_servers.code-review-graph]
 command = "uvx"
@@ -92,3 +42,6 @@ approval_mode = "approve"
 url = "https://mcp.mem0.ai/mcp"
 enabled = true
 required = false
+
+[windows]
+sandbox = "elevated"

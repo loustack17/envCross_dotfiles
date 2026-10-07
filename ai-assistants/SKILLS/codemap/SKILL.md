@@ -37,10 +37,10 @@ If neither file exists: Continue to Step 2 (Initialize).
      - Docs: `docs/**`, `*.md` (except root `README.md` if needed), `LICENSE`
      - Build/Deps: `node_modules/**`, `dist/**`, `build/**`, `*.min.js`
    - Respect `.gitignore` automatically
-3. **Run codemap.mjs init**:
+3. **Run the bundled `scripts/codemap.mjs` init command**. The file lives beside this skill, so resolve it from the installed skill root: use `${CLAUDE_SKILL_DIR}` in Claude Code and the directory containing this `SKILL.md` in Codex.
 
 ```bash
-node ~/.config/opencode/skills/codemap/scripts/codemap.mjs init \
+node "<skill-root>/scripts/codemap.mjs" init \
   --root ./ \
   --include "src/**/*.ts" \
   --exclude "**/*.test.ts" --exclude "dist/**" --exclude "node_modules/**"
@@ -50,14 +50,14 @@ This creates:
 - `.slim/codemap.json` - File and folder hashes for change detection
 - Empty `codemap.md` files in all relevant subdirectories
 
-4. **Delegate codemap writing to Fixer agents** - Spawn one fixer per folder to read code and create or update its specific `codemap.md` file.
+4. **Delegate codemap writing through OMO-Slim** - Delegate independent folder groups only when their size warrants separate context; batch small folders and keep concurrency bounded. Read code and create or update each group's `codemap.md` files. Use `fixer` in Claude Code and `worker` in Codex.
 
 ### Step 3: Detect Changes (If state already exists)
 
-1. **Run codemap.mjs changes** to see what changed:
+1. **Run the bundled `scripts/codemap.mjs` changes command** to see what changed, resolving `<skill-root>` as the installed directory containing this `SKILL.md`:
 
 ```bash
-node ~/.config/opencode/skills/codemap/scripts/codemap.mjs changes \
+node "<skill-root>/scripts/codemap.mjs" changes \
   --root ./
 ```
 
@@ -67,11 +67,11 @@ node ~/.config/opencode/skills/codemap/scripts/codemap.mjs changes \
    - Modified files
    - Affected folders
 
-3. **Only update affected codemaps** - Spawn one fixer per affected folder to update its `codemap.md`.
+3. **Only update affected codemaps** - Use OMO-Slim's `fixer` role in Claude Code or `worker` role in Codex for substantial independent groups; handle small updates directly.
 4. **Run update** to save new state:
 
 ```bash
-node ~/.config/opencode/skills/codemap/scripts/codemap.mjs update \
+node "<skill-root>/scripts/codemap.mjs" update \
   --root ./
 ```
 
@@ -83,13 +83,13 @@ Once all specific directories are mapped, the Orchestrator must create or update
 2.  **Aggregate Sub-Maps**: Create a "Repository Directory Map" section. For every folder that has a `codemap.md`, extract its **Responsibility** summary and include it in a table or list in the root map.
 3.  **Cross-Reference**: Ensure that the root map contains the absolute or relative paths to the sub-maps so agents can jump directly to the relevant details.
 
-### Step 5: Register Codemap in AGENTS.md
+### Step 5: Register Codemap in Host Instructions
 
-**OpenCode auto-loads `AGENTS.md` into agent context on every session.** To ensure agents automatically discover and use the codemap, update (or create) `AGENTS.md` at the repo root:
+To ensure agents discover the codemap, update the host's project instructions: `CLAUDE.md` in Claude Code or `AGENTS.md` in Codex. If Claude Code's `CLAUDE.md` imports `AGENTS.md`, the repository map may live in that included file.
 
-1. If `AGENTS.md` already exists and already contains a `## Repository Map` section, **skip this step** — the reference is already set up.
-2. If `AGENTS.md` exists but has no `## Repository Map` section, **append** the section below.
-3. If `AGENTS.md` doesn't exist, **create** it with the section below.
+1. If the host instruction file already contains a `## Repository Map` section, **skip this step** — the reference is already set up.
+2. If the host instruction file exists but has no `## Repository Map` section, **append** the section below.
+3. If the host instruction file doesn't exist, **create** it with the section below.
 
 ```markdown
 ## Repository Map
@@ -126,7 +126,7 @@ Defines agent personalities and manages their configuration lifecycle.
 ## Design
 Each agent is a prompt + permission set. Config system uses:
 - Default prompts (orchestrator.ts, explorer.ts, etc.)
-- User overrides from ~/.config/opencode/oh-my-opencode-slim.json
+- User overrides from the host's OMO-Slim configuration
 - Permission wildcards for skill/MCP access control
 
 ## Flow
@@ -134,7 +134,7 @@ Each agent is a prompt + permission set. Config system uses:
 2. Reads user config preset
 3. Merges defaults with overrides
 4. Applies permission rules (wildcard expansion)
-5. Returns agent configs to OpenCode
+5. Returns agent configs to the host runtime
 
 ## Integration
 - Consumed by: Main plugin (src/index.ts)

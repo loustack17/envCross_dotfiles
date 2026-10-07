@@ -167,9 +167,6 @@ class PackagePinTests(unittest.TestCase):
         common = tomllib.loads((config_root / "config.toml").read_text(encoding="utf-8"))
         self.assertEqual(common["mcp_servers"]["code-review-graph"]["args"], expected)
         self.assertNotIn("==", " ".join(expected))
-        for filename in ("windows.config.toml", "linux.config.toml"):
-            profile = tomllib.loads((config_root / filename).read_text(encoding="utf-8"))
-            self.assertNotIn("code-review-graph", profile.get("mcp_servers", {}))
 
     def test_grok_config_is_cross_platform_and_minimal(self):
         path = ROOT / "ai-assistants" / ".grok" / "config.toml"

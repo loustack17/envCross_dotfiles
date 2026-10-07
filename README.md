@@ -64,9 +64,12 @@ Directly linked files reflect source edits immediately. Generated configs must b
 
 This repository centralizes assistant context and tool-specific settings under `ai-assistants/`. Shared rules live in `ai-assistants/AGENTS.md`; shared skills live in `ai-assistants/SKILLS/`; tool-specific files live in hidden subdirectories such as `ai-assistants/.claude` and `ai-assistants/.opencode`.
 
-Codex and OpenCode active configs are generated from their common config plus the appropriate Windows or Linux config. Reapply the corresponding tool after changing either source. On Windows, the Codex installer also carries forward App-managed preferences, first-party plugin state, and project trust from the active config; it renders to an inactive slot before switching the live symlink. The active and generated files are not the source of truth for repository-managed settings.
+Claude Code user settings and Codex system defaults link directly to repository sources. Codex links its writable user config to the Git-ignored `ai-assistants/.codex/local/windows/config.toml` or `local/linux/config.toml`; Claude keeps trust in its local `.claude.json`. There is no custom settings merger, platform dispatcher, or CLI configuration wrapper. Edit one shared source per tool; Codex trust remains in the host user config and authentication stays in its native location. See [Claude configuration](ai-assistants/.claude/README.md) and [Codex configuration](ai-assistants/.codex/README.md).
+
+Both tools share instructions and the `omo-slim` coordination skill. Edit their native agent files directly; their official formats differ. Codex handles `[windows]` natively; switch models with `/model` or `--model`. OpenCode configuration is separate and outside this update.
 
 ### Directory Structure
+
 ```text
 ai-assistants/
 ├── AGENTS.md
@@ -74,12 +77,10 @@ ai-assistants/
 ├── SKILLS/
 ├── .claude/
 │   ├── CLAUDE.md
-│   ├── settings.json
-│   └── statusline-command.sh
+│   ├── agents/
+│   └── settings.json
 ├── .codex/
 │   ├── config.toml
-│   ├── windows.config.toml
-│   ├── linux.config.toml
 │   └── agents/
 ├── .grok/
 │   └── config.toml
@@ -106,16 +107,15 @@ During installation, these files are linked to the appropriate locations for eac
 |---------|--------|-------------|
 | **Claude Code** | `ai-assistants/.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | **Claude Code** | `ai-assistants/AGENTS.md` | `~/.claude/AGENTS.md` |
+| **Claude Code** | `ai-assistants/.claude/agents/` | `~/.claude/agents` |
 | **Claude Code** | `ai-assistants/.claude/settings.json` | `~/.claude/settings.json` |
 | **Claude Code** | `ai-assistants/SKILLS/` | `~/.claude/skills` |
-| **Claude Code** | `ai-assistants/.claude/statusline-command.sh` | `~/.claude/statusline-command.sh` |
 | **Codex** | `ai-assistants/AGENTS.md` | `~/.codex/AGENTS.md` |
-| **Codex** | common config + platform config | generated active `~/.codex/config.toml` |
-| **Codex** | `ai-assistants/.codex/windows.config.toml` | `~/.codex/windows.config.toml` |
-| **Codex** | `ai-assistants/.codex/linux.config.toml` | `~/.codex/linux.config.toml` |
+| **Codex** | `ai-assistants/.codex/config.toml` | `/etc/codex/config.toml` or `C:\ProgramData\OpenAI\Codex\config.toml` |
 | **Codex** | `ai-assistants/.codex/hooks.json` | `~/.codex/hooks.json` |
 | **Codex** | `ai-assistants/.codex/agents/` | `~/.codex/agents` |
-| **Codex** | `ai-assistants/SKILLS/` | `~/.codex/skills` |
+| **Codex** | `ai-assistants/SKILLS/` | `~/.agents/skills` |
+| **Codex** | `ai-assistants/SKILLS/` | `~/.agents/skills` |
 | **Grok Build** | `ai-assistants/AGENTS.md` | `~/.grok/AGENTS.md` |
 | **Grok Build** | `ai-assistants/.grok/config.toml` | `~/.grok/config.toml` |
 | **OpenCode** | `ai-assistants/AGENTS.md` | `~/.config/opencode/AGENTS.md` |
@@ -212,7 +212,7 @@ Windows Terminal, WezTerm, Nushell, Neovim, Yazi, MPV, Codex, Lazygit, Yasb, Kom
 | **neovim** | `%LOCALAPPDATA%\nvim` |
 | **yazi** | `%APPDATA%\yazi` |
 | **mpv** | `%SCOOP%\persist\mpv\portable_config` |
-| **codex** | `%USERPROFILE%\.codex\config.toml` |
+| **codex** | `%ProgramData%\OpenAI\Codex\config.toml` |
 | **lazygit** | `%LOCALAPPDATA%\lazygit` |
 | **yasb** | `%USERPROFILE%\.config\yasb\config.yaml` |
 | **yasb** | `%USERPROFILE%\.config\yasb\styles.css` |

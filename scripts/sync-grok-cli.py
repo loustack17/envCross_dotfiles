@@ -1,5 +1,4 @@
 import argparse
-import importlib.util
 import os
 import pathlib
 import re
@@ -9,9 +8,25 @@ import tomllib
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("overrides", ROOT / "scripts/codex-cli-overrides.py")
-FORMAT = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(FORMAT)
+import json
+
+
+def key_text(key):
+    return key if re.fullmatch(r"[A-Za-z0-9_-]+", key) else json.dumps(key, ensure_ascii=False)
+
+
+def inline(value):
+    if isinstance(value, dict):
+        return "{" + ",".join(f"{key_text(k)}={inline(v)}" for k, v in value.items()) + "}"
+    if isinstance(value, list):
+        return "[" + ",".join(inline(v) for v in value) + "]"
+    if isinstance(value, bool):
+        return str(value).lower()
+    if isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False)
+    if isinstance(value, (int, float)):
+        return str(value)
+    raise TypeError(type(value).__name__)
 
 
 def default_backup_root():
@@ -41,7 +56,7 @@ def synchronize(home, backup_root=None):
     live.setdefault("plugins", {})["disabled"] = sorted(set(live.get("plugins", {}).get("disabled", [])) | set(source["plugins"]["disabled"]))
     if original and live == tomllib.loads(original.decode("utf-8")):
         return
-    text = "\n".join(f"{FORMAT.merge.key_text(k)} = {FORMAT.inline(v)}" for k, v in live.items()) + "\n"
+    text = "\n".join(f"{key_text(k)} = {inline(v)}" for k, v in live.items()) + "\n"
     tomllib.loads(text)
     path.parent.mkdir(parents=True, exist_ok=True)
     if original:

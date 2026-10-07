@@ -1,0 +1,8 @@
+{
+  "name": "repo-tools",
+  "version": "1.0.0",
+  "description": "Live repository-managed cross-platform MCP servers",
+  "author": {
+    "name": "Lou"
+  }
+}

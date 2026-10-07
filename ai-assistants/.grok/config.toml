@@ -47,6 +47,7 @@ sessions = false
 
 [plugins]
 disabled = [
+  "repo-tools",
   "caveman",
   "claude-md-management",
   "code-review",
