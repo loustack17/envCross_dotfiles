@@ -28,7 +28,7 @@ Linux installation targets are defined in `config/targets.manifest`. The install
 ./install.sh --no-install
 ./install.sh --skip-kitty
 ./install.sh --only-neovim
-./install.sh --only-lazysql
+./install.sh --only-sqlit
 ```
 
 System-level Linux fixes that write to `/etc` are tracked separately under `Linux-system/` and are not part of the regular `install.sh` symlink flow.
@@ -144,6 +144,8 @@ Keep secrets and OAuth state outside git. Linux MCP secrets use Bitwarden Secret
 
 ## 📁 Paths & Configuration
 
+Launch sqlit with `sql` in Fish (Linux) or Nushell (Windows). The alias is provided by the repository Fish/Nushell configuration and forwards arguments to `sqlit`. Install that shell configuration on a new host; the sqlit-only target does not configure a shell. Install targets remain `--only-sqlit` on Linux and `--only sqlit` on Windows.
+
 ### Linux
 Linux configuration sources live primarily under the `Linux-config/` directory. 
 - Non-XDG files (e.g., `.profile`) remain at the repository root.
@@ -168,7 +170,7 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **zed** | `~/.config/zed` |
 | **yazi** | `~/.config/yazi` |
 | **lazygit** | `~/.config/lazygit` |
-| **lazysql** | `~/.config/lazysql` |
+| **sqlit (`sql`)** | `~/.config/sqlit` |
 | **tock** | `~/.config/tock` |
 | **zellij** | `~/.config/zellij` |
 | **systemd-user** | `~/.config/systemd/user` |
@@ -214,6 +216,7 @@ Windows Terminal, WezTerm, Nushell, Neovim, Yazi, MPV, Codex, Lazygit, Yasb, Kom
 | **mpv** | `%SCOOP%\persist\mpv\portable_config` |
 | **codex** | `%ProgramData%\OpenAI\Codex\config.toml` |
 | **lazygit** | `%LOCALAPPDATA%\lazygit` |
+| **sqlit (`sql`)** | `%USERPROFILE%\.config\sqlit` |
 | **yasb** | `%USERPROFILE%\.config\yasb\config.yaml` |
 | **yasb** | `%USERPROFILE%\.config\yasb\styles.css` |
 | **komorebi** | `%USERPROFILE%\komorebi.json` |

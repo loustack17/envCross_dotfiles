@@ -28,7 +28,7 @@ config|linux|zed-keymap|||false|zed/keymap.json|zed/keymap.json
 config|linux|zed-snippets|||false|zed/snippets|zed/snippets
 core|linux|yazi|yazi|yazi|false|yazi|yazi
 core|linux|lazygit|lazygit|lazygit|false|lazygit|lazygit
-core|linux|lazysql|lazysql|lazysql-bin|true|lazysql|lazysql
+core|linux|sqlit|sqlit|sqlit|true|sqlit|sqlit
 core|linux|zellij|zellij|zellij|false|Linux-config/zellij|zellij
 core|linux|qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct
 ai|ai|claude-code|claude||false||$HOME/.claude

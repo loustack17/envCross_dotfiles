@@ -41,3 +41,6 @@ __pycache__/
 /nvim/.claude/
 .slim/deepwork/
 /ai-assistants/.codex/local/
+/sqlit/*
+!/sqlit/keymap.json
+!/sqlit/README.md

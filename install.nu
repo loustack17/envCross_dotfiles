@@ -839,6 +839,21 @@ def main [
         }]
     }
 
+    if (should_install "sqlit" $skip_list $only_list) {
+        let sqlit_config_home = ($env.SQLIT_CONFIG_DIR? | default (($env.XDG_CONFIG_HOME? | default $user_config_home) | path join "sqlit"))
+        if ($sqlit_config_home | path exists) and not (is_symlink $sqlit_config_home) {
+            if (ls --all $sqlit_config_home | is-not-empty) {
+                error make {msg: "Existing sqlit config contains user data. Back up and migrate it into repo/sqlit before installing; no files were replaced."}
+            }
+        }
+        $targets ++= (existing_targets [{
+            src: ($repo_root | path join "sqlit")
+            dest: $sqlit_config_home
+            is_file: false
+            name: "sqlit (sql)"
+        }])
+    }
+
     let yasb_config_dir = ($user_config_home | path join "yasb")
     if (should_install "yasb" $skip_list $only_list) {
         let yasb_src = ($windows_root | path join "yasb")

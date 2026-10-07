@@ -975,6 +975,9 @@ step_backup_configs() {
             full_dst="$CONFIG_HOME/$dst"
         fi
 
+        if [[ "$name" == "sqlit" ]]; then
+            full_dst="${SQLIT_CONFIG_DIR:-$CONFIG_HOME/sqlit}"
+        fi
         backup_path "$full_dst" "$name"
     done
 }
@@ -1009,6 +1012,18 @@ step_symlink_configs() {
                     "$generated_zed_settings"
                 create_file_link "$generated_zed_settings" "$full_dst" "$name"
             fi
+        elif [[ "$name" == "sqlit" ]]; then
+            local sqlit_config_home="${SQLIT_CONFIG_DIR:-$CONFIG_HOME/sqlit}"
+            if [[ -e "$sqlit_config_home" && ! -L "$sqlit_config_home" ]]; then
+                [[ -d "$sqlit_config_home" ]] || return 1
+                local sqlit_existing_entry
+                sqlit_existing_entry="$(find "$sqlit_config_home" -mindepth 1 -print -quit)" || return 1
+                if [[ -n "$sqlit_existing_entry" ]]; then
+                    log_error "Existing sqlit config contains user data. Back up and migrate it into repo/sqlit before installing; no files were replaced."
+                    return 1
+                fi
+            fi
+            create_path_link "$REPO_ROOT/sqlit" "$sqlit_config_home" "sqlit (sql)"
         elif [[ -n "$src" ]]; then
             local full_src="$REPO_ROOT/$src"
 
