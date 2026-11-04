@@ -39,7 +39,7 @@ bash ./scripts/install-udev-rules.sh
 ```
 
 ### Windows
-Install Nushell before running the installer. Scoop supplies packages; Python is required when rendering platform-specific AI or Zed settings. Creating file symlinks requires Administrator privileges or Windows Developer Mode.
+Install Nushell before running the installer. Scoop supplies packages; Python is required to render Zed settings. Creating file symlinks requires Administrator privileges or Windows Developer Mode.
 
 ```nu
 # Full installation
@@ -113,7 +113,6 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **fish** | `~/.config/fish` |
 | **direnv** | `~/.config/direnv` |
 | **neovim** | `~/.config/nvim` |
-| **helix** | `~/.config/helix` |
 | **zed** | `~/.config/zed` |
 | **yazi** | `~/.config/yazi` |
 | **lazygit** | `~/.config/lazygit` |
@@ -142,12 +141,20 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **user-dirs-locale** | `~/.config/user-dirs.locale` |
 | **profile** | `~/.profile` |
 | **kitty-desktop**| `~/.local/share/applications/kitty.desktop` |
+| **openwhispr-desktop** | `~/.local/share/applications/openwhispr.desktop` |
+| **swaync** | `~/.config/swaync` |
+| **gtk-3 / gtk-4** | `~/.config/gtk-3.0`, `~/.config/gtk-4.0` |
+| **fontconfig** | `~/.config/fontconfig` |
+| **brave-flags** | `~/.config/brave-flags.conf` |
+| **vicinae-bitwarden** | `~/.local/share/vicinae/extensions/bitwarden` |
+| **cursor / vscode MCP** | Cursor and VS Code MCP JSON |
+| **zen** | `~/.zen/<default profile>/chrome` |
 | **gitconfig** | `~/.gitconfig` |
 
 </details>
 
 ### Windows
-Windows Terminal, WezTerm, Nushell, Neovim, Yazi, MPV, Codex, Lazygit, Yasb, Komorebi, and Whkd configurations are supported.
+Windows Terminal, WezTerm, PowerShell, Nushell, Neovim, Zed, Yazi, MPV, Lazygit, sqlit, Yasb, Komorebi, Whkd, and the Zen browser theme are supported; AI tools and `bws` are covered above.
 
 <details>
 <summary><b>View Windows Configuration Paths</b></summary>
@@ -170,5 +177,7 @@ Windows Terminal, WezTerm, Nushell, Neovim, Yazi, MPV, Codex, Lazygit, Yasb, Kom
 | **komorebi** | `%USERPROFILE%\komorebi.bar.json` |
 | **komorebi** | `%USERPROFILE%\applications.json` |
 | **whkd** | `%USERPROFILE%\.config\whkdrc` |
+| **zed** | `%APPDATA%\Zed` |
+| **zen** | `%APPDATA%\zen\<default profile>\chrome` |
 
 </details>

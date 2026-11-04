@@ -1,4 +1,3 @@
-alias hx="helix"
 alias nv="nvim"
 alias du="dust"
 alias df="dysk"

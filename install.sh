@@ -969,6 +969,15 @@ step_symlink_configs() {
         case "$name" in claude-code|codex|grok) link_ai_shared_files "$name" ;; esac
     done
 
+    local zen_ini="$HOME/.zen/profiles.ini"
+    if should_process "zen" && [[ -f "$zen_ini" ]] && pgrep -x zen >/dev/null 2>&1; then
+        log_warn "Zen is running; close it and rerun with --only-zen to link its chrome folder"
+    elif should_process "zen" && [[ -f "$zen_ini" ]]; then
+        local zen_profile
+        zen_profile="$(grep -m1 -E '^Default=.*/' "$zen_ini" | cut -d= -f2-)"
+        [[ -n "$zen_profile" ]] && { create_path_link "$REPO_ROOT/chrome" "$HOME/.zen/$zen_profile/chrome" "zen-chrome" || return 1; }
+    fi
+
     commit_transaction
 
     if should_process "codex"; then

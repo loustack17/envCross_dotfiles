@@ -27,8 +27,6 @@ core|linux|ghostty|ghostty|ghostty-git|true|Linux-config/ghostty|ghostty
 core|linux|fish|fish|fish|false|Linux-config/fish|fish
 core|linux|neovim|nvim|neovim|false|nvim|nvim
 core|linux|zed|zed|zed-git|true||zed/settings.json
-core|linux|helix|helix|helix|false|helix/config.toml|helix/config.toml
-config|linux|helix-languages|||false|helix/languages.linux.toml|helix/languages.toml
 config|linux|zed-keymap|||false|zed/keymap.json|zed/keymap.json
 config|linux|zed-snippets|||false|zed/snippets|zed/snippets
 core|linux|yazi|yazi|yazi|false|yazi|yazi
@@ -54,7 +52,6 @@ config|linux|cursor-mcp|||false|ai-assistants/mcp/cursor.mcp.json|$HOME/.cursor/
 config|linux|cursor-user-mcp|||false|ai-assistants/mcp/cursor.mcp.json|$HOME/.config/Cursor/User/mcp.json
 config|linux|vscode-mcp|||false|ai-assistants/mcp/ide.mcp.json|$HOME/.config/Code/User/mcp.json
 config|linux|autostart|||false|Linux-config/autostart|autostart
-config|linux|ferdium|||false|Linux-config/Ferdium|Ferdium
 config|linux|fcitx5|||false|Linux-config/fcitx5|fcitx5
 config|linux|fontconfig|||false|Linux-config/fontconfig|fontconfig
 config|linux|brave-flags|||false|Linux-config/brave-flags.conf|$HOME/.config/brave-flags.conf
