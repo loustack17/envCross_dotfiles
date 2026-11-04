@@ -6,7 +6,7 @@ if (-not (Test-Path -LiteralPath $store)) {
     Write-Error "Bitwarden is not configured. Run scripts\windows\secrets-configure.ps1."
     exit 1
 }
-$env:BWS_ACCESS_TOKEN = (Import-Clixml -LiteralPath $store).GetNetworkCredential().Password
+$env:BWS_ACCESS_TOKEN = ConvertFrom-SecureString -SecureString (Import-Clixml -LiteralPath $store).Password -AsPlainText
 try {
     & bws @args
     exit $LASTEXITCODE

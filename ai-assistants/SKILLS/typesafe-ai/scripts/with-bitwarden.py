@@ -22,10 +22,11 @@ def bitwarden_environment():
             environment["BWS_ACCESS_TOKEN"] = result.stdout.strip()
     store = Path(os.environ.get("LOCALAPPDATA", "")) / "envcross" / "bws.clixml"
     if not environment.get("BWS_ACCESS_TOKEN") and os.name == "nt" and store.is_file():
-        # `powershell -Command` does not bind trailing arguments to $args, so pass the path through the environment.
+        # Pass the path through the environment (-Command does not bind trailing $args) and use only
+        # cmdlets, because Codex's sandbox runs PowerShell in Constrained Language Mode.
         result = subprocess.run(
-            ["powershell", "-NoProfile", "-NonInteractive", "-Command",
-             "(Import-Clixml -LiteralPath $env:ENVCROSS_BWS_STORE).GetNetworkCredential().Password"],
+            ["pwsh", "-NoProfile", "-NonInteractive", "-Command",
+             "ConvertFrom-SecureString -SecureString (Import-Clixml -LiteralPath $env:ENVCROSS_BWS_STORE).Password -AsPlainText"],
             capture_output=True, text=True, timeout=30,
             env={**os.environ, "ENVCROSS_BWS_STORE": str(store)},
         )

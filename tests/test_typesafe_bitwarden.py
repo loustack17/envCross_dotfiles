@@ -26,7 +26,7 @@ class TypeSafeBitwardenTests(unittest.TestCase):
             store = Path(temp) / "envcross" / "bws.clixml"
             store.parent.mkdir()
             subprocess.run(
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command",
+                ["pwsh", "-NoProfile", "-NonInteractive", "-Command",
                  "[pscredential]::new('project', (ConvertTo-SecureString 'fake-token' -AsPlainText -Force))"
                  " | Export-Clixml -LiteralPath $env:TEST_STORE"],
                 check=True, env={**os.environ, "TEST_STORE": str(store)},

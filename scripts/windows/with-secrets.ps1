@@ -13,7 +13,7 @@ if (-not (Test-Path -LiteralPath $store)) {
 
 if (-not $env:BWS_SECRETS_INJECTED) {
     $credential = Import-Clixml -LiteralPath $store
-    $env:BWS_ACCESS_TOKEN = $credential.GetNetworkCredential().Password
+    $env:BWS_ACCESS_TOKEN = ConvertFrom-SecureString -SecureString $credential.Password -AsPlainText
     try {
         $json = bws secret list $credential.UserName --output json
         if ($LASTEXITCODE -ne 0) { Write-Error "Bitwarden secret retrieval failed."; exit 1 }
