@@ -4,7 +4,6 @@ local servers = {
   vtsls = { 'vtsls', '--stdio' },
   tailwindcss = { 'tailwindcss-language-server', '--stdio' },
   gopls = { 'gopls' },
-  pyright = { 'pyright-langserver', '--stdio' },
   ruff = { 'ruff', 'server' },
   ty = { 'ty', 'server' },
   html = { 'vscode-html-language-server', '--stdio' },
@@ -94,7 +93,7 @@ return {
         end
       end
 
-      for _, server in ipairs({ 'pyright', 'ruff', 'ty' }) do
+      for _, server in ipairs({ 'ruff', 'ty' }) do
         vim.lsp.config(server, {
           root_dir = python_root,
         })

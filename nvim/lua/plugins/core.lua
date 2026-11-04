@@ -43,7 +43,7 @@ return {
 		dependencies = {
 			{ "rafamadriz/friendly-snippets" },
 		},
-		build = "make install_jsregexp",
+		build = (vim.fn.has("win32") == 0 or vim.fn.executable("make") == 1) and "make install_jsregexp" or nil,
 		config = function()
 			require("luasnip.loaders.from_vscode").lazy_load({
 				paths = { vim.fn.stdpath("data") .. "/lazy/friendly-snippets" },

@@ -7,21 +7,15 @@ return {
       lua = { "stylua" },
       yaml = { lsp_format = "prefer" },
       toml = { "tombi" },
-      python = function(bufnr)
-        if require("conform").get_formatter_info("ruff_format", bufnr).available then
-          return { "ruff_format" }
-        else
-          return { "isort", "black" }
-        end
-      end,
+      python = { "ruff_organize_imports", "ruff_format" },
       go = { "goimports", "gofmt" },
       terraform = { "terraform_fmt" },
       ["terraform-vars"] = { "terraform_fmt" },
       ["_"] = { "trim_whitespace" },
-      javascript = { "eslint_d", "prettierd", "prettier", stop_after_first = true },
-      typescript = { "eslint_d", "prettierd", "prettier", stop_after_first = true },
+      javascript = { "eslint_d", "prettierd", stop_after_first = true },
+      typescript = { "eslint_d", "prettierd", stop_after_first = true },
       sass = { "stylelint" },
-      sql = { "sqlfmt", "sql_formatter" },
+      sql = { "sql_formatter" },
       latex = { "latexindent" },
     },
     default_format_opts = {
