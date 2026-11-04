@@ -24,7 +24,7 @@ class PlatformMcpTests(unittest.TestCase):
                 self.assertIn("mem0", settings["context_servers"])
                 if platform == "windows":
                     self.assertEqual(settings["context_servers"]["mem0"]["url"], "https://mcp.mem0.ai/mcp")
-                    self.assertEqual(settings["context_servers"]["code-review-graph"]["command"], r"D:\ProgramData\Scoop\shims\uvx.exe")
+                    self.assertEqual(settings["context_servers"]["code-review-graph"]["command"], "uvx")
                     self.assertNotIn("/home/lou", output.read_text(encoding="utf-8"))
                 else:
                     self.assertIn("firecrawl", settings["context_servers"])

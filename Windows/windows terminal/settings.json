@@ -97,28 +97,28 @@
                 "startingDirectory": null
             },
             {
-                "commandline": "D:\\ProgramData\\Scoop\\apps\\git\\current\\bin\\bash.exe",
+                "commandline": "%SCOOP%\\apps\\git\\current\\bin\\bash.exe",
                 "guid": "{991ee197-2714-4dfc-8b2d-e88737999366}",
                 "hidden": false,
-                "icon": "D:\\ProgramData\\Scoop\\apps\\git\\current\\mingw64\\share\\git\\git-for-windows.ico",
+                "icon": "%SCOOP%\\apps\\git\\current\\mingw64\\share\\git\\git-for-windows.ico",
                 "name": "Git Bash",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "D:\\ProgramData\\Scoop\\apps\\nu\\current\\nu.exe",
+                "commandline": "%SCOOP%\\apps\\nu\\current\\nu.exe",
                 "guid": "{5920812c-9a20-4791-9deb-b185a6e87947}",
                 "hidden": false,
-                "icon": "D:\\ProgramData\\Scoop\\apps\\nu\\current\\nu.exe",
+                "icon": "%SCOOP%\\apps\\nu\\current\\nu.exe",
                 "name": "Nushell",
                 "padding": "6",
                 "startingDirectory": "%USERPROFILE%",
                 "useAcrylic": false
             },
             {
-                "commandline": "\"D:\\Program Files\\PowerShell\\7\\pwsh.exe\"  -NoLogo",
+                "commandline": "pwsh.exe -NoLogo",
                 "guid": "{53984842-df7b-4587-a056-e71bf998ae69}",
                 "hidden": false,
-                "icon": "D:\\Program Files\\PowerShell\\7\\assets\\Powershell_black.ico",
+                "icon": "ms-appx:///ProfileIcons/pwsh.png",
                 "name": "PowerShell",
                 "startingDirectory": "%USERPROFILE%"
             },

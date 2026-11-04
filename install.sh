@@ -878,6 +878,7 @@ step_backup_configs() {
         [[ -z "$dst" ]] && continue
 
         should_process "$name" || continue
+        case "$name" in claude-code|codex) continue ;; esac
 
         local full_dst
         if [[ "$dst" == /* ]]; then
@@ -1004,10 +1005,6 @@ show_summary() {
 
     if should_process "awww" && command -v awww &>/dev/null; then
         echo "  Initialize wallpaper daemon: awww-daemon"
-    fi
-
-    if should_process "polkit-gnome"; then
-        echo "  Add to Niri config: spawn-at-startup \"/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1\""
     fi
 
     echo ""

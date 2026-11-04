@@ -11,7 +11,7 @@ copy-command = "wl-copy"
 annotation-size-factor = 2
 # Filename to use for saving action. Omit to disable saving to file. Might contain format specifiers: https://docs.rs/chrono/latest/chrono/format/strftime/index.html
 # starting with 0.20.0, can contain leading tilde (~) for home directory
-output-filename = "/tmp/test-%Y-%m-%d_%H:%M:%S.png"
+output-filename = "~/Pictures/Screenshots/satty-%Y-%m-%d_%H-%M-%S.png"
 # After copying the screenshot, save it to a file as well
 save-after-copy = false
 # Hide toolbars by default
@@ -34,11 +34,7 @@ actions-on-enter = ["save-to-clipboard"]
 # [possible values: save-to-clipboard, save-to-file, exit]
 actions-on-escape = ["exit"]
 # Action to perform when the Enter key is pressed [possible values: save-to-clipboard, save-to-file]
-# Deprecated: use actions-on-enter instead
-action-on-enter = "save-to-clipboard"
 # Right click to copy
-# Deprecated: use actions-on-right-click instead
-right-click-copy = false
 # request no window decoration. Please note that the compositor has the final say in this. At this point. requires xdg-decoration-unstable-v1.
 no-window-decoration = true
 # experimental feature: adjust history size for brush input smoothing (0: disabled, default: 0, try e.g. 5 or 10)

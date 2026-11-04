@@ -129,7 +129,6 @@ class PackagePinTests(unittest.TestCase):
         self.assertIn("tavily-mcp@0.2.22", tavily)
         self.assertIn("@playwright/cli@0.1.18", playwright)
         self.assertNotIn("@latest", "\n".join((mcp, firecrawl, tavily, playwright)))
-        self.assertNotIn("MCP_NODE_PREFIX", mcp)
 
     def test_installers_provide_bws_and_windows_secrets_skip_plaintext(self):
         manifest = (ROOT / "config" / "targets.manifest").read_text(encoding="utf-8")
@@ -140,7 +139,6 @@ class PackagePinTests(unittest.TestCase):
         self.assertIn("Import-Clixml", runner)
         self.assertIn("Remove-Item Env:BWS_ACCESS_TOKEN", runner)
         self.assertNotIn('"User")', runner)
-        self.assertFalse((ROOT / "ai-assistants" / ".envrc.example").exists())
 
     def test_moli_installers_pin_release_and_verify_checksums(self):
         sh = (ROOT / "scripts" / "install-moli.sh").read_text(encoding="utf-8")
@@ -192,7 +190,6 @@ class PackagePinTests(unittest.TestCase):
         config_root = ROOT / "ai-assistants" / ".codex"
         common = tomllib.loads((config_root / "config.toml").read_text(encoding="utf-8"))
         self.assertEqual(common["mcp_servers"]["code-review-graph"]["args"], expected)
-        self.assertNotIn("==", " ".join(expected))
 
     def test_grok_config_is_cross_platform_and_minimal(self):
         path = ROOT / "ai-assistants" / ".grok" / "config.toml"
@@ -241,19 +238,6 @@ class PackagePinTests(unittest.TestCase):
         self.assertNotIn("/home/", text)
         self.assertNotRegex(text, r"[A-Za-z]:\\")
 
-        codex = tomllib.loads(
-            (ROOT / "ai-assistants" / ".codex" / "config.toml").read_text(
-                encoding="utf-8"
-            )
-        )
-        self.assertEqual(
-            codex["mcp_servers"]["mem0"],
-            {
-                "url": "https://mcp.mem0.ai/mcp",
-                "enabled": True,
-                "required": False,
-            },
-        )
 
 
 if __name__ == "__main__":

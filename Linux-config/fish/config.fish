@@ -1,4 +1,4 @@
-source /usr/share/cachyos-fish-config/cachyos-config.fish
+test -f /usr/share/cachyos-fish-config/cachyos-config.fish; and source /usr/share/cachyos-fish-config/cachyos-config.fish
 
 # env
 export EDITOR=nvim
@@ -31,9 +31,9 @@ function y
 end
 
 # init
-starship init fish | source
-zoxide init fish | source
-/home/linuxbrew/.linuxbrew/bin/brew shellenv | source
+type -q starship; and starship init fish | source
+type -q zoxide; and zoxide init fish | source
+test -x /home/linuxbrew/.linuxbrew/bin/brew; and /home/linuxbrew/.linuxbrew/bin/brew shellenv | source
 if type -q direnv
     direnv hook fish | source
 end

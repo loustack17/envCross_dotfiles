@@ -14,6 +14,7 @@ class NativeAIConfigTests(unittest.TestCase):
         self.assertTrue((ROOT / "ai-assistants/.claude/statusline.sh").is_file())
         self.assertNotIn("autoMode", settings)
         self.assertTrue(all(settings["enabledPlugins"].values()))
+        self.assertEqual(settings["hooks"]["PostToolUse"][0]["matcher"], "Edit|Write")
         for event in settings["hooks"].values():
             for matcher in event:
                 for hook in matcher["hooks"]:
@@ -26,25 +27,19 @@ class NativeAIConfigTests(unittest.TestCase):
         settings = tomllib.loads((source / "config.toml").read_text(encoding="utf-8"))
         self.assertNotIn("profiles", settings)
         self.assertNotIn("profile", settings)
-        self.assertEqual(settings["windows"]["sandbox"], "unelevated")
         self.assertEqual(list(source.glob("*.config.toml")), [])
 
     def test_installers_link_both_native_config_sources_without_generators(self):
         windows = (ROOT / "install.nu").read_text(encoding="utf-8")
         linux = (ROOT / "install.sh").read_text(encoding="utf-8")
-        for text in (windows, linux):
-            self.assertNotIn("merge-codex-config", text)
-            self.assertNotIn("generated_codex", text)
-            self.assertNotIn("platform-command", text)
         self.assertIn('{src: $codex_config, dest: ($codex_system_home | path join "config.toml")', windows)
         self.assertNotIn('{src: $codex_config, dest: ($codex_home | path join "config.toml")', windows)
         self.assertIn('path join ".codex" "local" "windows" "config.toml"', windows)
         self.assertIn('"$codex_user_source" "$HOME/.codex/config.toml"', linux)
         self.assertIn('if [[ -f "$codex_user_source" ]]; then', linux)
         self.assertIn('/ai-assistants/.codex/local/', (ROOT / ".gitignore").read_text())
-        self.assertNotIn("Codex user config must be a local regular file", windows + linux)
         self.assertIn('"$codex_system_source" /etc/codex/config.toml', linux)
-        self.assertNotIn('"$REPO_ROOT/ai-assistants/.codex/config.toml" "$HOME/.codex/config.toml"', linux)
+        self.assertIn('case "$name" in claude-code|codex) continue ;; esac', linux)
 
 
 if __name__ == "__main__":

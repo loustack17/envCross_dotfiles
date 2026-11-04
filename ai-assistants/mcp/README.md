@@ -58,7 +58,6 @@ Tavily uses local stdio through `run-tavily.sh` so BWS can inject `TAVILY_API_KE
 - Cursor uses `mcpServers`; VS Code uses `servers`, so they cannot share one JSON shape.
 - Zed uses platform-specific `context_servers` in `zed/platform.linux.json` and `zed/platform.windows.json`; it cannot consume the shared `mcp.json` directly.
 - Each tool's MCP servers live in its own repo config: Claude `SKILLS/claude-tools/.mcp.json`, Codex `.codex/config.toml`, Grok `.grok/config.toml`.
-- cc-switch is retired because it stored provider keys in plaintext; nothing reads `~/.cc-switch`.
 - Codex uses the official OpenAI endpoint by default.
 - `code-review-graph` is enabled for Claude, Codex and Grok. Firecrawl, Tavily, MarkItDown, Crawl4AI and content-i18n are configured only for the Linux editors (Cursor, VS Code, Zed).
 - Mem0 is the shared durable memory provider for Claude, Codex, and Grok. Codex keeps it enabled and non-required so service or quota failures do not block startup.

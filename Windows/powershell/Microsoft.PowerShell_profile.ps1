@@ -29,8 +29,6 @@ Set-PSReadlineKeyHandler -Chord ctrl+e -Function EndOfLine
 # 設定按下 Ctrl+a 可以移動游標到最前面(Begin)
 Set-PSReadlineKeyHandler -Chord ctrl+a -Function BeginningOfLine
 
-#Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
-#Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 
 # This key handler shows the entire or filtered history using Out-GridView. The
 # typed text is used as the substring pattern for filtering. A selected command
@@ -440,19 +438,6 @@ function New-Password {
 }
 
 
-# Import the Chocolatey Profile that contains the necessary code to enable
-# tab-completions to function for `choco`.
-# Be aware that if you are missing these lines from your profile, tab completion
-# for `choco` will not function.
-# See https://ch0.co/tab-completion for details.
-$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-    Import-Module "$ChocolateyProfile"
-}
-
-# EZA Theme setting
-$env:EZA_CONFIG_DIR = "$env:USERPROFILE\.config\eza"
-
 # Yazi alias
 function y {
     $tmp = (New-TemporaryFile).FullName
@@ -464,8 +449,6 @@ function y {
     Remove-Item -Path $tmp
 }
 
-(& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
-
-if (-not (Get-Module -ListAvailable -Name Terminal-Icons)) { Install-Module Terminal-Icons -Scope CurrentUser }
-Import-Module -Name Terminal-Icons
-Invoke-Expression (&starship init powershell)
+if (Get-Command uv -ErrorAction SilentlyContinue) { (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression }
+if (Get-Module -ListAvailable -Name Terminal-Icons) { Import-Module -Name Terminal-Icons }
+if (Get-Command starship -ErrorAction SilentlyContinue) { Invoke-Expression (&starship init powershell) }

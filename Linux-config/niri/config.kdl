@@ -324,11 +324,7 @@ binds {
     MOD+O repeat=false { toggle-overview; }
 
     // Screenshot
-    // CTRL+SHIFT+1 { screenshot; }
-    // CTRL+SHIFT+2 { screenshot-screen; }
-    // CTRL+SHIFT+3 { screenshot-window; }
     Print hotkey-overlay-title="ScreenShots: Satty" { spawn-sh "grim -g \"$(slurp)\" - | satty --filename -"; }
-    // Print hotkey-overlay-title="ScreenShots: Gradia" { spawn-sh "gradia --screenshot=INTERACTIVE"; }
     CTRL+Print hotkey-overlay-title="ScreenShots: Gradia-screen" { spawn-sh "gradia --screenshot=FULL"; }
 
     // System

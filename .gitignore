@@ -27,6 +27,8 @@ yazi/plugins/custom-shell.yazi/yazi_cmd_history
 yazi/plugins/whoosh.yazi/bookmarks
 Windows/yasb/**/*.log
 Windows/nushell/history.txt
+Windows/nushell/vendor/
+yazi/state/
 /sqlit/*
 !/sqlit/keymap.json
 !/sqlit/README.md

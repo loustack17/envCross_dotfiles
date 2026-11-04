@@ -37,7 +37,6 @@
     ]
   },
   "network": {
-    "interface": "wlan0",
     "interval": 5,
     "format-wifi": "{icon}  {essid}",
     "format-icons": [

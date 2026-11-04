@@ -179,16 +179,6 @@ def main [
         }
     }
 
-    def remove_existing_path [path: string]: nothing -> bool {
-        try {
-            let script = '& { param([string]$Path) $ErrorActionPreference = "Stop"; $item = Get-Item -LiteralPath $Path -Force -ErrorAction SilentlyContinue; if ($null -eq $item) { exit 0 }; if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { if ($item.PSIsContainer) { [System.IO.Directory]::Delete($Path) } else { [System.IO.File]::Delete($Path) } } else { Remove-Item -LiteralPath $Path -Recurse -Force } }'
-            let result = (^powershell -NoProfile -Command $script $path | complete)
-            $result.exit_code == 0
-        } catch {
-            false
-        }
-    }
-
     def is_symlink [path: string]: nothing -> bool {
         let target = (read_link_target $path)
         ($target | str length) > 0
@@ -886,7 +876,7 @@ def main [
         if $dry_run {
             log_dry $"Would put Grok launcher on user PATH: ($grok_launcher)"
         } else {
-            let script = '& { param([string]$Dir) $entries = @([Environment]::GetEnvironmentVariable("Path", "User") -split ";" | Where-Object { $_ -and $_ -notmatch "\\scripts\\(codex-launcher|windows\\grok)\\?$" }); [Environment]::SetEnvironmentVariable("Path", ((@($Dir) + $entries) -join ";"), "User") }'
+            let script = '& { param([string]$Dir) $entries = @([Environment]::GetEnvironmentVariable("Path", "User") -split ";" | Where-Object { $_ -and $_ -notmatch "\\scripts\\windows\\grok\\?$" }); [Environment]::SetEnvironmentVariable("Path", ((@($Dir) + $entries) -join ";"), "User") }'
             let result = (^(powershell_host) -NoProfile -Command $script $grok_launcher | complete)
             if $result.exit_code != 0 { error make {msg: "Failed to put the Grok launcher on PATH"} }
             log_info $"Grok launcher on user PATH: ($grok_launcher)"
@@ -1082,7 +1072,6 @@ def main [
         print "  Open Neovim to install plugins: nvim"
     }
     if (should_install "nushell" $skip_list $only_list) and (check_cmd "nu") {
-        print "  Set Nushell as default: scoop install nu"
     }
 
     print ""

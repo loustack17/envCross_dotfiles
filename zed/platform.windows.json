@@ -61,7 +61,7 @@
   },
   "context_servers": {
     "code-review-graph": {
-      "command": "D:\\ProgramData\\Scoop\\shims\\uvx.exe",
+      "command": "uvx",
       "args": [
         "code-review-graph",
         "serve"

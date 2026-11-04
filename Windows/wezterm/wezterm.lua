@@ -1,8 +1,9 @@
 local wezterm = require 'wezterm'
 local act = wezterm.action
 local config = wezterm.config_builder()
+local scoop = os.getenv('SCOOP') or (os.getenv('USERPROFILE') .. '\\scoop')
 
-config.default_prog = { 'D:\\ProgramData\\Scoop\\shims\\nu.exe' }
+config.default_prog = { 'nu.exe' }
 config.launch_menu = {
   {
     label = 'CMD',
@@ -14,15 +15,15 @@ config.launch_menu = {
   },
   {
     label = 'PWSH7 (CORE)',
-    args = { 'D:\\Program Files\\PowerShell\\7\\pwsh.exe', '-NoLogo' },
+    args = { 'pwsh.exe', '-NoLogo' },
   },
   {
     label = 'Nushell',
-    args = { 'D:\\ProgramData\\Scoop\\shims\\nu.exe' },
+    args = { 'nu.exe' },
   },
   {
     label = 'Git Bash',
-    args = { 'D:\\ProgramData\\Scoop\\apps\\git\\current\\bin\\bash.exe', '--login', '-i' },
+    args = { scoop .. '\\apps\\git\\current\\bin\\bash.exe', '--login', '-i' },
   },
 }
 config.wsl_domains = {}

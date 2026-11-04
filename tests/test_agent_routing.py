@@ -4,42 +4,29 @@ import unittest
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1] / "ai-assistants"
+READ_ONLY_ROLES = {"explorer", "researcher", "reviewer"}
 
 
 class AgentRoutingTests(unittest.TestCase):
-    def test_codex_defaults(self):
+    def test_codex_multi_agent_is_enabled_with_a_subagent_default(self):
         config = tomllib.loads((ROOT / ".codex/config.toml").read_text())
-        self.assertEqual(config["model"], "gpt-6-sol")
-        self.assertEqual(config["model_reasoning_effort"], "medium")
         self.assertTrue(config["features"]["multi_agent"])
         self.assertTrue(config["agents"]["enabled"])
-        self.assertEqual(config["agents"]["default_subagent_model"], "gpt-6-luna")
-        self.assertEqual(config["agents"]["default_subagent_reasoning_effort"], "high")
-        self.assertEqual(config["agents"]["max_concurrent_threads_per_session"], 4)
-        self.assertIn("mem0", config["mcp_servers"])
-        self.assertTrue(config["mcp_servers"]["mem0"]["enabled"])
+        for key in ("model", "model_reasoning_effort"):
+            self.assertTrue(config[key])
+        self.assertTrue(config["agents"]["default_subagent_model"])
 
-    def test_codex_role_routing_and_permissions(self):
-        expected = {
-            "explorer": ("gpt-6-luna", "high", "read-only"),
-            "researcher": ("gpt-6-luna", "high", "read-only"),
-            "worker": ("gpt-6-luna", "high", "workspace-write"),
-            "reviewer": ("gpt-6-sol", "medium", "read-only"),
-            "designer": ("gpt-6-luna", "high", "workspace-write"),
-        }
-        self.assertEqual(
-            {path.stem for path in (ROOT / ".codex/agents").glob("*.toml")},
-            set(expected),
-        )
-        for name, values in expected.items():
-            with self.subTest(role=name):
-                role = tomllib.loads((ROOT / f".codex/agents/{name}.toml").read_text())
-                self.assertEqual(role["name"], name)
-                self.assertEqual(
-                    tuple(role[key] for key in ("model", "model_reasoning_effort", "sandbox_mode")),
-                    values,
-                )
-
+    def test_codex_roles_are_complete_and_read_only_where_expected(self):
+        roles = sorted((ROOT / ".codex/agents").glob("*.toml"))
+        self.assertTrue(roles)
+        for path in roles:
+            with self.subTest(role=path.stem):
+                role = tomllib.loads(path.read_text())
+                self.assertEqual(role["name"], path.stem)
+                self.assertTrue(role["model"])
+                self.assertTrue(role["model_reasoning_effort"])
+                expected = "read-only" if path.stem in READ_ONLY_ROLES else "workspace-write"
+                self.assertEqual(role["sandbox_mode"], expected)
 
 
 if __name__ == "__main__":

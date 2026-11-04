@@ -6,7 +6,7 @@ Installed links:
 - `~/.claude/skills`
 - `~/.agents/skills`
 
-Installed tools link to this directory; skills do not depend on machine-local CC Switch or plugin cache paths.
+Installed tools link to this directory; skills do not depend on machine-local plugin cache paths.
 
 Codex discovers these skills globally through `~/.agents/skills`. Codex loads them natively; bundled system skills remain managed by Codex. TypeSafe is stored in `typesafe-ai/` with its upstream license.
 

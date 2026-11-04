@@ -15,7 +15,7 @@ require("config.lazy")
 require("config.keymaps")
 require("config.autocmds")
 
-local is_windows = vim.loop.os_uname().sysname:find("Windows") ~= nil
+local is_windows = vim.uv.os_uname().sysname:find("Windows") ~= nil
 
 if is_windows then
   vim.opt.shell = "nu"

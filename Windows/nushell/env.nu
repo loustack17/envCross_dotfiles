@@ -23,6 +23,6 @@ use std "path add"
 let bun_bin = ($env.USERPROFILE | path join ".bun" "bin")
 path add $bun_bin
 
-path add ("$env.HOME" | path join ".local" "bin")
-path add ("$env.LOCALAPPDATA" | path join "Programs" "bun" "bin")
+path add ($env.USERPROFILE | path join ".local" "bin")
+path add ($env.LOCALAPPDATA | path join "Programs" "bun" "bin")
 
