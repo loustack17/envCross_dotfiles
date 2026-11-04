@@ -16,6 +16,9 @@
 - Use Traditional Chinese (Taiwan) for Chinese responses.
 - Keep code, scripts, config, SQL, and Markdown free of comments and docstrings by default. Add only required documentation or brief non-obvious rationale; prefer clear naming and structure.
 
+- After completing coding changes, run the simplify skill against the changed code; preserve behavior, avoid unnecessary refactors, and verify any resulting edits.
+- After verification, remove task-created disposable builds, duplicate downloads, and temporary files; verify resolved paths and preserve source code, deliverables, rollback records, and active or unrelated data.
+
 ## Multi-Agent
 
 - For material coding tasks that benefit from independent specialist work, use the shared `omo-slim` skill and the host's configured agents. Keep orchestration in the main conversation.
