@@ -29,6 +29,7 @@ Linux installation targets are defined in `config/targets.manifest`. The install
 ./install.sh --skip-kitty
 ./install.sh --only-neovim
 ./install.sh --only-sqlit
+./install.sh --only-moli   # Moli CLI for the moli-* skills
 ```
 
 System-level Linux fixes that write to `/etc` are tracked separately under `Linux-system/` and are not part of the regular `install.sh` symlink flow.

@@ -951,6 +951,13 @@ step_install_tools() {
             install_tool "gcc" "gcc" "gcc" "false" || return 1
         fi
     fi
+
+    if should_process "moli"; then
+        local moli_args=()
+        [[ "$DRY_RUN" == "true" ]] && moli_args+=(--dry-run)
+        [[ "$FORCE_INSTALL" == "true" ]] && moli_args+=(--force)
+        bash "$REPO_ROOT/scripts/install-moli.sh" "${moli_args[@]}" || return 1
+    fi
 }
 
 step_backup_configs() {

@@ -131,6 +131,21 @@ class PackagePinTests(unittest.TestCase):
         self.assertNotIn("@latest", "\n".join((mcp, firecrawl, tavily, playwright)))
         self.assertNotIn("MCP_NODE_PREFIX", mcp)
 
+    def test_moli_installers_pin_release_and_verify_checksums(self):
+        sh = (ROOT / "scripts" / "install-moli.sh").read_text(encoding="utf-8")
+        ps1 = (ROOT / "scripts" / "windows" / "install-moli.ps1").read_text(encoding="utf-8")
+        for text in (sh, ps1):
+            self.assertIn('"v1.1.21"', text)
+            self.assertNotIn("latest", text)
+            self.assertNotRegex(text, r"\|\s*(sh|bash)\b")
+            self.assertNotIn("iex", text)
+        self.assertIn("sha256sum -c", sh)
+        self.assertIn("Get-FileHash -Algorithm SHA256", ps1)
+        for skill in ("moli-cdp-server", "moli-webfetch", "moli-websearch"):
+            skill_dir = ROOT / "ai-assistants" / "SKILLS" / skill
+            self.assertTrue((skill_dir / "SKILL.md").is_file(), skill)
+            self.assertTrue((skill_dir / "LICENSE-MIT").is_file(), skill)
+
     def test_playwright_wrapper_executes_exact_npx_spec(self):
         if not BASH:
             self.skipTest("Bash is required")

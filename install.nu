@@ -662,6 +662,18 @@ def main [
             }
         }
 
+        if (should_install "moli" $skip_list $only_list) {
+            let moli_script = ($repo_root | path join "scripts" "windows" "install-moli.ps1")
+            mut moli_args = ["-NoProfile" "-ExecutionPolicy" "Bypass" "-File" $moli_script]
+            if $dry_run { $moli_args = ($moli_args | append "-DryRun") }
+            if $force_install { $moli_args = ($moli_args | append "-Force") }
+            let result = (^(powershell_host) ...$moli_args | complete)
+            print ($result.stdout | str trim)
+            if $result.exit_code != 0 {
+                error make $"Failed to install Moli: ($result.stderr | str trim)"
+            }
+        }
+
         if (should_install "wezterm" $skip_list $only_list) {
             let scoop_root = ($env.SCOOP? | default ($env.USERPROFILE | path join "scoop"))
             let nightly = ($scoop_root | path join "apps" "wezterm-nightly" "current" "wezterm.exe")
