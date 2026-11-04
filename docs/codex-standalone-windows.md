@@ -6,7 +6,7 @@ Verified on 2026-09-07: standalone and the official stable channel both report `
 
 ## Entry point
 
-The user PATH starts with `D:\Notes\WorkFlow\envCross_dotfiles\scripts\codex-launcher`. Run `codex` normally in a newly opened terminal. Restart the terminal application if a new tab still inherits its old PATH.
+The user PATH starts with `<repo>\scripts\codex-launcher` (wherever the repository is cloned). Run `codex` normally in a newly opened terminal. Restart the terminal application if a new tab still inherits its old PATH.
 
 `codex.cmd` runs PowerShell 7 with `-NoProfile`, then `codex-launch.ps1`:
 

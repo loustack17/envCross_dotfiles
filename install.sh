@@ -937,6 +937,13 @@ step_symlink_configs() {
     echo ""
     log_step "=== Step 3: Creating Links ==="
     echo ""
+    local anchor_user
+    for anchor_user in envcross-root fish zed hermes-agent opencode hyprlock cursor-mcp cursor-user-mcp vscode-mcp systemd-user openwhispr-desktop; do
+        if should_process "$anchor_user"; then
+            create_path_link "$REPO_ROOT" "$HOME/.local/share/envcross" "envcross-root" || return 1
+            break
+        fi
+    done
 
     for entry in "${TOOLS[@]}"; do
         IFS='|' read -r name cmd pkg is_aur src dst <<< "$entry"

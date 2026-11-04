@@ -7,13 +7,13 @@ mcp_servers:
       - serve
   firecrawl:
     enabled: true
-    command: /home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-firecrawl.sh
+    command: ~/.local/share/envcross/scripts/mcp/run-firecrawl.sh
   content-i18n:
-    command: /home/lou/.local/bin/content-i18n
+    command: ~/.local/bin/content-i18n
     args:
       - mcp
       - --config
-      - /home/lou/Documents/LouStackBase/content-i18n.yaml
+      - ~/Documents/LouStackBase/content-i18n.yaml
     enabled: true
   tavily:
     enabled: true
@@ -27,4 +27,4 @@ mcp_servers:
     enabled: true
   mem0:
     enabled: true
-    command: /home/lou/Documents/WorkFlow/envCross_dotfiles/scripts/mcp/run-mem0.sh
+    command: ~/.local/share/envcross/scripts/mcp/run-mem0.sh

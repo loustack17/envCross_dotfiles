@@ -404,7 +404,7 @@ goals:
   max_turns: 20
 skills:
   external_dirs:
-    - ~/Documents/WorkFlow/envCross_dotfiles/ai-assistants/SKILLS
+    - ~/.agents/skills
     - ~/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills
   template_vars: true
   inline_shell: false

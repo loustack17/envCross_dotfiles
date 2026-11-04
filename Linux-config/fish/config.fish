@@ -12,11 +12,11 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 fish_add_path (go env GOPATH)/bin
 fish_add_path --move --path "$HOME/.local/share/nvim/mason/bin"
 # uv (astral)
-fish_add_path "/home/lou/.local/bin"
+fish_add_path "$HOME/.local/bin"
 fish_add_path --path "$HOME/.dotnet/tools"
 fish_add_path /opt/cuda/bin
 
-set -gx PNPM_HOME "/home/lou/.local/share/pnpm"
+set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 fish_add_path --path "$PNPM_HOME"
 fish_add_path --path "$PNPM_HOME/bin"
 
@@ -39,7 +39,7 @@ if type -q direnv
 end
 
 # google cloud sdk
-if [ -f '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc' ]; . '/home/lou/Documents/Practise/google-cloud-sdk/path.fish.inc'; end
+if [ -f "$HOME/Documents/Practise/google-cloud-sdk/path.fish.inc" ]; . "$HOME/Documents/Practise/google-cloud-sdk/path.fish.inc"; end
 
 
 # >>> grok installer >>>

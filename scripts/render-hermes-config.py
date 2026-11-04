@@ -1,5 +1,6 @@
 import os
 import pathlib
+import re
 import sys
 import tempfile
 
@@ -11,6 +12,8 @@ if "\nmcp_servers:" in base or not mcp.startswith("mcp_servers:\n"):
     raise ValueError("Hermes MCP section must exist only in the platform file")
 output_path.parent.mkdir(parents=True, exist_ok=True)
 with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output_path.parent, delete=False) as temporary:
-    temporary.write(base.rstrip() + "\n" + mcp)
+    rendered = base.rstrip() + "\n" + mcp
+    home = pathlib.Path.home().as_posix()
+    temporary.write(re.sub(r"(?m)^(\s*(?:- |[\w-]+: ))~/", lambda match: match.group(1) + home + "/", rendered))
     temporary_path = pathlib.Path(temporary.name)
 os.replace(temporary_path, output_path)

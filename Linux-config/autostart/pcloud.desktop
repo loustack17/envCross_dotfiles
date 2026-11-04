@@ -2,7 +2,7 @@
 Type=Application
 Name=pCloud Drive
 Comment=Cloud storage service for your files
-Exec="/home/lou/.config/pcloud/pcloud-launcher.sh"
+Exec=sh -c '"$HOME/.config/pcloud/pcloud-launcher.sh"'
 Icon=appimagekit-pcloud
 StartupWMClass=pcloud
 Terminal=false

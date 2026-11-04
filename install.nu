@@ -602,7 +602,13 @@ def main [
     if $needs_python and not $dry_run and not (check_cmd "python") {
         error make "Python is required to render platform configs"
     }
-    mut targets = []
+    mut targets = if (["envcross-root" "nushell"] | any {|tool| should_install $tool $skip_list $only_list }) {
+        existing_targets [
+            {src: $repo_root, dest: ($home | path join ".local" "share" "envcross"), is_file: false, name: "envcross root"}
+        ]
+    } else {
+        []
+    }
     mut nushell_history_source = ""
     mut nushell_config = ""
     let scoop_root = ($env.SCOOP? | default "")
