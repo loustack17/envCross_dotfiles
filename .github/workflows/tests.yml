@@ -14,7 +14,7 @@ jobs:
     container: archlinux:latest
     steps:
       - run: pacman -Syu --noconfirm --needed git python jq stow
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: bash -n install.sh scripts/*.sh scripts/secrets/*.sh scripts/mcp/*.sh
       - name: Manifest packages exist in Arch repos or AUR
