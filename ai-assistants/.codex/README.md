@@ -4,7 +4,7 @@ Edit `config.toml` here for shared defaults. Windows links `C:\ProgramData\OpenA
 
 The writable user config also lives in this repository: `local/windows/config.toml` on Windows and `local/linux/config.toml` on Linux. Link `~/.codex/config.toml` to that host's file. The `local/` directory is ignored by Git because it holds project trust, hook approval, desktop state, and machine paths. Keep the shared defaults in `config.toml`; a user value overrides the corresponding system default. System defaults apply to all Codex users on that computer; anyone permitted to edit this repository can change those defaults. Do not share one writable user file between operating systems or accounts.
 
-The official `[windows]` table contains Windows-specific options, including `sandbox`; it is not a general-purpose OS override block. Codex has no documented automatic Windows/Linux configuration include. Common model, agent, UI, and MCP settings apply to both hosts. Windows uses the official recommended elevated sandbox; use the native unelevated fallback only when administrator permissions or elevated setup are unavailable. Linux uses Codex's native Linux sandbox. No invented `[linux]` table or platform merge is used.
+The official `[windows]` table contains Windows-specific options, including `sandbox`; it is not a general-purpose OS override block. Codex has no documented automatic Windows/Linux configuration include. Common model, agent, UI, and MCP settings apply to both hosts. Windows currently uses the official `unelevated` fallback because the elevated backend fails with `helper_sandbox_lock_failed` / `SetNamedSecurityInfoW ... failed: 5` on this host. The fallback retains restricted-token sandboxing but has weaker isolation. Return to the preferred `elevated` mode after its setup is repaired and command execution is verified. Linux uses Codex's native Linux sandbox. No invented `[linux]` table or platform merge is used.
 
 The shared source excludes machine-specific project trust records, desktop application state, unused plugin registrations, and legacy UI toggles. Authentication remains in its existing native location. Keep hook definitions linked at `~/.codex/hooks.json`; their approval state is stored in the linked user config. Review and approve changed hooks through `/hooks` or the desktop hook browser.
 
@@ -25,6 +25,7 @@ Official references:
 - [Hook definitions and trust](https://developers.openai.com/codex/hooks)
 - [Native model switching](https://developers.openai.com/codex/cli/reference)
 - [Windows-only sandbox setting](https://developers.openai.com/codex/config-reference/#windows-sandbox)
+- [Official Windows sandbox fallback and troubleshooting](https://developers.openai.com/codex/windows)
 - [Native agents](https://developers.openai.com/codex/multi-agent/)
 - [MCP configuration](https://developers.openai.com/codex/mcp/)
 

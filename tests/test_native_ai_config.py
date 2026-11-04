@@ -26,7 +26,7 @@ class NativeAIConfigTests(unittest.TestCase):
         settings = tomllib.loads((source / "config.toml").read_text(encoding="utf-8"))
         self.assertNotIn("profiles", settings)
         self.assertNotIn("profile", settings)
-        self.assertEqual(settings["windows"]["sandbox"], "elevated")
+        self.assertEqual(settings["windows"]["sandbox"], "unelevated")
         self.assertEqual(list(source.glob("*.config.toml")), [])
 
     def test_installers_link_both_native_config_sources_without_generators(self):

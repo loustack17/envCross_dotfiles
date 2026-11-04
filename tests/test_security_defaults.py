@@ -24,7 +24,7 @@ class SecurityDefaultsTests(unittest.TestCase):
         self.assertNotIn("/home/lou", projects)
 
     def test_windows_uses_only_the_platform_sandbox_default(self):
-        self.assertEqual(self.common["windows"]["sandbox"], "elevated")
+        self.assertEqual(self.common["windows"]["sandbox"], "unelevated")
         self.assertNotIn("sandbox_mode", self.common)
         self.assertNotIn("integratedTerminalShell", self.common.get("desktop", {}))
 

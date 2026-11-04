@@ -44,4 +44,4 @@ enabled = true
 required = false
 
 [windows]
-sandbox = "elevated"
+sandbox = "unelevated"
