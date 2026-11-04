@@ -35,9 +35,6 @@ core|linux|zellij|zellij|zellij|false|Linux-config/zellij|zellij
 core|linux|qt6ct|qt6ct|qt6ct|false|Linux-config/qt6ct|qt6ct
 ai|ai|claude-code|claude||false||$HOME/.claude
 ai|ai|codex|codex||false||$HOME/.codex
-ai|ai|gemini-cli|||false|ai-assistants/.gemini|$HOME/.gemini
-ai|ai|hermes-agent|hermes||false||$HOME/.hermes
-ai|ai|opencode|||false||$HOME/.config/opencode
 ai|ai|grok|grok||false|ai-assistants/.grok/config.toml|$HOME/.grok/config.toml
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig

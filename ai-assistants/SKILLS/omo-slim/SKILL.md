@@ -5,7 +5,7 @@ description: Coordinate bounded coding work with specialized agents in Claude Co
 
 # OMO Slim
 
-Keep orchestration in the main conversation. Use the host's native agent tools and available specialist definitions. No OpenCode plugin or subscription is required.
+Keep orchestration in the main conversation. Use the host's native agent tools and available specialist definitions.
 
 ## Routing
 

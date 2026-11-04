@@ -831,46 +831,6 @@ link_ai_shared_files() {
         grok)
             create_file_link "$shared_agents" "$HOME/.grok/AGENTS.md" "grok-rules" || return 1
             ;;
-        opencode)
-            local opencode_root="$REPO_ROOT/ai-assistants/.opencode"
-            local generated_opencode_config="${XDG_STATE_HOME:-$HOME/.local/state}/envcross/generated/opencode/opencode.json"
-            if [[ "$DRY_RUN" == "true" ]]; then
-                log_dry "Would render: OpenCode Linux config -> $generated_opencode_config"
-            else
-                python3 "$REPO_ROOT/scripts/merge-opencode-config.py" \
-                    "$opencode_root/opencode.json" \
-                    "$opencode_root/opencode.linux.json" \
-                    "$generated_opencode_config" || return 1
-            fi
-            create_file_link "$shared_agents" "$HOME/.config/opencode/AGENTS.md" "opencode-rules" || return 1
-            local active_opencode_source="$generated_opencode_config"
-            [[ "$DRY_RUN" == "true" ]] && active_opencode_source="$opencode_root/opencode.json"
-            create_file_link "$active_opencode_source" "$HOME/.config/opencode/opencode.json" "opencode-config" || return 1
-            create_file_link "$opencode_root/oh-my-opencode-slim.json" "$HOME/.config/opencode/oh-my-opencode-slim.json" "opencode-omc-slim" || return 1
-            create_file_link "$opencode_root/tui.json" "$HOME/.config/opencode/tui.json" "opencode-tui" || return 1
-            create_file_link "$opencode_root/cli.json" "$HOME/.config/opencode/cli.json" "opencode-cli" || return 1
-            create_path_link "$shared_skills" "$HOME/.config/opencode/skills" "opencode-skills" || return 1
-            create_path_link "$opencode_root/agents" "$HOME/.config/opencode/agents" "opencode-agents" || return 1
-            create_path_link "$opencode_root/commands" "$HOME/.config/opencode/commands" "opencode-commands" || return 1
-            create_path_link "$opencode_root/plugins" "$HOME/.config/opencode/plugins" "opencode-plugins" || return 1
-            ;;
-        hermes-agent)
-            local hermes_root="$REPO_ROOT/ai-assistants/.hermes"
-            local generated_hermes_config="${XDG_CACHE_HOME:-$HOME/.cache}/envCross_dotfiles/hermes/config.yaml"
-            if [[ "$DRY_RUN" == "true" ]]; then
-                log_dry "Would render: Hermes Linux config -> $generated_hermes_config"
-            else
-                python3 "$REPO_ROOT/scripts/render-hermes-config.py" \
-                    "$hermes_root/config.yaml" \
-                    "$hermes_root/mcp.linux.yaml" \
-                    "$generated_hermes_config" || return 1
-            fi
-            create_file_link "$hermes_root/SOUL.md" "$HOME/.hermes/SOUL.md" "hermes-soul" || return 1
-            local active_hermes_source="$generated_hermes_config"
-            [[ "$DRY_RUN" == "true" ]] && active_hermes_source="$hermes_root/config.yaml"
-            create_file_link "$active_hermes_source" "$HOME/.hermes/config.yaml" "hermes-config" || return 1
-            create_path_link "$hermes_root/hooks" "$HOME/.hermes/hooks" "hermes-hooks" || return 1
-            ;;
     esac
 }
 
@@ -938,7 +898,7 @@ step_symlink_configs() {
     log_step "=== Step 3: Creating Links ==="
     echo ""
     local anchor_user
-    for anchor_user in envcross-root fish zed hermes-agent opencode hyprlock cursor-mcp cursor-user-mcp vscode-mcp systemd-user openwhispr-desktop; do
+    for anchor_user in envcross-root fish zed hyprlock cursor-mcp cursor-user-mcp vscode-mcp systemd-user openwhispr-desktop; do
         if should_process "$anchor_user"; then
             create_path_link "$REPO_ROOT" "$HOME/.local/share/envcross" "envcross-root" || return 1
             break
@@ -1005,8 +965,7 @@ step_symlink_configs() {
             done
         fi
 
-        case "$name" in claude-code|codex|grok|opencode|hermes-agent) link_ai_shared_files "$name" ;; esac
-        case "$name" in gemini-cli) create_file_link "$REPO_ROOT/ai-assistants/AGENTS.md" "$HOME/.gemini/GEMINI.md" "gemini-shared-rules" || return 1 ;; esac
+        case "$name" in claude-code|codex|grok) link_ai_shared_files "$name" ;; esac
     done
 
     commit_transaction

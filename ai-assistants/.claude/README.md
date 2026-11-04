@@ -23,9 +23,9 @@ Platform differences come from the native executable and installed tools, rather
 | Plugin dependencies | Installed for this host | Must be installed for the Linux host |
 | Authentication | Local Claude and MCP credentials | Separate local Claude and MCP credentials |
 
-On Windows, installation diagnostics pass and Graph and Playwright MCP connections were verified. Claude model access is not authenticated, and Mem0 requires authorization. Linux runtime has not been tested; a shared settings file alone does not prove its executables, language servers, browsers, or credentials are available.
+On Windows, code-review-graph, Mem0 and freehire connect through the repo-tools plugin (verified 2026-11-04). Linux runtime has not been tested; a shared settings file alone does not prove its executables, language servers, browsers, or credentials are available.
 
-OpenCode-only skills are disabled through official `skillOverrides`. `enabledPlugins` lists only enabled plugins; unused plugins are uninstalled rather than kept disabled. Plugins synced from claude.ai and claude.ai connectors are account-managed and are not stored here.
+`enabledPlugins` lists only enabled plugins; unused plugins are uninstalled rather than kept disabled. Plugins synced from claude.ai and claude.ai connectors are account-managed and are not stored here.
 
 Apply links once with `nu install.nu --no-install --only claude-code` on Windows, or the repository's existing Linux installer. Later settings edits require no installer or copy step. Authentication, caches, and session state stay outside this repository.
 
@@ -40,4 +40,4 @@ Official references:
 - [Skills](https://code.claude.com/docs/en/skills)
 - [Supported shell interpreters](https://code.claude.com/docs/en/env-vars)
 
-Verified against the installed Claude Code 2.1.292 on 2026-10-07. Run `claude doctor`, `claude plugin details repo-tools`, and `claude mcp list`. Configuration health does not establish authenticated model access.
+To check a host, run `claude doctor`, `claude plugin details repo-tools`, and `claude mcp list`. Configuration health does not establish authenticated model access.

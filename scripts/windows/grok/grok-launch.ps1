@@ -1,7 +1,7 @@
 #requires -Version 7.0
 $ErrorActionPreference = 'Stop'
 $grokArguments = @($args)
-$syncScript = Join-Path $PSScriptRoot '../sync-grok-cli.py'
+$syncScript = Join-Path $PSScriptRoot '../../sync-grok-cli.py'
 & python $syncScript --home $env:USERPROFILE
 if ($LASTEXITCODE -ne 0) {
     [Console]::Error.WriteLine('Grok was not started: repository configuration sync failed.')

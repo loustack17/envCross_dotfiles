@@ -1,4 +1,3 @@
-import json
 import pathlib
 import tomllib
 import unittest
@@ -41,22 +40,6 @@ class AgentRoutingTests(unittest.TestCase):
                     values,
                 )
 
-    def test_openai_preset_is_selected_for_current_workflow(self):
-        config = json.loads((ROOT / ".opencode/oh-my-opencode-slim.json").read_text())
-        self.assertEqual(config["preset"], "openai")
-        preset = config["presets"]["openai"]
-        self.assertEqual(preset["orchestrator"]["model"], "openai/gpt-6-sol")
-        self.assertEqual(preset["orchestrator"]["variant"], "high")
-        self.assertEqual(preset["fixer"]["model"], "openai/gpt-6-luna")
-
-    def test_selected_preset_tool_scope_is_preserved(self):
-        config = json.loads((ROOT / ".opencode/oh-my-opencode-slim.json").read_text())
-        preset = config["presets"][config["preset"]]
-        self.assertEqual(preset["orchestrator"]["skills"], ["*"])
-        self.assertEqual(preset["orchestrator"]["mcps"], ["*", "!context7"])
-        self.assertEqual(preset["librarian"]["mcps"], ["context7", "gh_grep"])
-        for role in ("oracle", "explorer", "designer", "fixer"):
-            self.assertEqual(preset[role]["mcps"], [])
 
 
 if __name__ == "__main__":

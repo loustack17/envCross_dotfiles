@@ -4,12 +4,6 @@
     "pr": ""
   },
   "model": "opus",
-  "skillOverrides": {
-    "oh-my-opencode-slim": "off",
-    "release-smoke-test": "off",
-    "deepwork": "off",
-    "clonedeps": "off"
-  },
   "hooks": {
     "PostToolUse": [
       {

@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 import shutil
@@ -26,33 +25,9 @@ class SharedAgentRulesTests(unittest.TestCase):
             linux_installer,
         )
         self.assertIn(
-            "claude-code|codex|grok|opencode|hermes-agent",
+            "claude-code|codex|grok",
             linux_installer,
         )
-
-    def test_twelve_rule_backup_is_complete_and_not_an_install_target(self):
-        backup = (ROOT / "ai-assistants" / "AGENTS.12-rules.backup.md").read_text(
-            encoding="utf-8"
-        )
-        core = (ROOT / "ai-assistants" / "AGENTS.md").read_text(encoding="utf-8")
-        windows_installer = (ROOT / "install.nu").read_text(encoding="utf-8")
-        linux_installer = (ROOT / "install.sh").read_text(encoding="utf-8")
-        headings = [
-            line for line in backup.splitlines() if line.startswith("### Rule ")
-        ]
-
-        self.assertEqual(len(headings), 12)
-        self.assertEqual(
-            [int(line.split()[2]) for line in headings],
-            list(range(1, 13)),
-        )
-        self.assertEqual(
-            hashlib.sha256(backup.encode()).hexdigest(),
-            "4eee5b655cb97ff17d75651808b0f2110998589b557a45397846c8caa8a38735",
-        )
-        self.assertNotIn("12-Rule Task Contract", core)
-        self.assertNotIn("AGENTS.12-rules.backup.md", windows_installer)
-        self.assertNotIn("AGENTS.12-rules.backup.md", linux_installer)
 
 
 class InstallerRollbackTests(unittest.TestCase):

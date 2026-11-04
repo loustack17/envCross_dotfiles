@@ -1,49 +1,39 @@
+# Installer backups and local secrets
 backup/
+.env
+.envrc
+*.secret.toml
 
-# Zed backup settings may contain secrets
-zed/settings_backup.json
+# Python and editor caches
+__pycache__/
+*.py[cod]
+nvim.log
+/.claude/
+/nvim/.claude/
+/.codex/
 
-# Codex system-managed skills (auto-updated by codex)
+# AI tool runtime state written through linked directories
+/ai-assistants/.codex/local/
 ai-assistants/SKILLS/.system/
-ai-assistants/Codex/skills/.system/
-AI-Supporter/SKILLS/.system/
-AI-Supporter/Codex/skills/.system/
+ai-assistants/SKILLS/synced/
+
+# App-managed state that rewrites itself
+zed/settings_backup.json
+/lazygit/state.yml
+/lazygit/github_pull_requests.json
+nvim/lazy-lock.json
+yazi/config/
+yazi/plugins/custom-shell.yazi/yazi_cmd_history
+yazi/plugins/whoosh.yazi/bookmarks
+Windows/yasb/**/*.log
+Windows/nushell/history.txt
+/sqlit/*
+!/sqlit/keymap.json
+!/sqlit/README.md
+
+# Backup copies left by Linux apps
 Linux-config/**/*.bak
 Linux-config/**/*.bak.*
 Linux-config/**/*.backup
 Linux-local-share/**/*.bak
 Linux-local-share/**/*.backup
-/lazygit/state.yml
-/lazygit/github_pull_requests.json
-nvim/lazy-lock.json
-yazi/plugins/custom-shell.yazi/yazi_cmd_history
-yazi/plugins/whoosh.yazi/bookmarks
-yazi/config/
-Windows/yasb/**/*.log
-Windows/nushell/history.txt
-C:Users*
-nvim.log
-/.codex
-/.codex/
-ai-assistants/.hermes/.env
-ai-assistants/.hermes/auth.json
-ai-assistants/.hermes/*.db
-ai-assistants/.hermes/*.db-*
-ai-assistants/.hermes/logs/
-ai-assistants/.hermes/sessions/
-.envrc
-.env
-*.secret.toml
-
-__pycache__/
-*.py[cod]
-/.claude/
-/nvim/.claude/
-.slim/deepwork/
-/ai-assistants/.codex/local/
-/sqlit/*
-!/sqlit/keymap.json
-!/sqlit/README.md
-
-# Claude app runtime skill sync (written through ~/.claude/skills)
-ai-assistants/SKILLS/synced/

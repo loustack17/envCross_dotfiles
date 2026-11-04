@@ -2,7 +2,7 @@
 
 A cross-platform dotfiles repository for CachyOS/Arch Linux and Windows, featuring centralized configuration management and shared AI assistant instructions.
 
-Run the installers from the repository root. Preview changes before applying them, and keep the repository at a stable location because live symlinks point back to it.
+Clone the repository anywhere and run the installers from its root. Installers link `~/.local/share/envcross` to the clone, and every config reaches the repository through that link; after moving the clone, rerun the installer. Preview changes before applying them.
 
 | Task | Windows (Nushell) | Linux (Bash) |
 |------|-------------------|--------------|
@@ -63,84 +63,31 @@ Directly linked files reflect source edits immediately. Generated configs must b
 
 ## 🤖 AI Assistant Configuration
 
-This repository centralizes assistant context and tool-specific settings under `ai-assistants/`. Shared rules live in `ai-assistants/AGENTS.md`; shared skills live in `ai-assistants/SKILLS/`; tool-specific files live in hidden subdirectories such as `ai-assistants/.claude` and `ai-assistants/.opencode`.
-
-Claude Code user settings and Codex system defaults link directly to repository sources. Codex links its writable user config to the Git-ignored `ai-assistants/.codex/local/windows/config.toml` or `local/linux/config.toml`; Claude keeps trust in its local `.claude.json`. There is no custom settings merger, platform dispatcher, or CLI configuration wrapper. Edit one shared source per tool; Codex trust remains in the host user config and authentication stays in its native location. See [Claude configuration](ai-assistants/.claude/README.md) and [Codex configuration](ai-assistants/.codex/README.md).
-
-Both tools share instructions and the `omo-slim` coordination skill. Edit their native agent files directly; their official formats differ. Codex handles `[windows]` natively; switch models with `/model` or `--model`. OpenCode configuration is separate and outside this update.
-
-### Directory Structure
+Managed tools: **Claude Code**, **Codex**, and **Grok Build**. Everything lives under `ai-assistants/`: shared rules in `AGENTS.md`, shared skills in `SKILLS/` (one copy linked into every tool), and tool-specific settings in `.claude/`, `.codex/`, and `.grok/`. Add a per-tool setting only when the tool genuinely needs it. See [Claude configuration](ai-assistants/.claude/README.md), [Codex configuration](ai-assistants/.codex/README.md), and [MCP and secrets](ai-assistants/mcp/README.md).
 
 ```text
 ai-assistants/
-├── AGENTS.md
-├── AGENTS.12-rules.backup.md
-├── SKILLS/
-├── .claude/
-│   ├── CLAUDE.md
-│   ├── agents/
-│   └── settings.json
-├── .codex/
-│   ├── config.toml
-│   └── agents/
-├── .grok/
-│   └── config.toml
-├── .hermes/
-│   ├── SOUL.md
-│   ├── config.yaml
-│   └── hooks/
-├── .opencode/
-│   ├── agents/
-│   ├── commands/
-│   ├── plugins/
-│   ├── opencode.json
-│   ├── opencode.windows.json
-│   ├── opencode.linux.json
-│   ├── cli.json
-│   └── tui.json
-└── mcp/
+├── AGENTS.md              shared rules for every tool
+├── SKILLS/                shared skills; SKILLS/claude-tools/ is the Claude plugin holding its MCP servers
+├── .claude/               settings.json, CLAUDE.md, agents/, statusline.sh
+├── .codex/                config.toml (system defaults), hooks.json, agents/
+├── .grok/                 config.toml
+└── mcp/                   Cursor and VS Code MCP JSON, secrets documentation
 ```
 
-### Installation Targets
-During installation, these files are linked to the appropriate locations for each tool:
+| Tool | Source | Target |
+|------|--------|--------|
+| **Claude Code** | `.claude/settings.json`, `CLAUDE.md`, `statusline.sh`, `agents/` | `~/.claude/` |
+| **Claude Code** | `AGENTS.md`, `SKILLS/` | `~/.claude/AGENTS.md`, `~/.claude/skills` |
+| **Codex** | `.codex/config.toml` | `/etc/codex/config.toml` or `%ProgramData%\OpenAI\Codex\config.toml` |
+| **Codex** | `AGENTS.md`, `.codex/hooks.json`, `.codex/agents/` | `~/.codex/` |
+| **Codex** | `SKILLS/` | `~/.agents/skills` |
+| **Grok Build** | `AGENTS.md`, `.grok/config.toml` | `~/.grok/` |
+| **Grok Build (Windows)** | `scripts/windows/grok/` (syncs config, then starts Grok) | user `PATH` |
 
-| AI Tool | Source | Target Path |
-|---------|--------|-------------|
-| **Claude Code** | `ai-assistants/.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
-| **Claude Code** | `ai-assistants/AGENTS.md` | `~/.claude/AGENTS.md` |
-| **Claude Code** | `ai-assistants/.claude/agents/` | `~/.claude/agents` |
-| **Claude Code** | `ai-assistants/.claude/settings.json` | `~/.claude/settings.json` |
-| **Claude Code** | `ai-assistants/SKILLS/` | `~/.claude/skills` |
-| **Codex** | `ai-assistants/AGENTS.md` | `~/.codex/AGENTS.md` |
-| **Codex** | `ai-assistants/.codex/config.toml` | `/etc/codex/config.toml` or `C:\ProgramData\OpenAI\Codex\config.toml` |
-| **Codex** | `ai-assistants/.codex/hooks.json` | `~/.codex/hooks.json` |
-| **Codex** | `ai-assistants/.codex/agents/` | `~/.codex/agents` |
-| **Codex** | `ai-assistants/SKILLS/` | `~/.agents/skills` |
-| **Codex** | `ai-assistants/SKILLS/` | `~/.agents/skills` |
-| **Grok Build** | `ai-assistants/AGENTS.md` | `~/.grok/AGENTS.md` |
-| **Grok Build** | `ai-assistants/.grok/config.toml` | `~/.grok/config.toml` |
-| **OpenCode** | `ai-assistants/AGENTS.md` | `~/.config/opencode/AGENTS.md` |
-| **OpenCode** | common config + platform config | generated active `~/.config/opencode/opencode.json` |
-| **OpenCode** | `ai-assistants/.opencode/cli.json` | `~/.config/opencode/cli.json` |
-| **OpenCode (Linux V1)** | `ai-assistants/.opencode/tui.json` | `~/.config/opencode/tui.json` |
-| **OpenCode** | `ai-assistants/.opencode/oh-my-opencode-slim.json` | `~/.config/opencode/oh-my-opencode-slim.json` |
-| **OpenCode** | `ai-assistants/.opencode/agents/` | `~/.config/opencode/agents` |
-| **OpenCode** | `ai-assistants/.opencode/commands/` | `~/.config/opencode/commands` |
-| **OpenCode** | `ai-assistants/.opencode/plugins/` | `~/.config/opencode/plugins` |
-| **OpenCode** | `ai-assistants/SKILLS/` | `~/.config/opencode/skills` |
-| **Gemini CLI** | `ai-assistants/AGENTS.md` | `~/.gemini/GEMINI.md` |
-| **Hermes** | `ai-assistants/.hermes/SOUL.md` | `~/.hermes/SOUL.md` |
-| **Hermes** | common config + platform MCP config | generated active `~/.hermes/config.yaml` |
+### Secrets
 
-### MCP Configuration
-
-Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed keeps platform-specific MCP servers in `zed/platform.linux.json` and `zed/platform.windows.json`; Windows Mem0 uses browser authorization. Each tool's own repo config (Claude `SKILLS/claude-tools/.mcp.json`, Codex `config.toml`, OpenCode, Hermes, Grok) defines its MCP servers; no external manager syncs them.
-
-```bash
-bash ./install.sh --no-install --only-cursor-mcp --only-cursor-user-mcp --only-vscode-mcp
-```
-
-Keep secrets and OAuth state outside git. Linux MCP secrets use Bitwarden Secrets Manager and the local Secret Service/cache workflow described in `ai-assistants/mcp/README.md`; Windows hosted Mem0 uses browser authorization. Review app-managed settings, history, and generated output before adding files to Git.
+Every key and token comes from one Bitwarden Secrets Manager project through the `bws` CLI, which both installers install. Configure the machine token once per host (`scripts/secrets/configure.sh` on Linux, `scripts\windows\secrets-configure.ps1` on Windows), then launch tools through `with-secrets` or their wrappers. Never put a key in an environment variable, `.env`, or config file. OAuth sessions (Claude, freehire, Mem0) stay in each tool's own store and are signed in once per host.
 
 ## 📁 Paths & Configuration
 

@@ -54,7 +54,7 @@ def main [
         return ($tool not-in $skip_list)
     }
 
-    let needs_python = (["zed", "opencode", "hermes-agent"] | any {|tool| should_install $tool $skip_list $only_list })
+    let needs_python = (["zed"] | any {|tool| should_install $tool $skip_list $only_list })
 
     def check_cmd [cmd: string]: nothing -> bool {
         (which $cmd | is-not-empty)
@@ -602,7 +602,7 @@ def main [
     if $needs_python and not $dry_run and not (check_cmd "python") {
         error make "Python is required to render platform configs"
     }
-    mut targets = if (["envcross-root" "nushell"] | any {|tool| should_install $tool $skip_list $only_list }) {
+    mut targets = if (["envcross-root" "nushell" "grok"] | any {|tool| should_install $tool $skip_list $only_list }) {
         existing_targets [
             {src: $repo_root, dest: ($home | path join ".local" "share" "envcross"), is_file: false, name: "envcross root"}
         ]
@@ -808,20 +808,12 @@ def main [
     let codex_home = ($home | path join ".codex")
     let agents_home = ($home | path join ".agents")
     let grok_home = ($home | path join ".grok")
-    let opencode_home = ($user_config_home | path join "opencode")
-    let gemini_home = ($home | path join ".gemini")
     let has_claude = (check_cmd "claude")
     let has_codex = (check_cmd "codex")
     let has_grok = (check_cmd "grok")
-    let has_opencode = (check_cmd "opencode")
-    let has_gemini = (check_cmd "gemini")
-    let has_hermes = (check_cmd "hermes")
     let should_link_claude = $has_claude and (should_install "claude-code" $skip_list $only_list)
     let should_link_codex = $has_codex and (should_install "codex" $skip_list $only_list)
     let should_link_grok = $has_grok and (should_install "grok" $skip_list $only_list)
-    let should_link_opencode = $has_opencode and (should_install "opencode" $skip_list $only_list)
-    let should_link_gemini = $has_gemini and (should_install "gemini-cli" $skip_list $only_list)
-    let should_link_hermes = $has_hermes and (should_install "hermes-agent" $skip_list $only_list)
     let claude_agents = ($claude_root | path join "agents")
     let claude_skills_dest = ($claude_home | path join "skills")
     let resolved_claude_skill_targets = if $should_link_claude {
@@ -889,63 +881,16 @@ def main [
         $targets ++= (existing_targets $grok_files)
     }
 
-    if $should_link_opencode {
-        let opencode_root = ($ai_root | path join ".opencode")
-        let generated_opencode_config = ($state_root | path join "generated" | path join "opencode" | path join "opencode.json")
+    if (should_install "grok" $skip_list $only_list) and not $backup_only {
+        let grok_launcher = ($home | path join ".local" "share" "envcross" "scripts" "windows" "grok")
         if $dry_run {
-            log_dry $"Would render: OpenCode Windows config -> ($generated_opencode_config)"
+            log_dry $"Would put Grok launcher on user PATH: ($grok_launcher)"
         } else {
-            ^python ($repo_root | path join "scripts" | path join "merge-opencode-config.py") ($opencode_root | path join "opencode.json") ($opencode_root | path join "opencode.windows.json") $generated_opencode_config
-            if $env.LAST_EXIT_CODE != 0 {
-                error make {msg: "Failed to render OpenCode Windows config"}
-            }
+            let script = '& { param([string]$Dir) $entries = @([Environment]::GetEnvironmentVariable("Path", "User") -split ";" | Where-Object { $_ -and $_ -notmatch "\\scripts\\(codex-launcher|windows\\grok)\\?$" }); [Environment]::SetEnvironmentVariable("Path", ((@($Dir) + $entries) -join ";"), "User") }'
+            let result = (^(powershell_host) -NoProfile -Command $script $grok_launcher | complete)
+            if $result.exit_code != 0 { error make {msg: "Failed to put the Grok launcher on PATH"} }
+            log_info $"Grok launcher on user PATH: ($grok_launcher)"
         }
-        let active_opencode_source = if $dry_run { ($opencode_root | path join "opencode.json") } else { $generated_opencode_config }
-        let opencode_files = [
-            {src: $shared_agents, dest: ($opencode_home | path join "AGENTS.md"),    is_file: true,  name: "opencode AGENTS.md"}
-            {src: ($opencode_root | path join "oh-my-opencode-slim.json"), dest: ($opencode_home | path join "oh-my-opencode-slim.json"), is_file: true, name: "opencode oh-my-opencode-slim"}
-            {src: ($opencode_root | path join "cli.json"), dest: ($opencode_home | path join "cli.json"), is_file: true, name: "opencode cli"}
-            {src: $shared_skills, dest: ($opencode_home | path join "skills"),        is_file: false, name: "opencode skills"}
-            {src: ($ai_root | path join ".opencode" | path join "agents"),            dest: ($opencode_home | path join "agents"),        is_file: false, name: "opencode agents"}
-            {src: ($ai_root | path join ".opencode" | path join "commands"),          dest: ($opencode_home | path join "commands"),      is_file: false, name: "opencode commands"}
-            {src: ($ai_root | path join ".opencode" | path join "plugins"),           dest: ($opencode_home | path join "plugins"),       is_file: false, name: "opencode plugins"}
-        ]
-        $targets ++= (existing_targets $opencode_files)
-        $targets ++= [{
-            source: $active_opencode_source
-            dest: ($opencode_home | path join "opencode.json")
-            is_file: true
-            name: "opencode config"
-        }]
-    }
-
-    if $should_link_gemini {
-        $targets ++= [{
-            name: ".gemini GEMINI.md"
-            source: $shared_agents
-            dest: ($gemini_home | path join "GEMINI.md")
-            is_file: true
-        }]
-    }
-
-    let hermes_home = ($home | path join ".hermes")
-    let generated_hermes_config = ($state_root | path join "generated" "hermes" "config.yaml")
-    if $should_link_hermes {
-        if $dry_run {
-            log_dry $"Would render: Hermes Windows config -> ($generated_hermes_config)"
-        } else {
-            let result = (^python ($repo_root | path join "scripts" "render-hermes-config.py") ($ai_root | path join ".hermes" "config.yaml") ($ai_root | path join ".hermes" "mcp.windows.yaml") $generated_hermes_config | complete)
-            if $result.exit_code != 0 { error make "Failed to render Hermes Windows config" }
-        }
-    }
-    let hermes_config_source = if $dry_run { ($ai_root | path join ".hermes" "config.yaml") } else { $generated_hermes_config }
-    let hermes_files = [
-        {src: ($ai_root | path join ".hermes" | path join "SOUL.md"),      dest: ($hermes_home | path join "SOUL.md"),      is_file: true,  name: "Hermes SOUL.md"}
-        {src: $hermes_config_source,  dest: ($hermes_home | path join "config.yaml"),  is_file: true,  name: "Hermes config.yaml"}
-        {src: ($ai_root | path join ".hermes" | path join "hooks"),        dest: ($hermes_home | path join "hooks"),        is_file: false, name: "Hermes hooks"}
-    ]
-    if $should_link_hermes {
-        $targets ++= (existing_targets $hermes_files)
     }
 
     if not $backup_only and (should_install "nushell" $skip_list $only_list) {

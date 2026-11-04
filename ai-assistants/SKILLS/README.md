@@ -5,7 +5,6 @@ Source of truth for shared skills. Skill directories contain real files so Windo
 Installed links:
 - `~/.claude/skills`
 - `~/.agents/skills`
-- `~/.config/opencode/skills`
 
 Installed tools link to this directory; skills do not depend on machine-local CC Switch or plugin cache paths.
 
