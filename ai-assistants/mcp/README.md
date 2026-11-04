@@ -19,7 +19,7 @@ scripts/secrets/configure.sh
 
 The access token and project ID are stored in the desktop Secret Service keyring. `scripts/secrets/run.sh` retrieves them and uses `bws run` to inject secrets only into the launched process. Tool-owned OAuth sessions remain in their native stores.
 
-On Windows, run `scripts\windows\secrets-configure.ps1` once (`-FromEnvironment` migrates a plaintext `BWS_ACCESS_TOKEN` user variable and deletes it). The token and project ID are stored DPAPI-encrypted for the current user in `%LOCALAPPDATA%\envcross\bws.clixml`. Nushell's `with-secrets <cmd>` runs `scripts\windows\with-secrets.ps1`, which loads the project's secrets into that command's environment without passing the BWS token.
+On Windows, run `scripts\windows\secrets-configure.ps1` once (`-FromEnvironment` migrates a plaintext `BWS_ACCESS_TOKEN` user variable and deletes it). The token and project ID are stored DPAPI-encrypted for the current user in `%LOCALAPPDATA%\envcross\bws.clixml`. Nushell's `with-secrets <cmd>` runs `scripts\windows\with-secrets.ps1`, which loads the project's secrets into that command's environment without passing the BWS token. Because the token is no longer an environment variable, agents and scripts that call `bws` directly use `scripts\windows\bws.ps1 <args>`, which loads the token for that one call; Python helpers such as the TypeSafe skill read the same store.
 
 Every key and token comes from this Bitwarden project; never store one in a user environment variable, `.env`, or config file. Both installers install `bws` (Scoop `bitwarden-secrets-manager-cli`, AUR `bws-bin`) and, on Linux, `libsecret`.
 
