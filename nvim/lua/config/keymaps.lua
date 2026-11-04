@@ -1,10 +1,10 @@
 local map = vim.keymap.set
 
 -- Window resize
-map("n", "rh", "<C-w><", { desc = "Resize window left" })
-map("n", "rj", "<C-w>+", { desc = "Resize window down" })
-map("n", "rk", "<C-w>-", { desc = "Resize window up" })
-map("n", "rl", "<C-w>>", { desc = "Resize window right" })
+map("n", "<C-A-h>", "<C-w><", { desc = "Resize window narrower" })
+map("n", "<C-A-j>", "<C-w>-", { desc = "Resize window shorter" })
+map("n", "<C-A-k>", "<C-w>+", { desc = "Resize window taller" })
+map("n", "<C-A-l>", "<C-w>>", { desc = "Resize window wider" })
 
 -- Move lines
 map("n", "<A-Down>", ":m .+1<CR>==", { desc = "Move line down" })
@@ -17,8 +17,6 @@ map("n", "<S-A-j>", "<Cmd>t.<CR>", { desc = "Duplicate line down" })
 map("n", "<S-A-k>", "<Cmd>t-1<CR>", { desc = "Duplicate line up" })
 
 -- Diagnostics
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 map("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Line diagnostic" })
 map("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "Diagnostics quickfix" })
 
@@ -26,7 +24,7 @@ map("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "Diagnostics quickfix"
 map({ "n", "v" }, "d", '"_d', { desc = "Delete to black hole register" })
 map({ "n", "v" }, "dd", '"_dd', { desc = "Delete line to black hole register" })
 map({ "n", "v" }, "x", "d", { desc = "Cut" })
-map("n", "xx", "dd", { desc = "Cut line" })
+map("o", "x", "d", { desc = "Cut line (xx)" })
 
 -- Move visual selections
 map("v", "<A-Down>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
