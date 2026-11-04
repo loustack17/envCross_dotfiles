@@ -497,7 +497,7 @@ def main [
         print ""
     }
 
-    if $dry_run { log_warn "DRY RUN MODE - No changes will be made" }
+    if $dry_run { log_warn "DRY RUN MODE - No changes will be made" } else { try { ^git -C $repo_root config core.hooksPath .githooks } catch { log_warn "Could not enable repository git hooks" } }
 
     # === Step 1: Install Tools ===
     if not $no_install and not $backup_only {

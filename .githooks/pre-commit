@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+git diff --cached --check
+unset GIT_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX
+
+python_bin="$(command -v python3 || command -v python)"
+"$python_bin" -m unittest discover -s tests -q

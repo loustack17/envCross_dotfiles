@@ -1049,6 +1049,7 @@ main() {
 
     ensure_stow
 
+    [[ "$DRY_RUN" == "true" ]] || git -C "$REPO_ROOT" config core.hooksPath .githooks || log_warn "Could not enable repository git hooks"
     step_install_tools
     step_backup_configs
     step_symlink_configs
