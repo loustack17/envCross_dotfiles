@@ -444,108 +444,6 @@ def main [
         true
     }
 
-    def decode_json_result [result: record, name: string] {
-        if $result.exit_code != 0 {
-            log_warn $"($name): command failed"
-            return {
-                ok: false
-                value: null
-            }
-        }
-
-        try {
-            {
-                ok: true
-                value: ($result.stdout | from json)
-            }
-        } catch {
-            log_warn $"($name): invalid JSON output"
-            {
-                ok: false
-                value: null
-            }
-        }
-    }
-
-    def ensure_claude_local_plugin [marketplace_dir: string, dry: bool] {
-        let marketplace_name = "lou-local-ai"
-        let plugin_id = $"common-lsp@($marketplace_name)"
-
-        if not ($marketplace_dir | path exists) {
-            return
-        }
-
-        if $dry {
-            log_dry $"Would ensure Claude marketplace: ($marketplace_name)"
-            log_dry $"Would ensure Claude plugin: ($plugin_id)"
-            return
-        }
-
-        let marketplaces_result = (decode_json_result
-            (try { ^claude plugin marketplace list --json | complete } catch { {stdout: "[]", stderr: "", exit_code: 1} })
-            "claude marketplace list"
-        )
-        if not $marketplaces_result.ok {
-            return
-        }
-        let marketplaces = $marketplaces_result.value
-        let has_marketplace = (($marketplaces | where { |it| (($it | get -o name | default "") == $marketplace_name) } | length) > 0)
-
-        if not $has_marketplace {
-            let add_result = (try { ^claude plugin marketplace add $marketplace_dir --scope user | complete } catch { {stdout: "", stderr: "", exit_code: 1} })
-            if $add_result.exit_code == 0 {
-                log_info $"claude marketplace: added ($marketplace_name)"
-            } else {
-                log_warn $"claude marketplace: failed to add ($marketplace_name)"
-                return
-            }
-        } else {
-            log_info $"claude marketplace: already added ($marketplace_name)"
-        }
-
-        let initial_plugins_result = (decode_json_result
-            (try { ^claude plugin list --json | complete } catch { {stdout: "[]", stderr: "", exit_code: 1} })
-            "claude plugin list"
-        )
-        if not $initial_plugins_result.ok {
-            return
-        }
-        mut plugins = $initial_plugins_result.value
-
-        let has_plugin = (($plugins | where { |it| (($it | get -o id | default "") == $plugin_id) } | length) > 0)
-        if not $has_plugin {
-            let install_result = (try { ^claude plugin install $plugin_id --scope user | complete } catch { {stdout: "", stderr: "", exit_code: 1} })
-            if $install_result.exit_code == 0 {
-                log_info $"claude plugin: installed ($plugin_id)"
-                let refreshed_plugins_result = (decode_json_result
-                    (try { ^claude plugin list --json | complete } catch { {stdout: "[]", stderr: "", exit_code: 1} })
-                    "claude plugin list"
-                )
-                if not $refreshed_plugins_result.ok {
-                    return
-                }
-                $plugins = $refreshed_plugins_result.value
-            } else {
-                log_warn $"claude plugin: failed to install ($plugin_id)"
-                return
-            }
-        }
-
-        let plugin_disabled = (($plugins | where { |it|
-            (($it | get -o id | default "") == $plugin_id) and (($it | get -o enabled | default true) == false)
-        } | length) > 0)
-        if $plugin_disabled {
-            let enable_result = (try { ^claude plugin enable $plugin_id --scope user | complete } catch { {stdout: "", stderr: "", exit_code: 1} })
-            if $enable_result.exit_code == 0 {
-                log_info $"claude plugin: enabled ($plugin_id)"
-            } else {
-                log_warn $"claude plugin: failed to enable ($plugin_id)"
-            }
-        } else {
-            log_info $"claude plugin: ready ($plugin_id)"
-        }
-    }
-
     def ensure_yazi_config_layout [source: string, dry: bool] {
         let config_dir = ($source | path join "config")
         let entries = [
@@ -918,8 +816,6 @@ def main [
     let should_link_gemini = $has_gemini and (should_install "gemini-cli" $skip_list $only_list)
     let should_link_hermes = $has_hermes and (should_install "hermes-agent" $skip_list $only_list)
     let claude_agents = ($claude_root | path join "agents")
-    let claude_rules  = ($claude_root | path join "rules")
-    let claude_marketplace = ($claude_root | path join "marketplace")
     let claude_skills_dest = ($claude_home | path join "skills")
     let resolved_claude_skill_targets = if $should_link_claude {
         collect_link_targets $shared_skills $claude_skills_dest ".claude skill"
@@ -943,12 +839,11 @@ def main [
             {src: $shared_agents, dest: ($claude_home | path join "AGENTS.md"), is_file: true, name: ".claude shared rules"}
             {src: ($claude_root | path join "CLAUDE.md"), dest: ($claude_home | path join "CLAUDE.md"), is_file: true, name: ".claude CLAUDE.md"}
             {src: ($claude_root | path join "settings.json"), dest: ($claude_home | path join "settings.json"), is_file: true, name: ".claude settings"}
+            {src: ($claude_root | path join "statusline.sh"), dest: ($claude_home | path join "statusline.sh"), is_file: true, name: ".claude statusline"}
         ]
         $targets ++= (existing_targets $claude_files)
         $targets ++= (existing_non_empty_targets [
             {src: $claude_agents,      dest: ($claude_home | path join "agents"),      is_file: false, name: ".claude agents"}
-            {src: $claude_rules,       dest: ($claude_home | path join "rules"),       is_file: false, name: ".claude rules"}
-            {src: $claude_marketplace, dest: ($claude_home | path join "marketplace"), is_file: false, name: ".claude marketplace"}
         ])
         if $should_expand_claude_skills {
             $targets ++= $active_claude_skill_targets
@@ -1219,10 +1114,6 @@ def main [
         }) {
             log_warn $"Committed transaction status update failed: ($transaction_journal)"
         }
-    }
-
-    if $should_link_claude {
-        ensure_claude_local_plugin $claude_marketplace $dry_run
     }
 
     # === Done ===

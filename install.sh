@@ -814,10 +814,9 @@ link_ai_shared_files() {
             create_file_link "$shared_agents" "$HOME/.claude/AGENTS.md" "claude-shared-rules" || return 1
             create_file_link "$claude_root/CLAUDE.md" "$HOME/.claude/CLAUDE.md" "claude-rules" || return 1
             create_file_link "$claude_root/settings.json" "$HOME/.claude/settings.json" "claude-settings" || return 1
+            create_file_link "$claude_root/statusline.sh" "$HOME/.claude/statusline.sh" "claude-statusline" || return 1
             create_path_link "$shared_skills" "$HOME/.claude/skills" "claude-skills" || return 1
             create_optional_path_link "$claude_root/agents" "$HOME/.claude/agents" "claude-agents" || return 1
-            create_optional_path_link "$claude_root/rules" "$HOME/.claude/rules" "claude-rules-dir" || return 1
-            create_optional_path_link "$claude_root/marketplace" "$HOME/.claude/marketplace" "claude-marketplace" || return 1
             ;;
         codex)
             create_file_link "$shared_agents" "$HOME/.codex/AGENTS.md" "codex-rules" || return 1
@@ -874,61 +873,6 @@ link_ai_shared_files() {
             ;;
     esac
 }
-
-ensure_claude_local_plugin() {
-    local marketplace_dir="$REPO_ROOT/ai-assistants/.claude/marketplace"
-    local marketplace_name="lou-local-ai"
-    local plugin_id="common-lsp@$marketplace_name"
-
-    [[ -d "$marketplace_dir" ]] || return 0
-
-    if ! command -v claude &>/dev/null; then
-        log_warn "claude: not found, skipping local plugin install"
-        return 0
-    fi
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log_dry "Would ensure Claude marketplace: $marketplace_name"
-        log_dry "Would ensure Claude plugin: $plugin_id"
-        return 0
-    fi
-
-    local marketplaces
-    marketplaces="$(claude plugin marketplace list --json 2>/dev/null || printf '[]')"
-    if ! jq -e --arg name "$marketplace_name" '.[] | select(.name == $name)' >/dev/null 2>&1 <<< "$marketplaces"; then
-        if claude plugin marketplace add "$marketplace_dir" --scope user >/dev/null 2>&1; then
-            log_info "claude marketplace: added $marketplace_name"
-        else
-            log_warn "claude marketplace: failed to add $marketplace_name"
-            return 0
-        fi
-    else
-        log_info "claude marketplace: already added ($marketplace_name)"
-    fi
-
-    local plugins
-    plugins="$(claude plugin list --json 2>/dev/null || printf '[]')"
-    if ! jq -e --arg id "$plugin_id" '.[] | select(.id == $id)' >/dev/null 2>&1 <<< "$plugins"; then
-        if claude plugin install "$plugin_id" --scope user >/dev/null 2>&1; then
-            log_info "claude plugin: installed $plugin_id"
-        else
-            log_warn "claude plugin: failed to install $plugin_id"
-            return 0
-        fi
-        plugins="$(claude plugin list --json 2>/dev/null || printf '[]')"
-    fi
-
-    if jq -e --arg id "$plugin_id" '.[] | select(.id == $id and .enabled == false)' >/dev/null 2>&1 <<< "$plugins"; then
-        if claude plugin enable "$plugin_id" --scope user >/dev/null 2>&1; then
-            log_info "claude plugin: enabled $plugin_id"
-        else
-            log_warn "claude plugin: failed to enable $plugin_id"
-        fi
-    else
-        log_info "claude plugin: ready ($plugin_id)"
-    fi
-}
-
 
 step_install_tools() {
     [[ "$NO_INSTALL" == "true" ]] && return
@@ -1056,7 +1000,6 @@ step_symlink_configs() {
 
         case "$name" in claude-code|codex|grok|opencode|hermes-agent) link_ai_shared_files "$name" ;; esac
         case "$name" in gemini-cli) create_file_link "$REPO_ROOT/ai-assistants/AGENTS.md" "$HOME/.gemini/GEMINI.md" "gemini-shared-rules" || return 1 ;; esac
-        case "$name" in claude-code) ensure_claude_local_plugin ;; esac
     done
 
     commit_transaction

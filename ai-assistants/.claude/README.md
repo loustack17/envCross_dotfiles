@@ -1,12 +1,12 @@
 # Claude Code
 
-Edit `settings.json` here. `~/.claude/settings.json` links directly to it. No settings generation, OS dispatcher, platform JSON, or custom status line is used.
+Edit `settings.json` here. `~/.claude/settings.json` links directly to it, and `~/.claude/statusline.sh` links to `statusline.sh` (requires `bash` and `jq`). No settings generation, OS dispatcher, or platform JSON is used. Keep project-specific `autoMode` environments out of these user settings.
 
 Claude stores project trust and its own session/configuration state in the local `~/.claude.json`, which must not be shared or linked into this repository. User settings apply across projects; a project's `.claude/settings.json` provides shared project settings, and `.claude/settings.local.json` provides local overrides. These scopes do not automatically select arbitrary Windows/Linux settings blocks. Supported native tools adapt to the host; an explicit shared setting affects both hosts.
 
 Claude Code selects its supported native tools for the host. Graph hooks use official exec form: `code-review-graph` plus `args`, without a shell script. The installed executable must be available on PATH.
 
-`../SKILLS/claude-tools/` contains the official personal-plugin layout: `.claude-plugin/plugin.json` and `.mcp.json`. The existing `~/.claude/skills` link exposes it as `repo-tools@skills-dir`; Claude loads it without marketplace registration. Start a new session or use `/reload-plugins` after editing MCP definitions. Code Review Graph uses its installed executable; Mem0 uses its maintained hosted endpoint and requires local authentication.
+`../SKILLS/claude-tools/` contains the official personal-plugin layout: `.claude-plugin/plugin.json` and `.mcp.json`. The existing `~/.claude/skills` link exposes it as `repo-tools@skills-dir`; Claude loads it without marketplace registration. Start a new session or use `/reload-plugins` after editing MCP definitions. Code Review Graph uses its installed executable; Mem0 uses its maintained hosted endpoint and requires local authentication. freehire uses its account endpoint (`/api/v1/mcp/account`) with browser OAuth; authenticate once per host with `claude mcp login plugin:repo-tools:freehire`. Its public no-account endpoint is `/api/v1/mcp`.
 
 Native subagents are edited in `agents/`. Shared instructions and coordination live in `../AGENTS.md` and `../SKILLS/omo-slim/`. Claude Markdown and Codex TOML definitions have different official formats; there is no custom generator to combine them.
 
@@ -25,7 +25,7 @@ Platform differences come from the native executable and installed tools, rather
 
 On Windows, installation diagnostics pass and Graph and Playwright MCP connections were verified. Claude model access is not authenticated, and Mem0 requires authorization. Linux runtime has not been tested; a shared settings file alone does not prove its executables, language servers, browsers, or credentials are available.
 
-OpenCode-only skills are disabled through official `skillOverrides`. Duplicate workflow plugins and unauthenticated optional GitHub/Linear integrations are disabled. Other useful installed plugins remain available.
+OpenCode-only skills are disabled through official `skillOverrides`. `enabledPlugins` lists only enabled plugins; unused plugins are uninstalled rather than kept disabled. Plugins synced from claude.ai and claude.ai connectors are account-managed and are not stored here.
 
 Apply links once with `nu install.nu --no-install --only claude-code` on Windows, or the repository's existing Linux installer. Later settings edits require no installer or copy step. Authentication, caches, and session state stay outside this repository.
 

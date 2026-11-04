@@ -8,9 +8,12 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 class NativeAIConfigTests(unittest.TestCase):
-    def test_claude_hooks_use_direct_executables_and_no_custom_statusline(self):
+    def test_claude_hooks_use_direct_executables_and_linked_statusline(self):
         settings = json.loads((ROOT / "ai-assistants/.claude/settings.json").read_text(encoding="utf-8"))
-        self.assertNotIn("statusLine", settings)
+        self.assertEqual(settings["statusLine"], {"type": "command", "command": "bash ~/.claude/statusline.sh"})
+        self.assertTrue((ROOT / "ai-assistants/.claude/statusline.sh").is_file())
+        self.assertNotIn("autoMode", settings)
+        self.assertTrue(all(settings["enabledPlugins"].values()))
         for event in settings["hooks"].values():
             for matcher in event:
                 for hook in matcher["hooks"]:
