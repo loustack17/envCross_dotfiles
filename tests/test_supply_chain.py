@@ -131,6 +131,17 @@ class PackagePinTests(unittest.TestCase):
         self.assertNotIn("@latest", "\n".join((mcp, firecrawl, tavily, playwright)))
         self.assertNotIn("MCP_NODE_PREFIX", mcp)
 
+    def test_installers_provide_bws_and_windows_secrets_skip_plaintext(self):
+        manifest = (ROOT / "config" / "targets.manifest").read_text(encoding="utf-8")
+        self.assertIn("core|linux|bws|bws|bws-bin|true||", manifest)
+        self.assertIn("core|linux|libsecret|secret-tool|libsecret|false||", manifest)
+        self.assertIn('pkg: "bitwarden-secrets-manager-cli", cmd: "bws"', (ROOT / "install.nu").read_text(encoding="utf-8"))
+        runner = (ROOT / "scripts" / "windows" / "with-secrets.ps1").read_text(encoding="utf-8")
+        self.assertIn("Import-Clixml", runner)
+        self.assertIn("Remove-Item Env:BWS_ACCESS_TOKEN", runner)
+        self.assertNotIn('"User")', runner)
+        self.assertFalse((ROOT / "ai-assistants" / ".envrc.example").exists())
+
     def test_moli_installers_pin_release_and_verify_checksums(self):
         sh = (ROOT / "scripts" / "install-moli.sh").read_text(encoding="utf-8")
         ps1 = (ROOT / "scripts" / "windows" / "install-moli.ps1").read_text(encoding="utf-8")

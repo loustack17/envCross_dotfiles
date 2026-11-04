@@ -44,3 +44,6 @@ __pycache__/
 /sqlit/*
 !/sqlit/keymap.json
 !/sqlit/README.md
+
+# Claude app runtime skill sync (written through ~/.claude/skills)
+ai-assistants/SKILLS/synced/

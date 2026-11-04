@@ -19,6 +19,10 @@ scripts/secrets/configure.sh
 
 The access token and project ID are stored in the desktop Secret Service keyring. `scripts/secrets/run.sh` retrieves them and uses `bws run` to inject secrets only into the launched process. Tool-owned OAuth sessions remain in their native stores.
 
+On Windows, run `scripts\windows\secrets-configure.ps1` once (`-FromEnvironment` migrates a plaintext `BWS_ACCESS_TOKEN` user variable and deletes it). The token and project ID are stored DPAPI-encrypted for the current user in `%LOCALAPPDATA%\envcross\bws.clixml`. Nushell's `with-secrets <cmd>` runs `scripts\windows\with-secrets.ps1`, which loads the project's secrets into that command's environment without passing the BWS token; `opencode` is wrapped the same way.
+
+Every key and token comes from this Bitwarden project; never store one in a user environment variable, `.env`, or config file. Both installers install `bws` (Scoop `bitwarden-secrets-manager-cli`, AUR `bws-bin`) and, on Linux, `libsecret`.
+
 Required secret names are `FIRECRAWL_API_KEY`, `MEM0_API_KEY`, `TAVILY_API_KEY`, `GITHUB_PERSONAL_ACCESS_TOKEN`, and `CRAWL4AI_API_TOKEN`.
 
 Codex MCP children lack D-Bus, so wrappers use a local cache:

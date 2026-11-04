@@ -1,4 +1,6 @@
 # group|scope|name|cmd|pkg|is_aur|src|dst
+core|linux|bws|bws|bws-bin|true||
+core|linux|libsecret|secret-tool|libsecret|false||
 utilities|linux|playerctl|playerctl|playerctl|false||
 utilities|linux|brightnessctl|brightnessctl|brightnessctl|false||
 utilities|linux|bluez|bluetoothctl|bluez,bluez-utils|false||

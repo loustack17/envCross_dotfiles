@@ -539,6 +539,7 @@ def main [
             {name: "Yasb",              pkg: "yasb",              cmd: "yasb"}
             {name: "Komorebi",          pkg: "komorebi",          cmd: "komorebi"}
             {name: "Whkd",              pkg: "whkd",              cmd: "whkd"}
+            {name: "bws",               pkg: "bitwarden-secrets-manager-cli", cmd: "bws"}
         ]
 
         for tool in $tools {

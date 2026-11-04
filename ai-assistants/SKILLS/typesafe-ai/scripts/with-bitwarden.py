@@ -20,6 +20,15 @@ def bitwarden_environment():
         )
         if result.returncode == 0 and result.stdout.strip():
             environment["BWS_ACCESS_TOKEN"] = result.stdout.strip()
+    store = Path(os.environ.get("LOCALAPPDATA", "")) / "envcross" / "bws.clixml"
+    if not environment.get("BWS_ACCESS_TOKEN") and os.name == "nt" and store.is_file():
+        result = subprocess.run(
+            ["powershell", "-NoProfile", "-Command",
+             "(Import-Clixml -LiteralPath $args[0]).GetNetworkCredential().Password", str(store)],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            environment["BWS_ACCESS_TOKEN"] = result.stdout.strip()
     return environment
 
 
