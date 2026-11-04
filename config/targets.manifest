@@ -45,7 +45,7 @@ niri|linux|zathura|zathura|zathura,zathura-pdf-mupdf|false|Linux-config/zathura|
 niri|linux|easyeffects|easyeffects|easyeffects,calf,lsp-plugins-lv2|false|Linux-config/easyeffects|easyeffects
 niri|linux|mpv|mpv|mpv|false|mpv|mpv
 niri|linux|hyprlock|hyprlock|hyprlock|false|Linux-config/hyprlock|hypr
-niri|linux|waypaper|waypaper|waypaper|false||
+niri|linux|waypaper|waypaper|waypaper|true||
 config|linux|profile|||false|.profile|$HOME/.profile
 config|linux|direnv|direnv|direnv|false|Linux-config/direnv|direnv
 config|linux|cursor-mcp|||false|ai-assistants/mcp/cursor.mcp.json|$HOME/.cursor/mcp.json
