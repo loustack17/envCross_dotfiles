@@ -8,7 +8,7 @@ utilities|linux|blueman|blueman-manager|blueman|false||
 utilities|linux|slurp|slurp|slurp|false||
 utilities|linux|grim|grim|grim|false||
 utilities|linux|satty|satty|satty-git|true||
-utilities|linux|impala|impala|impala|true||
+utilities|linux|impala|impala|impala|false||
 utilities|linux|yt-dlp|yt-dlp|yt-dlp|false||
 utilities|linux|wl-clipboard|wl-copy|wl-clipboard|false||
 utilities|linux|swayosd|swayosd-server|swayosd|false||

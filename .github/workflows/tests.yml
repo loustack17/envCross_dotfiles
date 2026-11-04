@@ -9,12 +9,16 @@ permissions:
   contents: read
 
 jobs:
-  unittest:
+  arch:
     runs-on: ubuntu-latest
+    container: archlinux:latest
     steps:
+      - run: pacman -Syu --noconfirm --needed git python jq stow
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-      - run: bash -n install.sh scripts/install-moli.sh scripts/install-udev-rules.sh
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: bash -n install.sh scripts/*.sh scripts/secrets/*.sh scripts/mcp/*.sh
+      - name: Manifest packages exist in Arch repos or AUR
+        run: bash scripts/check-arch-packages.sh
+      - name: Installer dry run
+        run: bash install.sh --dry-run --no-backup
       - run: python -m unittest discover -s tests -v
