@@ -129,9 +129,8 @@ Linux configuration sources live primarily under the `Linux-config/` directory.
 | **mpv** | `~/.config/mpv` |
 | **pipewire** | `~/.config/pipewire` |
 | **qt6ct** | `~/.config/qt6ct` |
-| **qt6ct-env** | `~/.config/environment.d/qt6ct.conf` |
+| **qt6ct-env** | `~/.config/environment.d` (session QT/IME variables, mason PATH) |
 | **mimeapps** | `~/.config/mimeapps.list` |
-| **niri-mimeapps**| `~/.config/niri-mimeapps.list` |
 | **satty-config** | `~/.config/satty` |
 | **wireplumber** | `~/.config/wireplumber` |
 | **xdg-terminals**| `~/.config/xdg-terminals.list` |

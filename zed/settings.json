@@ -1,7 +1,7 @@
 {
   "vim_mode": true,
   "icon_theme": "VSCode Icons for Zed (Dark Official Icons)",
-  "theme": "Dracula Solid",
+  "theme": "Tokyo Night",
   "proxy": "",
   "agent_servers": {
     "claude-acp": {
@@ -48,5 +48,8 @@
   },
   "project_panel": {
     "dock": "right"
+  },
+  "auto_install_extensions": {
+    "tokyo-night": true
   }
 }

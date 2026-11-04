@@ -6,19 +6,19 @@ set notification-warning-fg     "#45475A"
 set notification-bg             "#45475A"
 set notification-fg             "#A6ADC8"
 
-set completion-bg               "#282C34"
+set completion-bg               "#1E1E2E"
 set completion-fg               "#89B4FA"
-set completion-group-bg         "#282C34"
+set completion-group-bg         "#1E1E2E"
 set completion-group-fg         "#89B4FA"
 set completion-highlight-bg     "rgba(255, 105, 180, 0.5)"
 set completion-highlight-fg     "#45475A"
 
-set index-bg                    "#282C34"
+set index-bg                    "#1E1E2E"
 set index-fg                    "#A6ADC8"
 set index-active-bg             "#89B4FA"
 set index-active-fg             "#45475A"
 
-set inputbar-bg                 "#282C34"
+set inputbar-bg                 "#1E1E2E"
 set inputbar-fg                 "#A6ADC8"
 
 set statusbar-bg                "#45475A"

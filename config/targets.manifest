@@ -60,7 +60,6 @@ config|linux|gtk-4|||false|Linux-config/gtk-4.0|gtk-4.0
 config|linux|pipewire|||false|Linux-config/pipewire|pipewire
 config|linux|qt6ct-env|||false|Linux-config/environment.d|environment.d
 config|linux|mimeapps|||false|Linux-config/mimeapps.list|mimeapps.list
-config|linux|niri-mimeapps|||false|Linux-config/niri-mimeapps.list|niri-mimeapps.list
 config|linux|satty-config|||false|Linux-config/satty|satty
 config|linux|systemd-user|||false|Linux-config/systemd/user|systemd/user
 config|linux|xdg-terminals|||false|Linux-config/xdg-terminals.list|xdg-terminals.list
