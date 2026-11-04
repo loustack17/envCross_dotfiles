@@ -134,11 +134,10 @@ During installation, these files are linked to the appropriate locations for eac
 
 ### MCP Configuration
 
-Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed keeps platform-specific MCP servers in `zed/platform.linux.json` and `zed/platform.windows.json`; Windows Mem0 uses browser authorization. The cc-switch sync below is for Linux; Windows Codex uses the official provider directly.
+Shared MCP config lives under `ai-assistants/mcp/`. Cursor and VS Code use separate JSON shapes from the same catalog intent. Zed keeps platform-specific MCP servers in `zed/platform.linux.json` and `zed/platform.windows.json`; Windows Mem0 uses browser authorization. Each tool's own repo config (Claude `SKILLS/claude-tools/.mcp.json`, Codex `config.toml`, OpenCode, Hermes, Grok) defines its MCP servers; no external manager syncs them.
 
 ```bash
-bash ./install.sh --no-install --only-cursor-mcp --only-cursor-user-mcp --only-vscode-mcp --only-cc-switch
-scripts/mcp/sync-cc-switch-mcp.py
+bash ./install.sh --no-install --only-cursor-mcp --only-cursor-user-mcp --only-vscode-mcp
 ```
 
 Keep secrets and OAuth state outside git. Linux MCP secrets use Bitwarden Secrets Manager and the local Secret Service/cache workflow described in `ai-assistants/mcp/README.md`; Windows hosted Mem0 uses browser authorization. Review app-managed settings, history, and generated output before adding files to Git.

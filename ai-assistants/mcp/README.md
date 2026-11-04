@@ -8,7 +8,6 @@ Canonical non-secret config lives here.
 |------|-----|
 | `cursor.mcp.json` | Cursor MCP JSON (`mcpServers`) |
 | `ide.mcp.json` | VS Code MCP JSON (`servers`) |
-| `cc-switch-mcp.json` | cc-switch MCP catalog seed, no secrets |
 
 ## Secret handling
 
@@ -35,7 +34,6 @@ Also:
 
 ```fish
 opencode
-claude
 with-secrets -- <cmd>
 ```
 
@@ -45,18 +43,13 @@ On Linux, Mem0 uses local stdio through `run-mem0.sh`. Set `MEM0_API_KEY`; the w
 
 Tavily uses local stdio through `run-tavily.sh` so BWS can inject `TAVILY_API_KEY`.
 
-`sync-cc-switch-mcp.py` resolves `${env:NAME}` from environment. If an env var is missing, it preserves the existing cc-switch DB value for that field so stored secrets are not erased.
-
 ## Apply
 
 ```fish
 ./install.sh --no-install \
   --only-cursor-mcp \
   --only-cursor-user-mcp \
-  --only-vscode-mcp \
-  --only-cc-switch
-
-scripts/mcp/sync-cc-switch-mcp.py
+  --only-vscode-mcp
 ```
 
 ## Boundaries
@@ -64,10 +57,10 @@ scripts/mcp/sync-cc-switch-mcp.py
 - Cursor uses `mcpServers`; VS Code uses `servers`, so they cannot share one JSON shape.
 - Zed uses platform-specific `context_servers` in `zed/platform.linux.json` and `zed/platform.windows.json`; it cannot consume the shared `mcp.json` directly.
 - Hermes combines `.hermes/config.yaml` with `.hermes/mcp.linux.yaml` or `.hermes/mcp.windows.yaml` into the active config during installation.
-- cc-switch app settings are symlinked from `ai-assistants/.cc-switch/settings.json`.
-- cc-switch stores MCP servers in `~/.cc-switch/cc-switch.db`, not a symlink-friendly JSON file. The repo manages a seed JSON plus sync script, not the DB or auth files.
+- Each tool's MCP servers live in its own repo config: Claude `SKILLS/claude-tools/.mcp.json`, Codex `.codex/config.toml`, OpenCode `.opencode/opencode.*.json`, Hermes `.hermes/mcp.*.yaml`, Grok `.grok/config.toml`.
+- cc-switch is retired because it stored provider keys in plaintext; nothing reads `~/.cc-switch`.
 - Codex uses the official OpenAI endpoint by default.
-- `code-review-graph` is enabled for Codex and OpenCode. Optional seed entries other than Mem0 stay disabled for Codex, Claude, Gemini, and Hermes; existing OpenCode-only defaults remain explicit.
+- `code-review-graph` is enabled for Claude, Codex and OpenCode. Firecrawl, Tavily, MarkItDown, Crawl4AI and content-i18n are configured only for OpenCode on Linux.
 - Mem0 is the shared durable memory provider for Claude, Codex, OpenCode, and Hermes. Codex keeps it enabled and non-required so service or quota failures do not block startup.
 
 ## Zed Firecrawl / MarkItDown

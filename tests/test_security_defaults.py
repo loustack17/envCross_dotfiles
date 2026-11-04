@@ -57,35 +57,6 @@ class SecurityDefaultsTests(unittest.TestCase):
         self.assertIn(r"D:\ProgramData\envCross_dotfiles", config)
         self.assertNotIn("ENVCROSS_STATE_ROOT", config)
 
-    def test_cc_switch_preserves_official_codex_auth(self):
-        settings = json.loads(
-            (ROOT / "ai-assistants" / ".cc-switch" / "settings.json").read_text(
-                encoding="utf-8"
-            )
-        )
-        self.assertTrue(settings["preserveCodexOfficialAuthOnSwitch"])
-
-    def test_cc_switch_optional_mcp_defaults_are_off(self):
-        catalog = json.loads(
-            (ROOT / "ai-assistants" / "mcp" / "cc-switch-mcp.json").read_text(
-                encoding="utf-8"
-            )
-        )["servers"]
-        self.assertEqual(catalog["code-review-graph"]["enabled"], ["codex", "opencode"])
-        self.assertEqual(
-            catalog["mem0"]["enabled"],
-            ["claude", "codex", "opencode", "hermes"],
-        )
-        for name, entry in catalog.items():
-            if name in {"code-review-graph", "mem0"}:
-                continue
-            self.assertTrue(
-                set(entry.get("enabled", [])).isdisjoint(
-                    {"claude", "codex", "gemini", "hermes"}
-                ),
-                name,
-            )
-
     def test_graph_hooks_avoid_read_only_shell_churn(self):
         claude = json.loads(
             (ROOT / "ai-assistants" / ".claude" / "settings.json").read_text(

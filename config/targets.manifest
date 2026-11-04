@@ -37,7 +37,6 @@ ai|ai|gemini-cli|||false|ai-assistants/.gemini|$HOME/.gemini
 ai|ai|hermes-agent|hermes||false||$HOME/.hermes
 ai|ai|opencode|||false||$HOME/.config/opencode
 ai|ai|grok|grok||false|ai-assistants/.grok/config.toml|$HOME/.grok/config.toml
-ai|ai|cc-switch|||false|ai-assistants/.cc-switch/settings.json|$HOME/.cc-switch/settings.json
 core|shared|tock|||false|tock|tock
 config|shared|gitconfig|||false|.gitconfig|$HOME/.gitconfig
 core|windows|windows-terminal|wt|windows-terminal|false|Windows/windows terminal/settings.json|%SCOOP%\apps\windows-terminal\current\settings\settings.json
