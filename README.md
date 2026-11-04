@@ -87,7 +87,7 @@ ai-assistants/
 
 ### Secrets
 
-Every key and token comes from one Bitwarden Secrets Manager project through the `bws` CLI, which both installers install. Configure the machine token once per host (`scripts/secrets/configure.sh` on Linux, `scripts\windows\secrets-configure.ps1` on Windows), then launch tools through `with-secrets` or their wrappers. Never put a key in an environment variable, `.env`, or config file. OAuth sessions (Claude, freehire, Mem0) stay in each tool's own store and are signed in once per host.
+Every key and token comes from one Bitwarden Secrets Manager project through the `bws` CLI, which both installers install. Configure the machine token once per host (`scripts/secrets/configure.sh` on Linux; the `BWS_ACCESS_TOKEN` user environment variable on Windows), then launch tools through `with-secrets` or their wrappers. Never put a service key in an environment variable, `.env`, or config file. OAuth sessions (Claude, freehire, Mem0) stay in each tool's own store and are signed in once per host.
 
 ## 📁 Paths & Configuration
 

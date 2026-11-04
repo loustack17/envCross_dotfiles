@@ -20,18 +20,8 @@ def bitwarden_environment():
         )
         if result.returncode == 0 and result.stdout.strip():
             environment["BWS_ACCESS_TOKEN"] = result.stdout.strip()
-    store = Path(os.environ.get("LOCALAPPDATA", "")) / "envcross" / "bws.clixml"
-    if not environment.get("BWS_ACCESS_TOKEN") and os.name == "nt" and store.is_file():
-        # Pass the path through the environment (-Command does not bind trailing $args) and use only
-        # cmdlets, because Codex's sandbox runs PowerShell in Constrained Language Mode.
-        result = subprocess.run(
-            ["pwsh", "-NoProfile", "-NonInteractive", "-Command",
-             "ConvertFrom-SecureString -SecureString (Import-Clixml -LiteralPath $env:ENVCROSS_BWS_STORE).Password -AsPlainText"],
-            capture_output=True, text=True, timeout=30,
-            env={**os.environ, "ENVCROSS_BWS_STORE": str(store)},
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            environment["BWS_ACCESS_TOKEN"] = result.stdout.strip()
+    if not environment.get("BWS_ACCESS_TOKEN"):
+        raise RuntimeError("BWS_ACCESS_TOKEN is not set for this process.")
     return environment
 
 
@@ -45,6 +35,12 @@ def retrieve_key():
         env=bitwarden_environment(), capture_output=True, text=True, timeout=45,
     )
     if result.returncode:
+        diagnostic = (result.stderr or "").lower()
+        if any(term in diagnostic for term in ("tunnel", "proxy", "dns", "certificate", "connect", "timed out")):
+            raise RuntimeError(
+                "Bitwarden network request failed after loading the credential. "
+                "Retry through approved network execution before changing authentication or global settings."
+            )
         raise RuntimeError("Bitwarden retrieval failed. Check machine-account authentication and secret access.")
     secret = json.loads(result.stdout)
     if secret.get("id") != secret_id:

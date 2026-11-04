@@ -20,21 +20,25 @@ SECRET_ID = "a422228e-c585-43d9-a7e6-b4db0165831f"
 
 
 class TypeSafeBitwardenTests(unittest.TestCase):
-    @unittest.skipUnless(os.name == "nt", "DPAPI store is Windows-only")
-    def test_windows_reads_the_token_from_the_dpapi_store(self):
-        with tempfile.TemporaryDirectory() as temp:
-            store = Path(temp) / "envcross" / "bws.clixml"
-            store.parent.mkdir()
-            subprocess.run(
-                ["pwsh", "-NoProfile", "-NonInteractive", "-Command",
-                 "[pscredential]::new('project', (ConvertTo-SecureString 'fake-token' -AsPlainText -Force))"
-                 " | Export-Clixml -LiteralPath $env:TEST_STORE"],
-                check=True, env={**os.environ, "TEST_STORE": str(store)},
-            )
-            environment = {key: value for key, value in os.environ.items() if key != "BWS_ACCESS_TOKEN"}
-            environment["LOCALAPPDATA"] = temp
-            with mock.patch.dict(os.environ, environment, clear=True):
-                self.assertEqual(MODULE.bitwarden_environment()["BWS_ACCESS_TOKEN"], "fake-token")
+    def test_uses_the_bws_token_from_the_environment(self):
+        with mock.patch.dict(os.environ, {"BWS_ACCESS_TOKEN": "machine-token"}, clear=True):
+            self.assertEqual(MODULE.bitwarden_environment()["BWS_ACCESS_TOKEN"], "machine-token")
+
+    @unittest.skipUnless(os.name == "nt", "Linux falls back to the Secret Service")
+    def test_missing_token_fails_before_contacting_bitwarden(self):
+        with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(MODULE.subprocess, "run") as run:
+            with self.assertRaisesRegex(RuntimeError, "BWS_ACCESS_TOKEN is not set"):
+                MODULE.bitwarden_environment()
+            run.assert_not_called()
+
+    def test_network_failure_does_not_report_bad_credentials_or_leak_details(self):
+        with tempfile.TemporaryDirectory() as folder:
+            config = Path(folder) / "bitwarden.json"
+            config.write_text(json.dumps({"secret_id": SECRET_ID}), encoding="utf-8")
+            with mock.patch.object(MODULE, "CONFIG", config), mock.patch.object(MODULE.shutil, "which", return_value="bws"), mock.patch.object(MODULE, "bitwarden_environment", return_value={"BWS_ACCESS_TOKEN": "machine-token"}), mock.patch.object(MODULE.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, "", "proxy tunnel private-error")):
+                with self.assertRaisesRegex(RuntimeError, "network request failed") as caught:
+                    MODULE.retrieve_key()
+                self.assertNotIn("private", str(caught.exception))
 
     def test_injects_only_into_child_and_preserves_arguments_and_exit_code(self):
         environment = {"BWS_ACCESS_TOKEN": "machine-token", "JEV_API_KEY": "stale", "TYPESAFE_API_KEY": "old"}

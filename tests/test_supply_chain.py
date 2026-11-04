@@ -136,9 +136,8 @@ class PackagePinTests(unittest.TestCase):
         self.assertIn("core|linux|libsecret|secret-tool|libsecret|false||", manifest)
         self.assertIn('pkg: "bitwarden-secrets-manager-cli", cmd: "bws"', (ROOT / "install.nu").read_text(encoding="utf-8"))
         runner = (ROOT / "scripts" / "windows" / "with-secrets.ps1").read_text(encoding="utf-8")
-        self.assertIn("Import-Clixml", runner)
         self.assertIn("Remove-Item Env:BWS_ACCESS_TOKEN", runner)
-        self.assertNotIn('"User")', runner)
+        self.assertNotIn("bws.clixml", runner)
 
     def test_moli_installers_pin_release_and_verify_checksums(self):
         sh = (ROOT / "scripts" / "install-moli.sh").read_text(encoding="utf-8")
