@@ -25,6 +25,14 @@ PROCESS_ENV = {
 }
 
 
+def is_ip_literal(host):
+    try:
+        ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return True
+
+
 def arguments(request):
     permitted = {"url", "goal", "allow_hosts", "values", "expect", "expect_fields", "max_ticks"}
     if not isinstance(request, dict) or set(request) - permitted:
@@ -46,8 +54,9 @@ def arguments(request):
         raise ValueError("Private destinations are not supported")
     if not isinstance(hosts, list) or not hosts or parsed.hostname not in hosts:
         raise ValueError("An explicit matching host allowlist is required")
-    if any(not isinstance(host, str) or any(c in host for c in "/:* ,") for host in hosts):
-        raise ValueError("Use exact hostnames")
+    if any(not isinstance(host, str) or any(c in host for c in "/:* ,") or "." not in host.strip(".")
+           or host.endswith((".localhost", ".local", ".internal")) or is_ip_literal(host) for host in hosts):
+        raise ValueError("Use exact public hostnames")
     if not isinstance(goal, str) or not goal.strip() or len(goal) > 2000:
         raise ValueError("Supply a bounded goal")
     ticks = request.get("max_ticks", 8)

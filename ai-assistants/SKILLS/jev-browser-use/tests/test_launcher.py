@@ -29,7 +29,10 @@ class LauncherTests(unittest.TestCase):
                         {"url": "http://127.0.0.1/", "allow_hosts": ["127.0.0.1"]},
                         {"url": "http://localhost/", "allow_hosts": ["localhost"]},
                         {"url": "http://192.168.1.1/", "allow_hosts": ["192.168.1.1"]},
-                        {"url": "https://example.com:8443/"}):
+                        {"url": "https://example.com:8443/"},
+                        {"allow_hosts": ["example.com", "10.0.0.5"]},
+                        {"allow_hosts": ["example.com", "router.local"]},
+                        {"allow_hosts": ["example.com", "com"]}):
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 launcher.arguments({**request(), **changes})
 

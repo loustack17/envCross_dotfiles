@@ -119,6 +119,17 @@ class LaunchOrderTests(unittest.TestCase):
 
 
 class AllowlistTests(unittest.TestCase):
+    def test_live_destination_must_be_public_on_a_standard_port(self):
+        from unittest.mock import patch
+        public = [(2, 1, 6, "", ("93.184.215.14", 443))]
+        private = [(2, 1, 6, "", ("10.0.0.5", 443))]
+        with patch.object(runner.socket, "getaddrinfo", return_value=public):
+            self.assertTrue(runner.public_destination("https://example.com/"))
+            self.assertFalse(runner.public_destination("https://example.com:8443/"))
+            self.assertFalse(runner.public_destination("ftp://example.com/"))
+        with patch.object(runner.socket, "getaddrinfo", return_value=private):
+            self.assertFalse(runner.public_destination("https://example.com/"))
+
     def test_subdomains_allowed_but_not_lookalikes(self):
         self.assertTrue(runner.host_allowed("https://en.wikipedia.org/wiki/X", ["wikipedia.org"]))
         self.assertFalse(runner.host_allowed("https://evil-wikipedia.org/", ["wikipedia.org"]))

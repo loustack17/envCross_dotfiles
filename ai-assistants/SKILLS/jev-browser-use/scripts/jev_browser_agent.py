@@ -34,6 +34,7 @@ import os
 import re
 import shutil
 import signal
+import ipaddress
 import socket
 import subprocess
 import sys
@@ -342,12 +343,27 @@ class SensitivePage(Exception):
     pass
 
 
+def public_destination(url: str) -> bool:
+    """True for HTTP(S) on the standard port whose host resolves only to public addresses."""
+    parsed = urlparse(url)
+    default_port = {"http": 80, "https": 443}.get(parsed.scheme)
+    if default_port is None or parsed.port not in (None, default_port) or not parsed.hostname:
+        return False
+    try:
+        addresses = socket.getaddrinfo(parsed.hostname, parsed.port or default_port)
+    except OSError:
+        return False
+    return bool(addresses) and all(ipaddress.ip_address(item[4][0]).is_global for item in addresses)
+
+
 def check_live_page(browser, allow_hosts):
     url = browser.evaluate("location.href") or ""
     if not host_allowed(url, allow_hosts):
         raise OutsideAllowlist(url)
     if browser.evaluate(SENSITIVE_INPUTS_JS):
         raise SensitivePage("visible sensitive or personal fields were detected")
+    if not public_destination(url):
+        raise OutsideAllowlist(url)
 
 
 def guarded_choose(choose, browser, allow_hosts):
