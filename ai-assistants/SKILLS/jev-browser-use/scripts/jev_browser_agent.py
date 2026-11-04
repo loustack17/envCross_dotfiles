@@ -1,0 +1,702 @@
+#!/usr/bin/env python3
+"""Bounded browser-use + Jev runner for Jev Ultrafast.
+
+Jev Ultrafast chooses an operation and an observed target; the executor performs
+exactly that one action. Nothing here lets the model emit selectors, code, or
+free-form text: the operation and target must map to elements that were observed
+on the live page.
+
+Safety properties enforced by this runner
+-----------------------------------------
+* Credentials come only from the environment, which the guarded run.py fills from
+  Bitwarden Secrets Manager. They are never written to disk, never placed in
+  config, and never printed.
+* Live runs require an explicit ``--allow-hosts`` allowlist. The loop aborts
+  mid-run if the page's host leaves the allowlist, so an agent cannot wander off
+  the approved site.
+* ``--max-ticks`` hard-caps the number of Jev model calls.
+* Exactly one browser context is used, and it is always closed.
+* Success is an independently verified page/postcondition check, never the
+  agent's own DONE choice.
+* Refuses to start without a TypeSafe credential.
+
+Self-locating: if ``jev_ultrafast`` is not importable in the current interpreter,
+this script re-execs itself with the vendored repo's virtualenv python.
+"""
+
+from __future__ import annotations
+
+import argparse
+import atexit
+import contextlib
+import json
+import os
+import re
+import shutil
+import signal
+import socket
+import subprocess
+import sys
+import tempfile
+import time
+import urllib.request
+from collections.abc import Mapping
+from pathlib import Path
+from urllib.parse import urlparse
+
+REPO = Path(os.environ.get("JEV_ULTRAFAST_REPO") or Path.home() / "jev-ultrafast").expanduser()
+
+
+def venv_python(repo: Path, platform=None) -> Path:
+    executable = Path("Scripts") / "python.exe" if (os.name if platform is None else platform) == "nt" else Path("bin") / "python"
+    return repo / ".venv" / executable
+
+
+VENV_PY = venv_python(REPO)
+DEFAULT_TEXT_MODEL = "google/gemini-2.5-flash"
+DEFAULT_TEXT_BASE = "https://openrouter.ai/api/v1"
+
+# Chrome binaries we are willing to launch ourselves, in preference order.
+CHROME_CANDIDATES = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+    "/usr/bin/google-chrome",
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+]
+CHROME_ENV_KEYS = (
+    "PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "LOCALAPPDATA", "APPDATA", "USERPROFILE",
+    "COMSPEC", "PATHEXT", "PROGRAMFILES", "PROGRAMFILES(X86)", "PROGRAMDATA", "HOME", "LANG",
+    "LC_ALL", "DISPLAY", "XAUTHORITY",
+)
+SENSITIVE_INPUTS_JS = """(() => {
+  const tokens = new Set(['one-time-code','cc-number','cc-exp','cc-exp-month','cc-exp-year','cc-csc','name','given-name','family-name','email','tel','street-address','postal-code','bday']);
+  return Array.from(document.querySelectorAll('input,textarea,select')).some(el => {
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    if (style.display === 'none' || style.visibility === 'hidden' || rect.width <= 0 || rect.height <= 0) return false;
+    if (['password','email','tel'].includes((el.type || '').toLowerCase())) return true;
+    return (el.getAttribute('autocomplete') || '').toLowerCase().split(/\\s+/).some(token => tokens.has(token) || token.startsWith('cc-') || token.startsWith('address-line') || token.startsWith('bday'));
+  });
+})()"""
+
+
+# ─ credentials ──────────────────────────────────────────────────────────────
+
+def resolve_credentials(env: dict, no_text_backend: bool = False) -> dict:
+    """Read credentials from the environment only. Missing values are simply absent."""
+    resolved = {}
+    if env.get("TYPESAFE_API_KEY"):
+        resolved["TYPESAFE_API_KEY"] = env["TYPESAFE_API_KEY"]
+    text_key = None if no_text_backend else (env.get("TEXT_MODEL_API_KEY") or env.get("OPENROUTER_API_KEY"))
+    if text_key:
+        resolved["TEXT_MODEL_API_KEY"] = text_key
+    resolved["TYPESAFE_MODEL"] = env.get("TYPESAFE_MODEL", "jev-latest")
+    resolved["TEXT_MODEL"] = env.get("TEXT_MODEL", DEFAULT_TEXT_MODEL)
+    resolved["TEXT_MODEL_BASE_URL"] = env.get("TEXT_MODEL_BASE_URL", DEFAULT_TEXT_BASE)
+    return resolved
+
+
+def redact(secret: str | None) -> str:
+    if not secret:
+        return "(absent)"
+    return f"present(len={len(secret)})"
+
+
+# ── host allowlist ───────────────────────────────────────────────────────────
+
+def host_allowed(url: str, allow_hosts: list[str]) -> bool:
+    """True when the URL's host is the allowlisted host or a subdomain of it."""
+    try:
+        host = (urlparse(url).hostname or "").lower()
+    except Exception:  # noqa: BLE001
+        return False
+    if not host:
+        return False
+    for allowed in allow_hosts:
+        a = allowed.strip().lower().lstrip(".")
+        if a and (host == a or host.endswith("." + a)):
+            return True
+    return False
+
+
+# ── outcome verification ─────────────────────────────────────────────────────
+
+def outcome_verified(title: str, heading: str, url: str, expect: str) -> bool:
+    """Independent check against live page state, not the agent's DONE choice."""
+    if not expect:
+        return False
+    haystack = " ".join([title or "", heading or "", url or ""]).lower()
+    return expect.lower() in haystack
+
+
+READ_FIELDS = """JSON.stringify(Object.fromEntries(
+  [...document.querySelectorAll('input:not([type]),input[type=text],input[type=email],input[type=tel],'
+     + 'input[type=number],input[type=search],input[type=url],textarea,select')]
+    .filter(e => e.offsetParent !== null)
+    .map(e => [((e.getAttribute('aria-label') || (e.labels && e.labels[0] && e.labels[0].innerText)
+                 || e.placeholder || e.name || e.id || '') + '').trim(), e.value])))"""
+
+
+def fields_match(observed: dict, expected: list[tuple[str, str]]) -> tuple[bool, dict]:
+    """Check live field values by label: exact label first, else exactly one containing it."""
+    report = {}
+    for name, value in expected:
+        exact = [label for label in observed if label.lower() == name.lower()]
+        contained = [label for label in observed if name.lower() in label.lower()]
+        match = exact or (contained if len(contained) == 1 else [])
+        report[name] = bool(match) and observed[match[0]] == value
+    return bool(expected) and all(report.values()), report
+
+
+def run_verified(title: str, heading: str, url: str, expect: str, fields_ok: bool | None) -> bool:
+    """Pass only on independent evidence: --expect text and/or --expect-field values."""
+    if not expect and fields_ok is None:
+        return False
+    return (not expect or outcome_verified(title, heading, url, expect)) and fields_ok is not False
+
+
+# ── browser ownership ────────────────────────────────────────────────────────
+
+def find_chrome(env: Mapping[str, str] | None = None) -> str | None:
+    """Locate a Chrome/Chromium binary without ever touching the person's profile."""
+    env = env if env is not None else os.environ
+    for key in ("BH_CHROME_PATH", "CHROME_PATH"):
+        candidate = env.get(key)
+        if candidate and Path(candidate).exists():
+            return candidate
+    for candidate in CHROME_CANDIDATES:
+        if Path(candidate).exists():
+            return candidate
+    for name in ("google-chrome", "chromium", "chromium-browser"):
+        found = shutil.which(name)
+        if found:
+            return found
+    return None
+
+
+def free_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
+
+
+def chrome_args(port: int, profile_dir: str, url: str = "about:blank") -> list[str]:
+    """Flags for a throwaway, headless, isolation-friendly browser we own."""
+    return [
+        "--headless=new",
+        "--remote-debugging-address=127.0.0.1",
+        f"--remote-debugging-port={port}",
+        f"--user-data-dir={profile_dir}",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-background-networking",
+        "--disable-component-update",
+        "--disable-sync",
+        "--metrics-recording-only",
+        "--window-size=1280,900",
+        url,
+    ]
+
+
+def owned_browser_options(env=None, platform=None) -> dict:
+    env = os.environ if env is None else env
+    process_env = {key: env[key] for key in CHROME_ENV_KEYS if key in env}
+    options = {"env": process_env}
+    if (os.name if platform is None else platform) == "nt":
+        options["creationflags"] = getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
+    return options
+
+
+def wait_for_cdp(port: int, timeout: float = 30.0, opener=None) -> str | None:
+    """Poll the DevTools endpoint until it hands us a websocket URL."""
+    opener = opener or (lambda url: urllib.request.urlopen(url, timeout=2))
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            payload = json.loads(opener(f"http://127.0.0.1:{port}/json/version").read().decode())
+            websocket = payload.get("webSocketDebuggerUrl")
+            if websocket:
+                return websocket
+        except Exception:  # noqa: BLE001  (not up yet, or not a CDP port)
+            pass
+        time.sleep(0.5)
+    return None
+
+
+class OwnedChrome:
+    """A Chrome this process launched, on a throwaway profile, closed on exit.
+
+    The person's everyday browser is never attached to, and never has remote
+    debugging enabled. browser-harness needs a CDP endpoint, so when the caller
+    has not supplied one we bring our own.
+    """
+
+    def __init__(self, chrome_path: str, url: str = "about:blank", port: int | None = None,
+                 startup_timeout: float = 30.0):
+        self.chrome_path = chrome_path
+        self.url = url
+        self.port = port or free_port()
+        self.startup_timeout = startup_timeout
+        self.log_path: Path | None = None
+        self.profile_dir: str | None = None
+        self.process: subprocess.Popen | None = None
+        self.websocket: str | None = None
+
+    def start(self) -> str:
+        self.profile_dir = tempfile.mkdtemp(prefix="jev-browser-profile-")
+        handle, log_name = tempfile.mkstemp(prefix="jev-browser-chrome-", suffix=".log")
+        os.close(handle)
+        self.log_path = Path(log_name)
+        with open(self.log_path, "wb") as log:  # the child keeps its own descriptor
+            self.process = subprocess.Popen(
+                [self.chrome_path, *chrome_args(self.port, self.profile_dir, self.url)],
+                stdout=log, stderr=subprocess.STDOUT,
+                **owned_browser_options(),
+            )
+        websocket = wait_for_cdp(self.port, timeout=self.startup_timeout)
+        if not websocket:
+            tail = ""
+            with contextlib.suppress(Exception):
+                tail = self.log_path.read_text(errors="replace")[-400:]
+            self.stop()
+            raise RuntimeError(f"owned Chrome did not expose CDP on port {self.port}. {tail}".strip())
+        self.websocket = websocket
+        return websocket
+
+    def stop(self) -> None:
+        if self.process and self.process.poll() is None:
+            self.process.terminate()
+            for _ in range(20):
+                if self.process.poll() is not None:
+                    break
+                time.sleep(0.5)
+            if self.process.poll() is None:
+                self.process.kill()
+        if self.profile_dir:
+            shutil.rmtree(self.profile_dir, ignore_errors=True)
+            self.profile_dir = None
+
+    def __enter__(self) -> "OwnedChrome":
+        self.start()
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.stop()
+
+
+@contextlib.contextmanager
+def browser_endpoint(args):  # retained for callers that prefer explicit scoping
+    if args.cdp:
+        os.environ["BU_CDP_WS"] = args.cdp
+        yield args.cdp
+        return
+    owned = start_owned_browser(args)
+    try:
+        yield owned.websocket
+    finally:
+        owned.stop()
+
+
+def start_owned_browser(args) -> "OwnedChrome":
+    """Launch our own Chrome when the caller did not supply a CDP endpoint."""
+    chrome = args.chrome_path or find_chrome()
+    if not chrome:
+        raise SystemExit(
+            "FAIL: no CDP endpoint was supplied and no Chrome/Chromium binary was found. "
+            "Pass --cdp ws://…, set BU_CDP_WS, install Chrome, or point BH_CHROME_PATH at one. "
+            "(Use --no-launch-chrome to require an attached browser instead.)"
+        )
+    owned = OwnedChrome(chrome, url="about:blank")
+    try:
+        os.environ["BU_CDP_WS"] = owned.start()
+    except RuntimeError as error:
+        raise SystemExit(f"FAIL: {error}") from error
+    print(f"  browser: our own Chrome (pid={owned.process.pid if owned.process else '?'}, "
+          f"port={owned.port}, throwaway profile) — closed on exit")
+    return owned
+
+
+# ── click guard ──────────────────────────────────────────────────────────────
+
+DEFAULT_NEVER_CLICK = (r"\b(send|submit|pay|buy|purchase|place order|order now|checkout|check out"
+                       r"|delete|remove|publish|subscribe)\b")
+
+
+class BlockedClick(Exception):
+    """Jev chose a click the --never-click guard refuses."""
+
+    def __init__(self, label: str):
+        super().__init__(f"refused click on {label!r}")
+        self.label = label
+
+
+class OutsideAllowlist(Exception):
+    def __init__(self, url: str):
+        super().__init__(f"page is outside the host allowlist: {url}")
+        self.url = url
+
+
+class SensitivePage(Exception):
+    pass
+
+
+def check_live_page(browser, allow_hosts):
+    url = browser.evaluate("location.href") or ""
+    if not host_allowed(url, allow_hosts):
+        raise OutsideAllowlist(url)
+    if browser.evaluate(SENSITIVE_INPUTS_JS):
+        raise SensitivePage("visible sensitive or personal fields were detected")
+
+
+def guarded_choose(choose, browser, allow_hosts):
+    def choose_if_safe(state, goal, history):
+        check_live_page(browser, allow_hosts)
+        return choose(state, goal, history)
+    return choose_if_safe
+
+
+def click_blocked(action: dict, pattern: str) -> bool:
+    """True when ``action`` is a click whose label matches ``pattern`` (case-insensitive)."""
+    return bool(pattern) and action.get("kind") == "click" and bool(
+        re.search(pattern, action.get("label") or "", re.IGNORECASE))
+
+
+# ── page timing ──────────────────────────────────────────────────────────────
+
+def wait_until_settled(read, quiet_s: float = 1.0, cap_s: float = 5.0,
+                       clock=time.monotonic, sleep=time.sleep) -> bool:
+    """Poll ``read`` until its value is unchanged for ``quiet_s``; give up at ``cap_s``.
+
+    A site builder can still be hydrating when the first decision lands, so the
+    executor rejects the action as stale and the run drifts. Returns True when settled.
+    """
+    start = clock()
+    last = read()
+    stable_since = start
+    while clock() - start < cap_s:
+        sleep(0.1)
+        current = read()
+        if current != last:
+            last, stable_since = current, clock()
+        elif clock() - stable_since >= quiet_s:
+            return True
+    return False
+
+
+def wait_for_change(read, before, cap_s: float = 1.5, clock=time.monotonic, sleep=time.sleep) -> bool:
+    """Poll ``read`` until it differs from ``before``; give up at ``cap_s``.
+
+    Jev Ultrafast scrolls with a synthetic wheel event and observes right away. Some
+    sites apply the scroll about a second later, so Jev would see an unmoved page.
+    """
+    start = clock()
+    while read() == before:
+        if clock() - start >= cap_s:
+            return False
+        sleep(0.05)
+    return True
+
+
+# ── caller-supplied text ─────────────────────────────────────────────────────
+
+class MissingText(Exception):
+    """Jev chose to type into a field the caller gave no value for."""
+
+    def __init__(self, label: str):
+        super().__init__(f"no --text value for field {label!r}")
+        self.label = label
+
+
+def parse_text_values(pairs: list[str]) -> list[tuple[str, str]]:
+    """Parse repeated ``--text LABEL=VALUE`` flags, splitting on the first ``=``."""
+    parsed = []
+    for pair in pairs:
+        label, sep, value = pair.partition("=")
+        if not sep or not label.strip():
+            raise ValueError(f"--text expects LABEL=VALUE, got {pair!r}")
+        parsed.append((label.strip(), value.strip()))
+    return parsed
+
+
+def count_text_calls(entries: list[dict]) -> tuple[int, int]:
+    """Split ``agent.state["text_calls"]`` into (text-model calls, --text values).
+
+    caller_field_text stamps a --text value with model "caller"; that is a local
+    substitution, not a call to the text model, so it must not count as one.
+    """
+    caller_values = sum(1 for entry in entries if entry.get("model") == "caller")
+    return len(entries) - caller_values, caller_values
+
+
+def caller_field_text(values: list[tuple[str, str]], fallback=None):
+    """Build a replacement for jev_ultrafast's text helper.
+
+    Jev still picks the field; the caller decides what goes in it. An exact label
+    match (ignoring case) wins, else exactly one caller label contained in the field
+    label. Anything else defers to ``fallback`` (the text model) or stops the run.
+    """
+    def field_text(context):
+        label = (context["field"].get("label") or "").strip()
+        exact = [v for k, v in values if k.lower() == label.lower()]
+        contained = [v for k, v in values if k.lower() in label.lower()]
+        match = exact or (contained if len(contained) == 1 else [])
+        if match:
+            return match[0], {"model": "caller", "latency_ms": 0, "usage": {}}
+        if fallback:
+            return fallback(context)
+        raise MissingText(label)
+    return field_text
+
+
+# ── runner ───────────────────────────────────────────────────────────────────
+
+def stop_own_daemon(name: str, stop=None) -> bool:
+    """Stop the browser-harness daemon this run named. Best effort; never raises."""
+    try:
+        if stop is None:
+            from browser_harness.admin import restart_daemon as stop  # only stops, despite the name
+        stop(name)
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+
+def ensure_importable(argv: list[str] | None = None) -> None:
+    """Re-exec into the vendored venv when jev_ultrafast is not importable.
+
+    Forwards the arguments this run was actually invoked with. Never uses
+    ``sys.argv`` when the caller supplied explicit arguments, because a
+    programmatic caller's ``sys.argv`` belongs to the host process and would
+    re-exec with the wrong flags.
+    """
+    try:
+        import jev_ultrafast  # noqa: F401
+        return
+    except ModuleNotFoundError:
+        pass
+    if VENV_PY.exists() and Path(sys.executable).resolve() != VENV_PY.resolve():
+        forwarded = list(argv) if argv is not None else sys.argv[1:]
+        os.execv(str(VENV_PY), [str(VENV_PY), str(Path(__file__).resolve()), *forwarded])
+    raise SystemExit(
+        "jev_ultrafast is not importable and no vendored venv was found at "
+        f"{VENV_PY}. Clone https://github.com/browser-use/jev-ultrafast, run `uv sync` in it, "
+        "and set JEV_ULTRAFAST_REPO to that folder."
+    )
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(description="Bounded browser-use + Jev runner")
+    p.add_argument("--url", required=True, help="Starting URL.")
+    p.add_argument("--goal", required=True, help="One narrow, non-sensitive goal.")
+    p.add_argument("--allow-hosts", required=True,
+                   help="Comma-separated host allowlist. The run aborts if the page leaves it.")
+    p.add_argument("--max-ticks", type=int, default=10, help="Hard cap on Jev calls (default 10).")
+    p.add_argument("--expect", default="", help="Substring that must appear in title/h1/url to PASS.")
+    p.add_argument("--cdp", default=os.environ.get("BU_CDP_WS", ""),
+                   help="Existing CDP websocket. Defaults to BU_CDP_WS / the attached browser.")
+    p.add_argument("--chrome-path", default=os.environ.get("BH_CHROME_PATH", ""),
+                   help="Chrome/Chromium binary to launch when no CDP endpoint is given.")
+    p.add_argument("--launch-chrome", dest="launch_chrome", action="store_true", default=True,
+                   help="Launch our own throwaway Chrome when no CDP endpoint is given (default).")
+    p.add_argument("--no-launch-chrome", dest="launch_chrome", action="store_false",
+                   help="Require an already-attached browser instead of launching one.")
+    p.add_argument("--text", action="append", default=[], metavar="LABEL=VALUE",
+                   help="Value to type when Jev picks the field with this label. Repeatable. "
+                        "Stays local; without it (and without a text model key) the run stops "
+                        "and names the field in needs_text.")
+    p.add_argument("--no-text-backend", action="store_true",
+                   help="Do not read text-provider credentials or call a text model; stop on unnamed fields.")
+    p.add_argument("--expect-field", action="append", default=[], metavar="LABEL=VALUE",
+                   help="Field that must hold this value on the live page to PASS. Repeatable. "
+                        "Use it for forms, where title/heading/URL do not change.")
+    p.add_argument("--never-click", default=DEFAULT_NEVER_CLICK, metavar="REGEX",
+                   help="Refuse any click whose label matches (case-insensitive); the run stops and "
+                        "reports blocked_click. Default blocks send/submit/pay/buy/delete/publish and "
+                        "similar. Pass '' only when the person approved those clicks.")
+    p.add_argument("--settle-max-ms", type=int, default=5000,
+                   help="Before the first decision, wait until the page stops changing for 1 s, "
+                        "at most this long (default 5000; 0 disables).")
+    p.add_argument("--scroll-wait-ms", type=int, default=1500,
+                   help="After a scroll, wait until the page has actually moved, at most this long "
+                        "(default 1500; 0 disables).")
+    p.add_argument("--json", action="store_true", help="Emit a machine-readable result as the last line.")
+    return p
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+
+    creds = resolve_credentials(dict(os.environ), no_text_backend=args.no_text_backend)
+    print(f"typesafe: {redact(creds.get('TYPESAFE_API_KEY'))} model={creds['TYPESAFE_MODEL']}")
+    print(f"text helper: {redact(creds.get('TEXT_MODEL_API_KEY'))} model={creds['TEXT_MODEL']} "
+          f"base={creds['TEXT_MODEL_BASE_URL']}")
+    if "TYPESAFE_API_KEY" not in creds:
+        print("FAIL: no TypeSafe credential. Run `jev setup-key`.")
+        return 2
+    for k, v in creds.items():
+        os.environ[k] = v
+
+    allow = [h for h in (args.allow_hosts or "").split(",") if h.strip()]
+    if not allow:
+        print("FAIL: --allow-hosts is required for a live run.")
+        return 2
+    if not host_allowed(args.url, allow):
+        print(f"FAIL: start URL host is not in the allowlist {allow}.")
+        return 2
+    try:
+        text_values = parse_text_values(args.text)
+        expect_fields = parse_text_values(args.expect_field)
+    except ValueError as exc:
+        print(f"FAIL: {exc}")
+        return 2
+    # Bring up the browser AFTER ensure_importable, because that call may re-exec this
+    # script into the vendored venv. A browser started before the exec is orphaned:
+    # the replacement process never runs the parent's atexit handler, so it leaks.
+    # One browser-harness daemon per run: parallel runs sharing "default" crash when the
+    # first to finish shuts it down. browser_harness reads BU_NAME at import, and
+    # ensure_importable imports it, so this must come first. A caller's name wins; a
+    # re-exec keeps the parent's name. A named daemon outlives the run, so stop ours at exit.
+    if "BU_NAME" not in os.environ:
+        os.environ["BU_NAME"] = f"jev-browser-use-{os.getpid()}"
+        os.environ["JEV_BROWSER_USE_OWNS_DAEMON"] = "1"
+    ensure_importable(argv)
+    if os.environ.get("JEV_BROWSER_USE_OWNS_DAEMON") == "1":
+        atexit.register(stop_own_daemon, os.environ["BU_NAME"])
+
+    if args.cdp:
+        os.environ["BU_CDP_WS"] = args.cdp
+    elif not args.launch_chrome:
+        print("FAIL: --no-launch-chrome was set but no CDP endpoint was supplied.")
+        return 2
+    else:
+        owned = start_owned_browser(args)  # sets BU_CDP_WS for browser-harness
+        atexit.register(owned.stop)
+        for _signal in (signal.SIGINT, signal.SIGTERM):
+            with contextlib.suppress(Exception):
+                signal.signal(_signal, lambda *_: (owned.stop(), sys.exit(130)))
+
+    import jev_ultrafast.agent as jev_agent
+    from jev_ultrafast import Agent
+
+    # agent.py imports field_text by name, so patch it where the loop looks it up.
+    model_fallback = jev_agent.field_text if "TEXT_MODEL_API_KEY" in creds and not args.no_text_backend else None
+    jev_agent.field_text = caller_field_text(text_values, fallback=model_fallback)
+
+    ticks = 0
+    left_allowlist = False
+    sensitive_page = False
+    loop_error = False
+    needs_text = None
+    blocked_click = None
+    settled = None
+    final_url = title = heading = ""
+    with Agent(args.url, args.goal) as agent:
+        if args.settle_max_ms > 0:
+            from jev_ultrafast.browser import MARKER
+            settled = wait_until_settled(lambda: agent.browser.evaluate(MARKER), cap_s=args.settle_max_ms / 1000)
+            agent.state["page"] = agent.browser.observe(screenshot=False)
+            print(f"  page {'settled' if settled else 'still changing at the cap'} before the first decision")
+        execute = agent.browser.act
+        jev_agent.choose = guarded_choose(jev_agent.choose, agent.browser, allow)
+
+        def guarded_act(action, page, text=None):
+            check_live_page(agent.browser, allow)
+            if click_blocked(action, args.never_click):
+                raise BlockedClick(action.get("label") or "")
+            scrolling = args.scroll_wait_ms > 0 and action["kind"] == "scroll"
+            before = agent.browser.evaluate("scrollY") if scrolling else None
+            result = execute(action, page, text=text)
+            if scrolling:
+                wait_for_change(lambda: agent.browser.evaluate("scrollY"), before,
+                                cap_s=args.scroll_wait_ms / 1000)
+            return result
+
+        agent.browser.act = guarded_act
+        try:
+            for _state in agent.run():
+                ticks += 1
+                page_url = agent.state["page"].get("url", "")
+                if not host_allowed(page_url, allow):
+                    left_allowlist = True
+                    print(f"ABORT: page left the allowlist -> {page_url}")
+                    break
+                last = agent.state["history"][-1] if agent.state["history"] else {}
+                print(f"  tick {ticks:>2}  {agent.state['elapsed_ms']:>6} ms  "
+                      f"actions={len(agent.state['history'])}  status={agent.state['status']}  "
+                      f"last={last.get('kind', '-')}")
+                if ticks >= args.max_ticks:
+                    print(f"  stopping at the {args.max_ticks}-tick budget")
+                    break
+        except MissingText as exc:
+            needs_text = exc.label
+            print(f"  stopped: Jev chose to type into {exc.label!r}; re-run with --text '{exc.label}=...'")
+        except BlockedClick as exc:
+            blocked_click = exc.label
+            print(f"  stopped: refused click on {exc.label!r} (--never-click); nothing was clicked")
+        except OutsideAllowlist as exc:
+            left_allowlist = True
+            print(f"ABORT: page left the allowlist -> {exc.url}")
+        except SensitivePage as exc:
+            sensitive_page = True
+            print(f"ABORT: {exc}")
+        except Exception as exc:  # noqa: BLE001
+            loop_error = True
+            print(f"  loop error {type(exc).__name__}: {str(exc)[:200]}")
+
+        final_url = agent.state["page"].get("url", "")
+        fields_ok, field_report = None, {}
+        try:
+            title = agent.browser.evaluate("document.title") or ""
+            heading = agent.browser.evaluate("(document.querySelector('h1')||{}).textContent||''") or ""
+            if expect_fields and not sensitive_page:
+                fields_ok, field_report = fields_match(json.loads(agent.browser.evaluate(READ_FIELDS)), expect_fields)
+        except Exception as exc:  # noqa: BLE001
+            print(f"  could not read the live document: {type(exc).__name__}")
+            if expect_fields and not sensitive_page:
+                fields_ok = False
+        history = list(agent.state["history"])
+        text_calls = list(agent.state["text_calls"])
+
+    verified = (run_verified(title, heading, final_url, args.expect, fields_ok) and blocked_click is None
+                and not sensitive_page and not needs_text and not left_allowlist and not loop_error)
+    model_calls, caller_values = count_text_calls(text_calls)
+    result = {
+        "schema": "jev.browser_use_run_v1",
+        "goal": args.goal,
+        "final_url": final_url,
+        "title": title,
+        "heading": heading,
+        "steps": len(history),
+        "text_calls": model_calls,
+        "caller_text": caller_values,
+        "ticks": ticks,
+        "left_allowlist": left_allowlist,
+        "sensitive_page": sensitive_page,
+        "loop_error": loop_error,
+        "needs_text": needs_text,
+        "blocked_click": blocked_click,
+        "settled": settled,
+        "expected": args.expect,
+        "fields": field_report,
+        "jev_calls": len(agent.state["decisions"]),
+        "jev_usage": [decision.get("usage", {}) for decision in agent.state["decisions"]],
+        "verified": verified,
+        "browser": "attached" if args.cdp else "owned",
+    }
+    print(f"  final_url: {final_url}")
+    print(f"  title: {title!r}")
+    if field_report:
+        print(f"  field check: {field_report}")
+    print(f"  independent check: {'PASS' if verified else 'FAIL'}")
+    if args.json:
+        print(json.dumps(result))
+    if left_allowlist:
+        return 5
+    return 0 if verified else 4
+
+
+if __name__ == "__main__":
+    sys.exit(main())

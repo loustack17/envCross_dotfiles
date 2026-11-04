@@ -15,7 +15,18 @@ return {
       ["<C-l>"] = { "show", "show_documentation", "hide_documentation" },
       ["<C-e>"] = { "hide", "fallback" },
       ["<CR>"] = { "accept", "fallback" },
-      ["<Tab>"] = { "select_and_accept", "snippet_forward", "fallback" },
+      ["<Tab>"] = {
+        "select_and_accept",
+        function()
+          local ok, ai = pcall(require, "codeium.virtual_text")
+          if ok and ai.get_current_completion_item() then
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(ai.accept(), true, false, true), "n", false)
+            return true
+          end
+        end,
+        "snippet_forward",
+        "fallback",
+      },
       ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
     },
     appearance = {

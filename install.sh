@@ -862,6 +862,15 @@ step_install_tools() {
         [[ "$FORCE_INSTALL" == "true" ]] && moli_args+=(--force)
         bash "$REPO_ROOT/scripts/install-moli.sh" "${moli_args[@]}" || return 1
     fi
+
+    if should_process "jev"; then
+        local jev_project="$REPO_ROOT/ai-assistants/SKILLS/jev-browser-use/vendor/jev-ultrafast"
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_dry "Would create the Jev runtime: uv sync --frozen --no-dev --project $jev_project"
+        else
+            uv sync --frozen --no-dev --project "$jev_project" || return 1
+        fi
+    fi
 }
 
 step_backup_configs() {

@@ -11,8 +11,10 @@ map("n", "<A-Down>", ":m .+1<CR>==", { desc = "Move line down" })
 map("n", "<A-Up>", ":m .-2<CR>==", { desc = "Move line up" })
 map("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
 map("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
-map("n", "<leader>j", ":m .+1<CR>==", { desc = "Move line down" })
-map("n", "<leader>k", ":m .-2<CR>==", { desc = "Move line up" })
+map("n", "<S-A-Down>", "<Cmd>t.<CR>", { desc = "Duplicate line down" })
+map("n", "<S-A-Up>", "<Cmd>t-1<CR>", { desc = "Duplicate line up" })
+map("n", "<S-A-j>", "<Cmd>t.<CR>", { desc = "Duplicate line down" })
+map("n", "<S-A-k>", "<Cmd>t-1<CR>", { desc = "Duplicate line up" })
 
 -- Diagnostics
 map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
@@ -31,8 +33,6 @@ map("v", "<A-Down>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 map("v", "<A-Up>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
-map("v", "<leader>j", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
-map("v", "<leader>k", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- Move current line from insert mode
 map("i", "<A-Down>", "<Esc>:m .+1<CR>==gi", { desc = "Move line down" })
@@ -40,10 +40,7 @@ map("i", "<A-Up>", "<Esc>:m .-2<CR>==gi", { desc = "Move line up" })
 map("i", "<A-j>", "<Esc>:m .+1<CR>==gi", { desc = "Move line down" })
 map("i", "<A-k>", "<Esc>:m .-2<CR>==gi", { desc = "Move line up" })
 
--- AI completion
-map("i", "<Tab>", function()
-  return require("codeium.virtual_text").accept()
-end, { silent = true, expr = true, script = true, nowait = true, desc = "Accept AI completion" })
+-- AI completion (<Tab> accepts it through blink-cmp, like VS Code)
 map("i", "<M-]>", function()
   require("codeium.virtual_text").cycle_completions(1)
 end, { silent = true, desc = "Next AI completion" })

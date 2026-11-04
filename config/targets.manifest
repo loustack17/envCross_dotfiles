@@ -18,6 +18,7 @@ utilities|linux|lxqt-policykit|lxqt-policykit-agent|lxqt-policykit|false||
 utilities|linux|starship|starship|starship|false||
 utilities|linux|zoxide|zoxide|zoxide|false||
 utilities|linux|jq|jq|jq|false||
+utilities|linux|uv|uv|uv|false||
 utilities|linux|awww|awww|awww-git|true||
 utilities|linux|ripdrag|ripdrag|ripdrag-git|true||
 utilities|linux|pcmanfm-qt|pcmanfm-qt|pcmanfm-qt|false|Linux-config/pcmanfm-qt|pcmanfm-qt

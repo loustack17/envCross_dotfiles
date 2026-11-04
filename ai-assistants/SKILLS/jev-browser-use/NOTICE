@@ -1,0 +1,14 @@
+jev-browser-use
+Copyright (c) 2026 Damian Borek
+
+SKILL.md, scripts/jev_browser_agent.py and the runner tests are derived from
+https://github.com/damian87x/jev-browser-use (commit 2ce6baa), itself derived from
+the jev-browser-use skill in hermes-jev-skills by Steve Darlow, used under the MIT
+License: https://github.com/kerpopule/hermes-jev-skills
+
+Local changes: the guarded run.py entry point, credentials only from the environment
+(filled from Bitwarden Secrets Manager by run.py; no .env, pi secret file or Keychain
+lookup), disabled text-model fallback and telemetry, and skill-relative paths.
+
+vendor/jev-ultrafast is Jev Ultrafast (https://github.com/browser-use/jev-ultrafast,
+commit 8251e27, MIT, Browser Use), included unmodified with its LICENSE and uv.lock.

@@ -529,6 +529,7 @@ def main [
             {name: "Komorebi",          pkg: "komorebi",          cmd: "komorebi"}
             {name: "Whkd",              pkg: "whkd",              cmd: "whkd"}
             {name: "bws",               pkg: "bitwarden-secrets-manager-cli", cmd: "bws"}
+            {name: "uv",                pkg: "uv",                cmd: "uv"}
         ]
 
         for tool in $tools {
@@ -559,6 +560,15 @@ def main [
             print ($result.stdout | str trim)
             if $result.exit_code != 0 {
                 error make $"Failed to install Moli: ($result.stderr | str trim)"
+            }
+        }
+
+        if (should_install "jev" $skip_list $only_list) {
+            let jev_project = ($repo_root | path join "ai-assistants" "SKILLS" "jev-browser-use" "vendor" "jev-ultrafast")
+            if $dry_run {
+                log_dry $"Would create the Jev runtime: uv sync --frozen --no-dev --project ($jev_project)"
+            } else if (^uv sync --frozen --no-dev --project $jev_project | complete | get exit_code) != 0 {
+                error make "Failed to create the Jev runtime"
             }
         }
 
