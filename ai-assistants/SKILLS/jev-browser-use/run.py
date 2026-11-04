@@ -39,6 +39,8 @@ def arguments(request):
         raise ValueError("Unsupported request fields")
     url, goal = request.get("url", ""), request.get("goal", "")
     parsed = urlsplit(url)
+    if parsed.hostname and parsed.hostname.endswith("."):
+        raise ValueError("Use a hostname without a trailing dot")
     hosts = request.get("allow_hosts", [])
     if parsed.scheme not in {"http", "https"} or parsed.username or parsed.password:
         raise ValueError("Use an HTTP(S) URL without credentials")

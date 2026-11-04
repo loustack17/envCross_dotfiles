@@ -108,18 +108,12 @@ def redact(secret: str | None) -> str:
 # ── host allowlist ───────────────────────────────────────────────────────────
 
 def host_allowed(url: str, allow_hosts: list[str]) -> bool:
-    """True when the URL's host is the allowlisted host or a subdomain of it."""
+    """True only when the URL's host exactly matches an allowlisted host."""
     try:
-        host = (urlparse(url).hostname or "").lower()
+        host = (urlparse(url).hostname or "").lower().rstrip(".")
     except Exception:  # noqa: BLE001
         return False
-    if not host:
-        return False
-    for allowed in allow_hosts:
-        a = allowed.strip().lower().lstrip(".")
-        if a and (host == a or host.endswith("." + a)):
-            return True
-    return False
+    return bool(host) and host in {allowed.strip().lower().rstrip(".") for allowed in allow_hosts}
 
 
 # ── outcome verification ─────────────────────────────────────────────────────
@@ -664,15 +658,18 @@ def main(argv: list[str] | None = None) -> int:
 
         final_url = agent.state["page"].get("url", "")
         fields_ok, field_report = None, {}
-        try:
-            title = agent.browser.evaluate("document.title") or ""
-            heading = agent.browser.evaluate("(document.querySelector('h1')||{}).textContent||''") or ""
-            if expect_fields and not sensitive_page:
-                fields_ok, field_report = fields_match(json.loads(agent.browser.evaluate(READ_FIELDS)), expect_fields)
-        except Exception as exc:  # noqa: BLE001
-            print(f"  could not read the live document: {type(exc).__name__}")
-            if expect_fields and not sensitive_page:
-                fields_ok = False
+        if left_allowlist or not host_allowed(final_url, allow):
+            left_allowlist = True
+        else:
+            try:
+                title = agent.browser.evaluate("document.title") or ""
+                heading = agent.browser.evaluate("(document.querySelector('h1')||{}).textContent||''") or ""
+                if expect_fields and not sensitive_page:
+                    fields_ok, field_report = fields_match(json.loads(agent.browser.evaluate(READ_FIELDS)), expect_fields)
+            except Exception as exc:  # noqa: BLE001
+                print(f"  could not read the live document: {type(exc).__name__}")
+                if expect_fields and not sensitive_page:
+                    fields_ok = False
         history = list(agent.state["history"])
         text_calls = list(agent.state["text_calls"])
 

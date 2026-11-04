@@ -130,8 +130,9 @@ class AllowlistTests(unittest.TestCase):
         with patch.object(runner.socket, "getaddrinfo", return_value=private):
             self.assertFalse(runner.public_destination("https://example.com/"))
 
-    def test_subdomains_allowed_but_not_lookalikes(self):
-        self.assertTrue(runner.host_allowed("https://en.wikipedia.org/wiki/X", ["wikipedia.org"]))
+    def test_only_exact_hosts_are_allowed(self):
+        self.assertTrue(runner.host_allowed("https://wikipedia.org./wiki/X", ["wikipedia.org"]))
+        self.assertFalse(runner.host_allowed("https://en.wikipedia.org/wiki/X", ["wikipedia.org"]))
         self.assertFalse(runner.host_allowed("https://evil-wikipedia.org/", ["wikipedia.org"]))
         self.assertFalse(runner.host_allowed("https://example.com/", ["wikipedia.org"]))
 
